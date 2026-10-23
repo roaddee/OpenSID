@@ -17,6 +17,7 @@ ditambah perbaikan & pengerasan dari PT. Satima Putra Informa. Dipasang oleh Pan
 | login mandiri | `filled('anjungan_uuid')` | field tersembunyi selalu terkirim → semua login warga ditolak "Anjungan tidak ditemukan" |
 | cookie | `assets/js/id_browser.js`: elemen `#pengunjung` opsional | tombol "Terima semua cookie" diam & modal menutupi form login |
 | wilayah RW/RT | `'true'`/`'false'` untuk `refreshOrder` | `var refreshOrder = ;` mematikan skrip halaman RW/RT |
+| header admin | blok lama menu pengguna/Informasi/Pengaturan dibuang, `$is_mobile` didefinisikan | ikon tampil dua kali di semua halaman admin; HTML rusak di HP (bawaan 2607.0.0) |
 
 Dekoder obfuscate (tanpa eval) untuk berkas yang mungkin muncul lagi di rilis berikutnya: lihat
 handoff `handoff-opensid-satima-umum.md` di project Panel Satima.
