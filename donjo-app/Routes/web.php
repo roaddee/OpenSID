@@ -87,6 +87,11 @@ Route::group('/first', static function (): void {
     Route::get('/get_form_info', 'First@get_form_info')->name('first.get_form_info');
 });
 
+// Captcha
+// Satima: Rilis-v2607.0.2 memindahkan rute ini ke routes/web.php (Laravel) yang tidak dimuat edisi umum,
+// sehingga gambar captcha di /siteman hilang. Dikembalikan ke router CI.
+Route::get('captcha', 'Securimage@show');
+
 // Statistik web
 
 Route::group('/statistik_web', static function (): void {
