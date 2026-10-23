@@ -35,6 +35,25 @@
 
 RewriteEngine On
 
+# ============================================================================
+# SATIMA - Blok eksekusi skrip & berkas sensitif
+# ============================================================================
+# Ditulis dengan RewriteRule (bukan <FilesMatch>) supaya juga berlaku di OpenLiteSpeed/LiteSpeed,
+# yang hanya membaca aturan rewrite dari .htaccess.
+# 1. Skrip di folder data/unggahan/kode tidak boleh dipanggil langsung (pintu webshell). Satu-satunya
+#    titik masuk PHP adalah index.php di akar (dan rfm/ untuk pengelola berkas).
+RewriteRule ^(desa|storage|backup_inkremental|assets|resources|vendor|donjo-app|app|Modules|config|bootstrap|cache|logs|themes)/.*\.(php[0-9]?|phtml|phar|pht|phps|inc|cgi|pl|py|sh)$ - [F,L,NC]
+#    PHP di akar selain index.php (mis. skrip build make_obfuscate.php yang ikut ter-clone lewat git)
+RewriteCond %{REQUEST_URI} !(^|/)index\.php
+RewriteRule ^[^/]+\.(php[0-9]?|phtml|phar)$ - [F,L,NC]
+#    Folder pengembangan (ikut ter-clone lewat git, tidak ada di zip rilis)
+RewriteRule ^(tests|bin|node_modules)(/|$) - [F,L,NC]
+# 2. Dotfile/dotfolder (.git, .env, .htaccess, ...) kecuali .well-known
+RewriteCond %{REQUEST_URI} !^/\.well-known/
+RewriteRule (^|/)\. - [F,L]
+# 3. Kunci, konfigurasi, cadangan, dan arsip
+RewriteRule (^|/)(app_key|mitra|artisan|composer\.(json|lock)|phpunit\.xml(\.dist)?|rector\.php|[^/]+\.(sql|log|bak|env|zip|rar|7z|tar|gz|tgz))$ - [F,L,NC]
+
 # FOR SUBFOLDER INSTALLATION: Uncomment RewriteBase below and change path to match your folder name
 # Replace /opensid/ with your actual folder name where OpenSID is installed
 # Example: If installed in folder named 'desa', change to: RewriteBase /desa/
@@ -78,7 +97,7 @@ RewriteCond %{HTTP:CF-Visitor} ^{\"scheme\":\"https\"}$
 RewriteRule .* - [E=HTTPS:on]
 
 # Enforce HTTPS redirect
-RewriteCond %{HTTPS} != on
+RewriteCond %{HTTPS} !=on
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # ============================================================================
