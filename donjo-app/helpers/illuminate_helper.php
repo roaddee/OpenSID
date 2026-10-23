@@ -228,7 +228,23 @@ if (! function_exists('decrypt')) {
      */
     function decrypt($value)
     {
-        return app('encrypter')->decrypt($value);
+        // Satima: jangan pernah membuat objek dari data terenkripsi. Semua pemanggil encrypt() di OpenSID
+        // hanya mengenkripsi angka/teks; bila APP_KEY bocor (mis. situs pernah dibobol), unserialize biasa
+        // membuka jalan PHP object injection.
+        $raw = app('encrypter')->decrypt($value, false);
+
+        if ($raw === 'N;') {
+            return null;
+        }
+
+        // Hanya skalar & array yang di-unserialize; objek (O:/C:) dibiarkan sebagai teks mentah.
+        if (! is_string($raw) || ! preg_match('/^(?:[idsb]:|a:\d+:\{)/', $raw)) {
+            return $raw;
+        }
+
+        $hasil = @unserialize($raw, ['allowed_classes' => false]);
+
+        return ($hasil === false && $raw !== 'b:0;') ? $raw : $hasil;
     }
 }
 
