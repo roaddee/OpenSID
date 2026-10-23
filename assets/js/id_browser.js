@@ -13,8 +13,8 @@ $(document).ready(function () {
           $("#konfirmasi-cookie").data("fingerprint", result.visitorId);
           $("#konfirmasi-cookie").modal("show");
         } else {
-          // Tampilkan ke browser
-          document.getElementById("pengunjung").innerHTML = readCookie("pengunjung");
+          // Tampilkan ke browser (elemen #pengunjung hanya ada di sebagian halaman)
+          tampilkanPengunjung(readCookie("pengunjung"));
         }
       } else {
         $("#aktifkan-cookie").modal("show");
@@ -41,12 +41,24 @@ function rejectCookie() {
 </div>`).modal();
 }
 
+// Satima: halaman login Layanan Mandiri tidak punya elemen #pengunjung; dulu innerHTML ke null membuat
+// tombol "Terima semua cookie" error sebelum cookie dibuat sehingga modal tidak pernah tertutup.
+function tampilkanPengunjung(nilai) {
+  const el = document.getElementById("pengunjung");
+  if (el) {
+    el.innerHTML = nilai;
+  }
+}
+
 function buatPengunjungCookie(name) {
   // This is the visitor identifier:
-  const browserId = $("#konfirmasi-cookie").data("fingerprint");
-  // Tampilkan ke browser
-  document.getElementById("pengunjung").innerHTML = browserId;
-  createCookie("pengunjung", browserId, 360);
+  let browserId = $("#konfirmasi-cookie").data("fingerprint");
+  if (!browserId) {
+    // Fingerprint gagal dimuat (diblokir/lambat): tetap buat ID acak supaya pengunjung tidak terkunci.
+    browserId = Date.now().toString(16) + Math.random().toString(16).slice(2, 10);
+  }
+  createCookie(name || "pengunjung", browserId, 360);
+  tampilkanPengunjung(browserId);
   $("#konfirmasi-cookie").modal("hide");
 }
 
