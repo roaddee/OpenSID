@@ -7,11 +7,16 @@
 <div class="col-md-9">
     <div class="box box-primary">
         <div class="box-header with-border">
-            @if (preg_match('/keluarga/i', $_SERVER['HTTP_REFERER']))
-                @include('admin.layouts.components.tombol_kembali', ['url' => $_SERVER['HTTP_REFERER'], 'label' => 'Daftar Anggota Keluarga'])
+            @php
+                // Satima: referer bisa kosong; hanya pakai bila berasal dari situs ini
+                $referer = request()->server('HTTP_REFERER') ?? '';
+                $referer = str_starts_with($referer, base_url()) ? $referer : '';
+            @endphp
+            @if ($referer && preg_match('/keluarga/i', $referer))
+                @include('admin.layouts.components.tombol_kembali', ['url' => $referer, 'label' => 'Daftar Anggota Keluarga'])
             @endif
-            @if (preg_match('/rtm/i', $_SERVER['HTTP_REFERER']))
-                @include('admin.layouts.components.tombol_kembali', ['url' => $_SERVER['HTTP_REFERER'], 'label' => 'Anggota Rumah Tangga'])
+            @if ($referer && preg_match('/rtm/i', $referer))
+                @include('admin.layouts.components.tombol_kembali', ['url' => $referer, 'label' => 'Anggota Rumah Tangga'])
             @endif
             @include('admin.layouts.components.tombol_kembali', ['url' => ci_route('penduduk.clear'), 'label' => 'Daftar Penduduk'])
         </div>

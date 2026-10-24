@@ -8,8 +8,13 @@
     </h1>
 @endsection
 
+@php
+    // Satima: jangan andalkan HTTP_REFERER (kosong bila halaman dibuka langsung -> TypeError 500)
+    $urlKembali = $navigasi === 'Penduduk' ? ci_route('daftar_kontak.penduduk') : ci_route('daftar_kontak');
+@endphp
+
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ $_SERVER['HTTP_REFERER'] }}">Kontak {{ $navigasi }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ $urlKembali }}">Kontak {{ $navigasi }}</a></li>
     <li class="active">{{ $action }} Data</li>
 @endsection
 
@@ -23,7 +28,7 @@
         <div class="col-md-9">
             <div class="box box-info">
                 <div class="box-header with-border">
-                    <x-kembali-button  onclick="true" :judul="'Kembali Ke '.$navigasi" :url="$_SERVER['HTTP_REFERER']" />
+                    <x-kembali-button  onclick="true" :judul="'Kembali Ke '.$navigasi" :url="$urlKembali" />
                 </div>
                 {!! form_open($formAction, 'class="form-horizontal" id="validasi"') !!}
                 <div class="box-body">

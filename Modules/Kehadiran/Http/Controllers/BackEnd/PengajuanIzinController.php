@@ -35,7 +35,6 @@
  *
  */
 
-use AdminModulController;
 use App\Models\Pamong;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\View;

@@ -80,11 +80,15 @@ class Setting extends Admin_Controller
             'latar_login_mandiri' => [LATAR_LOGIN, LOKASI_ASSET_IMAGES],
         ];
 
-        if (isset($paths[$pengaturan])) {
-            [$new_setting, $default] = $paths[$pengaturan];
-            if (! file_exists(FCPATH . $new_setting . $foto)) {
-                $foto = $pengaturan . '.jpg';
-            }
+        // Satima: tanpa/keliru parameter `pengaturan`, $new_setting & $default tidak terdefinisi
+        // → TypeError ambilBerkas() (500). Tolak dengan 404.
+        if (! isset($paths[$pengaturan])) {
+            show_404();
+        }
+
+        [$new_setting, $default] = $paths[$pengaturan];
+        if (! is_string($foto) || $foto === '' || ! is_file(FCPATH . $new_setting . $foto)) {
+            $foto = $pengaturan . '.jpg';
         }
 
         ambilBerkas($foto, $this->controller, null, $foto == $pengaturan . '.jpg' ? $default : $new_setting, $tampil = true);

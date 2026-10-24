@@ -92,6 +92,13 @@ class AppServiceProvider extends ServiceProvider
             return;
         }
 
+        // Satima: lewati bila koneksi database belum dikonfigurasi (tahap instalasi)
+        $config  = $this->app['config'];
+        $default = $config->get('database.default');
+        if (! $default || ! $config->get("database.connections.{$default}")) {
+            return;
+        }
+
         $platform = DB::connection()->getDoctrineConnection()->getDatabasePlatform();
 
         // Tinyint bawaan MySQL
@@ -270,7 +277,10 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function registerMacrosDropIfExistsDBGabungan($table = null, $model = null)
     {
-        Schema::macro('dropIfExistsDBGabungan', function ($table, $model): void {
+        // Satima: daftarkan langsung di kelas Builder; Schema::macro() me-resolve koneksi DB
+        // sehingga sebelum instalasi (belum ada desa/config/database.php) tercatat error
+        // "Database connection [] not configured" di setiap permintaan.
+        \Illuminate\Database\Schema\Builder::macro('dropIfExistsDBGabungan', function ($table, $model): void {
             if (DB::table('config')->count() === 1) {
                 Schema::dropIfExists($table);
             } elseif (Schema::hasTable($table)) {
