@@ -272,9 +272,15 @@ class Surat extends Mandiri_Controller
         $data_permohonan = $this->session->data_permohonan;
 
         $post = $this->input->post();
+
+        // Satima: pemohon selalu warga yang sedang login, bukan nilai `nik` dari form
+        // (cegah mengajukan/menimpa permohonan atas nama penduduk lain).
+        $id_pend     = (int) $this->is_login->id_pend;
+        $post['nik'] = $id_pend;
+
         $data = [
             'config_id'   => identitas('id'),
-            'id_pemohon'  => bilangan($post['nik']),
+            'id_pemohon'  => $id_pend,
             'id_surat'    => FormatSurat::where('url_surat', $post['url_surat'])->first()->id,
             'isian_form'  => $post,
             'status'      => 1, // Selalu 1 bagi penggun layanan mandiri
@@ -285,16 +291,25 @@ class Surat extends Mandiri_Controller
         ];
 
         if ($id) {
-            PermohonanSurat::whereId($id)->update($data);
+            // Satima: hanya permohonan milik sendiri yang masih perlu dilengkapi (sama dengan syarat di form()).
+            PermohonanSurat::where(['id' => $id, 'id_pemohon' => $id_pend, 'status' => 0])->firstOrFail()->update($data);
         } else {
             $data['created_at'] = $data['updated_at'];
 
             $permohonan = PermohonanSurat::create($data);
             $surat      = $permohonan->load('surat')->surat;
-            $penduduk   = auth('penduduk')->user();
 
-            // Dispatch event to send notifications
-            event(new PermohonanSuratSubmitted($permohonan, $penduduk, $surat));
+            // Satima: guard 'penduduk' mengembalikan PendudukMandiri (akun PIN), event butuh model Penduduk.
+            $penduduk = Penduduk::find($id_pend);
+
+            // Notifikasi gagal tidak boleh membatalkan permohonan yang sudah tersimpan.
+            if ($penduduk && $surat) {
+                try {
+                    event(new PermohonanSuratSubmitted($permohonan, $penduduk, $surat));
+                } catch (Throwable $e) {
+                    log_message('error', 'Notifikasi permohonan surat gagal: ' . $e->getMessage());
+                }
+            }
         }
 
         $this->session->unset_userdata('data_permohonan');

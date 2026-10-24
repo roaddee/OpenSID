@@ -36,6 +36,7 @@
  */
 
 use App\Events\Pesan\PesanMasukSubmitted;
+use App\Models\Penduduk;
 use App\Models\PermohonanSurat;
 use App\Models\PesanMandiri;
 
@@ -111,11 +112,19 @@ class Pesan extends Mandiri_Controller
         $post['tipe']        = PesanMandiri::MASUK;
         $post['status']      = PesanMandiri::UNREAD;
 
-        $pesan    = PesanMandiri::create($post);
-        $penduduk = auth('penduduk')->user();
+        $pesan = PesanMandiri::create($post);
 
-        // Dispatch event to send notifications
-        event(new PesanMasukSubmitted($pesan, $penduduk));
+        // Satima: guard 'penduduk' mengembalikan PendudukMandiri (akun PIN), event butuh model Penduduk.
+        $penduduk = Penduduk::find($this->is_login->id_pend);
+
+        // Notifikasi gagal tidak boleh membatalkan pesan yang sudah tersimpan.
+        if ($penduduk) {
+            try {
+                event(new PesanMasukSubmitted($pesan, $penduduk));
+            } catch (Throwable $e) {
+                log_message('error', 'Notifikasi pesan mandiri gagal: ' . $e->getMessage());
+            }
+        }
 
         if ($kat == 1) {
             redirect('layanan-mandiri/pesan-keluar');
