@@ -1,5 +1,8 @@
 @extends('admin.auth.index')
 
+@section('judul', 'Verifikasi dua langkah')
+@section('keterangan', 'Masukkan 6 digit kode verifikasi yang dikirim kepada Anda.')
+
 @section('content')
     <form id="validasi" class="login-form" action="{{ $form_action }}" method="post">
         <div class="form-group">
@@ -15,7 +18,7 @@
         </div>
 
         <div class="form-group">
-            <button type="submit" class="btn">Masuk</button>
+            <button type="submit" class="btn sl-btn sl-btn-primary">Masuk</button>
         </div>
     </form>
 @endsection

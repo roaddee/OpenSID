@@ -1,5 +1,8 @@
 @extends('admin.auth.index')
 
+@section('judul', 'Atur ulang kata sandi')
+@section('keterangan', 'Buat kata sandi baru yang kuat, minimal 8 karakter.')
+
 @section('content')
     <form id="validasi" class="login-form" action="<?= site_url('siteman/verifikasi_sandi') ?>" method="post">
         <div class="form-group">
@@ -14,7 +17,7 @@
             <input name="password_confirmation" type="password" placeholder="Konfirmasi Password" autocomplete="off" class="form-control required pwdLengthNist">
         </div>
         <div class="form-group">
-            <button type="submit" class="btn">Reset Sandi</button>
+            <button type="submit" class="btn sl-btn sl-btn-primary">Reset Sandi</button>
         </div>
     </form>
 @endsection

@@ -1,5 +1,8 @@
 @extends('admin.auth.index')
 
+@section('judul', 'Lupa kata sandi')
+@section('keterangan', 'Masukkan email akun Anda. Tautan untuk mengatur ulang kata sandi akan dikirim ke email atau Telegram.')
+
 @section('content')
     @if (empty(setting('email_notifikasi')) && empty(setting('telegram_notifikasi')))
         <br>
@@ -35,7 +38,10 @@
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary w-100">Kirim Lupa Sandi</button>
+                <button type="submit" class="btn sl-btn sl-btn-primary">Kirim tautan</button>
+            </div>
+            <div class="form-group">
+                <a href="<?= site_url('siteman') ?>" class="btn sl-btn sl-btn-ghost"><i class="fa fa-arrow-left"></i> Kembali ke halaman masuk</a>
             </div>
         </form>
     @endif

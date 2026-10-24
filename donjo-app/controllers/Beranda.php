@@ -37,6 +37,9 @@
 
 use App\Libraries\Release;
 use App\Libraries\Saas;
+use App\Models\Artikel;
+use App\Models\Penduduk;
+use App\Models\PermohonanSurat;
 use App\Models\Shortcut;
 use Modules\Pelanggan\Services\CekService;
 use Modules\Pelanggan\Services\PelangganService;
@@ -73,9 +76,57 @@ class Beranda extends Admin_Controller
             'saas'            => Saas::peringatan(),
             'notif_langganan' => $notif_langganan,
             'notif_percobaan' => $notif_percobaan,
+            'ringkasan'       => $this->ringkasan(),
         ];
 
         return view('admin.home.index', $data);
+    }
+
+    /**
+     * Data tambahan untuk tampilan beranda edisi Satima. Setiap bagian dibungkus try/catch:
+     * bila satu kueri gagal (mis. tabel berbeda versi), beranda tetap tampil tanpa bagian itu.
+     */
+    private function ringkasan(): array
+    {
+        $data = ['penduduk' => null, 'umur' => null, 'permohonan' => collect(), 'permohonan_baru' => 0, 'artikel' => collect()];
+
+        try {
+            $jenis = Penduduk::status(1)->selectRaw('sex, COUNT(*) as jumlah')->groupBy('sex')->pluck('jumlah', 'sex');
+            $data['penduduk'] = [
+                'laki'      => (int) ($jenis[1] ?? 0),
+                'perempuan' => (int) ($jenis[2] ?? 0),
+                'total'     => (int) $jenis->sum(),
+            ];
+
+            $umur = Penduduk::status(1)->whereNotNull('tanggallahir')
+                ->selectRaw('SUM(TIMESTAMPDIFF(YEAR, tanggallahir, CURDATE()) < 17) as anak')
+                ->selectRaw('SUM(TIMESTAMPDIFF(YEAR, tanggallahir, CURDATE()) BETWEEN 17 AND 59) as produktif')
+                ->selectRaw('SUM(TIMESTAMPDIFF(YEAR, tanggallahir, CURDATE()) >= 60) as lansia')
+                ->first();
+            $data['umur'] = [
+                'Anak (0–16)'       => (int) $umur?->anak,
+                'Usia kerja (17–59)' => (int) $umur?->produktif,
+                'Lansia (60+)'      => (int) $umur?->lansia,
+            ];
+        } catch (Throwable $e) {
+            log_message('error', 'Beranda ringkasan penduduk: ' . $e->getMessage());
+        }
+
+        try {
+            $data['permohonan'] = PermohonanSurat::with(['penduduk:id,nama', 'surat:id,nama'])
+                ->latest('created_at')->limit(5)->get(['id', 'id_pemohon', 'id_surat', 'status', 'created_at']);
+            $data['permohonan_baru'] = PermohonanSurat::whereIn('status', [PermohonanSurat::BELUM_LENGKAP, PermohonanSurat::SEDANG_DIPERIKSA])->count();
+        } catch (Throwable $e) {
+            log_message('error', 'Beranda ringkasan permohonan: ' . $e->getMessage());
+        }
+
+        try {
+            $data['artikel'] = Artikel::whereNotIn('tipe', Artikel::TIPE_NOT_IN_ARTIKEL)->latest('tgl_upload')->limit(4)->get(['id', 'judul', 'tgl_upload', 'hit', 'enabled']);
+        } catch (Throwable $e) {
+            log_message('error', 'Beranda ringkasan artikel: ' . $e->getMessage());
+        }
+
+        return $data;
     }
 
     private function getUpdate(): array
