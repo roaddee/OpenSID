@@ -9,7 +9,7 @@ class GifSpecialPurposeBlock
     private $applicationExt;
     private $commentExt;
 
-    public function __construct(GifApplicationExt $applicationExt = null, GifCommentExt $commentExt = null)
+    public function __construct(?GifApplicationExt $applicationExt = null, ?GifCommentExt $commentExt = null)
     {
         $this->applicationExt = $applicationExt;
         $this->commentExt = $commentExt;

@@ -19,7 +19,7 @@ use Mike42\GfxPhp\Image;
  */
 class NativeEscposImage extends EscposImage
 {
-    protected function loadImageData(string $filename = null)
+    protected function loadImageData(?string $filename = null)
     {
         $image = Image::fromFile($filename) -> toRgb() -> toBlackAndWhite();
         $imgHeight = $image -> getHeight();

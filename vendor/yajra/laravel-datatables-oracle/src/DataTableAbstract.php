@@ -740,7 +740,7 @@ abstract class DataTableAbstract implements DataTable
      * @param  callable|null  $builder
      * @return $this
      */
-    public function searchPane($column, $options, callable $builder = null): static
+    public function searchPane($column, $options, ?callable $builder = null): static
     {
         $options = value($options);
 

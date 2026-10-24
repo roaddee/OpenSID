@@ -460,7 +460,7 @@ class Manipulations
      * @param int|null $yPadding    How far is the watermark placed from the top and bottom edges of the image.
      * @param string $unit          Unit of the padding values. Use `Manipulations::UNIT_PERCENT` or `Manipulations::UNIT_PIXELS`.
      */
-    public function watermarkPadding(int $xPadding, int $yPadding = null, string $unit = 'px'): static
+    public function watermarkPadding(int $xPadding, ?int $yPadding = null, string $unit = 'px'): static
     {
         $yPadding = $yPadding ?? $xPadding;
 

@@ -99,7 +99,7 @@ final class GlideConversion
         }
     }
 
-    private function createGlideServer($inputFile, string $watermarkPath = null): Server
+    private function createGlideServer($inputFile, ?string $watermarkPath = null): Server
     {
         $config = [
             'source' => dirname($inputFile),

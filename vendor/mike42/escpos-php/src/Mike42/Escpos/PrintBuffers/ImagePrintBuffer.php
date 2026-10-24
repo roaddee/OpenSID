@@ -55,7 +55,7 @@ class ImagePrintBuffer implements PrintBuffer
         return $this -> printer;
     }
 
-    public function setPrinter(Printer $printer = null)
+    public function setPrinter(?Printer $printer = null)
     {
         $this -> printer = $printer;
     }

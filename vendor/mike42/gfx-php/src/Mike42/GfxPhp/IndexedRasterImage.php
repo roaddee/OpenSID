@@ -245,7 +245,7 @@ class IndexedRasterImage extends AbstractRasterImage
         throw new \Exception("Cannot map colors");
     }
 
-    public static function create(int $width, int $height, array $data = null, array $palette = [], int $maxVal = 255)
+    public static function create(int $width, int $height, ?array $data = null, array $palette = [], int $maxVal = 255)
     {
         $expectedSize = $width * $height;
         if ($data == null) {
