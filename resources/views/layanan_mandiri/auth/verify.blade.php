@@ -1,5 +1,9 @@
 @extends('layanan_mandiri.auth.index')
 
+@section('judul', 'Verifikasi akun')
+@section('keterangan', '')
+@section('tanpa_catatan', '1')
+
 @section('content')
     <div class="alert alert-info">
         <h3>Terima kasih telah mendaftar! Sebelum memulai, bisakah Anda melakukan verifikasi Email dan Telegram Anda dengan mengklik tautan yang baru saja kami kirimkan kepada Anda? Jika Anda tidak menerima notifikasi tersebut, kami akan dengan senang hati mengirimkan yang lain.</h3>

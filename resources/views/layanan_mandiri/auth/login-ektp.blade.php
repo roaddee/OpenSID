@@ -1,14 +1,12 @@
 @extends('layanan_mandiri.auth.index')
 
+@section('judul', 'Masuk dengan e-KTP')
+@section('keterangan', $cek_anjungan ? 'Tempelkan e-KTP pada pembaca kartu di anjungan.' : 'Tempelkan e-KTP pada pembaca kartu, lalu masukkan PIN.')
+
 @section('content')
     <form id="validasi" autocomplete="off" action="{{ $form_action }}" method="post" class="login-form">
-        <div class="login-footer-top">
-            @if ($cek_anjungan)
-                Tempelkan e-KTP Pada Card Reader
-            @endif
-            <div class="thumbnail">
-                <img src="{{ asset('images/camera-scan.gif') }}" alt="scanner" class="center" style="width:30%">
-            </div>
+        <div class="sl-scan">
+            <img src="{{ asset('images/camera-scan.gif') }}" alt="Ilustrasi pembaca kartu e-KTP">
         </div>
         <input type="hidden" name="anjungan_uuid" id="anjungan_uuid">
         <div class="form-group form-login" style="{{ jecho($cek_anjungan == 0 || ENVIRONMENT == 'development', false, 'width: 0; height: 0; overflow: hidden;') }}">
@@ -23,36 +21,27 @@
             >
         </div>
         @if (!$cek_anjungan)
-            <div class="form-group form-login">
-                <input type="password" class="form-control required number" name="password" placeholder="Masukan PIN" autocomplete="off" maxlength="6">
+            <div class="form-group form-login sl-field">
+                <label for="pin" class="sl-label">PIN</label>
+                <div class="sl-input">
+                    <i class="fa fa-lock" aria-hidden="true"></i>
+                    <input type="password" inputmode="numeric" id="pin" class="form-control required number sl-pin" name="password" placeholder="6 digit" autocomplete="off" maxlength="6">
+                </div>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-block bg-green"><b>MASUK</b></button>
+                <button type="submit" class="btn sl-btn sl-btn-primary">Masuk</button>
             </div>
         @endif
-        <div class="form-group">
-            <a href="{{ site_url('layanan-mandiri/masuk') }}">
-                <button type="button" class="btn btn-block bg-green"><b>MASUK DENGAN NIK</b></button>
-            </a>
+        <div class="sl-divider"><span>atau</span></div>
+        <div class="sl-actions">
+            <a href="{{ site_url('layanan-mandiri/masuk') }}" class="btn sl-btn sl-btn-ghost"><i class="fa fa-id-card-o"></i> Masuk dengan NIK</a>
+            <a href="{{ site_url('layanan-mandiri/lupa-pin') }}" class="btn sl-btn sl-btn-ghost"><i class="fa fa-question-circle"></i> Lupa PIN</a>
+            @if (in_array(\Modules\Anjungan\Models\Anjungan::ANJUNGAN, $cek_anjungan['tipe'] ?? []))
+                <a href="{{ route('anjungan.index') }}" class="btn sl-btn sl-btn-ghost"><i class="fa fa-desktop"></i> Anjungan</a>
+            @endif
         </div>
         @if (setting('tampilkan_pendaftaran'))
-            <div class="form-group">
-                <a href="{{ site_url('layanan-mandiri/daftar') }}">
-                    <button type="button" class="btn btn-block bg-green"><b>DAFTAR</b></button>
-                </a>
-            </div>
-        @endif
-        <div class="form-group">
-            <a href="{{ site_url('layanan-mandiri/lupa-pin') }}">
-                <button type="button" class="btn btn-block bg-green"><b>LUPA PIN</b></button>
-            </a>
-        </div>
-        @if (in_array(\Modules\Anjungan\Models\Anjungan::ANJUNGAN, $cek_anjungan['tipe'] ?? []))
-            <div class="form-group">
-                <a href="{{ route('anjungan.index') }}">
-                    <button type="button" class="btn btn-block bg-green"><b>ANJUNGAN</b></button>
-                </a>
-            </div>
+            <p class="sl-switch">Belum punya akun? <a href="{{ site_url('layanan-mandiri/daftar') }}">Daftar di sini</a></p>
         @endif
     </form>
 @endsection

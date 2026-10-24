@@ -1,8 +1,13 @@
 @extends('layanan_mandiri.auth.index')
 
+@section('judul', 'Daftar akun')
+@section('keterangan', '')
+@section('tanpa_catatan', '1')
+@section('lebar', '1')
+
 @section('content')
     <form id="validasi" action="<?= $form_action ?>" method="post" class="login-form" enctype="multipart/form-data">
-        <h3><strong>PENDAFTARAN AKUN LAYANAN MANDIRI</strong></h3>
+        
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">

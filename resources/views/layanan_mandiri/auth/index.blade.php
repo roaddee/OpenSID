@@ -1,31 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
     <meta charset="utf-8">
     <title>
         {{ setting('login_title') . ' ' . ucwords(setting('sebutan_desa')) . ($desa['nama_desa'] ? ' ' . $desa['nama_desa'] : '') . get_dynamic_title_page_from_path() }}
     </title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta name="theme-color" content="#0f4f33">
     <link rel="shortcut icon" href="{{ favico_desa() }}" />
-    <link rel="stylesheet" href="{{ asset('css/login-style.css') }}" media="screen">
-    <link rel="stylesheet" href="{{ asset('css/login-form-elements.css') }}" media="screen">
-    <link rel="stylesheet" href="{{ asset('css/daftar-form-elements.css') }}" media="screen">
-    <link rel="stylesheet" href="{{ asset('css/siteman_mandiri.css') }}" media="screen">
     <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.bar.css') }}" media="screen">
     <!-- bootstrap datetimepicker -->
     <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap-datetimepicker.min.css') }}">
-    @if (is_file('desa/pengaturan/siteman/siteman_mandiri.css'))
-        <link rel="stylesheet" href="{{ base_url('desa/pengaturan/siteman/siteman_mandiri.css') }}">
-    @endif
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('bootstrap/css/font-awesome.min.css') }}">
-    <!-- Google Font -->
-    @if (cek_koneksi_internet())
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="stylesheet" href="{{ asset('css/satima-font.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/satima-login.css') }}">
+    @if (is_file('desa/pengaturan/siteman/siteman_mandiri.css'))
+        <link rel="stylesheet" href="{{ base_url('desa/pengaturan/siteman/siteman_mandiri.css') }}">
     @endif
     <script src="{{ asset('bootstrap/js/jquery.min.js') }}"></script>
 
@@ -36,78 +30,99 @@
     @endif
 
     @include('admin.layouts.components.token')
-
-    <style type="text/css">
-        body.login {
-            background-image: url('{{ default_file(LATAR_LOGIN . setting('latar_login_mandiri'), DEFAULT_LATAR_KEHADIRAN) }}');
-        }
-    </style>
 </head>
 
-<body class="login">
-    <div class="top-content">
-        <div class="inner-bg">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-6 col-sm-offset-4 form-box">
-                        <div class="form-top">
-                            <a href="{{ base_url('/') }}"><img src="{{ gambar_desa($desa['logo']) }}" alt="Lambang Desa" class="img-responsive" /></a>
-                            <div class="login-footer-top">
-                                <h1>LAYANAN MANDIRI<br />
-                                    {{ ucwords(setting('sebutan_desa')) }} {{ $desa['nama_desa'] }}</h1>
-                                <h3>
-                                    <br />{{ ucwords(setting('sebutan_kecamatan')) }} {{ $desa['nama_kecamatan'] }}
-                                    <br />{{ ucwords(setting('sebutan_kabupaten')) }} {{ $desa['nama_kabupaten'] }}
-                                    <br />{{ $desa['alamat_kantor'] }}
-                                    <br />Kodepos {{ $desa['kode_pos'] }}
-                                    <br /><br />Silakan hubungi operator desa untuk mendapatkan kode PIN anda.
-                                    <br /><br /><br />IP Address: {{ request()->ip() }}
-                                    @if ($cek_anjungan)
-                                        @if ($cek_anjungan['mac_address'])
-                                            <br />Mac Address : {{ $cek_anjungan['mac_address'] }}
-                                        @endif
-                                        <br />Anjungan Mandiri
-                                        {!! jecho($cek_anjungan['keyboard'] == 1, true, ' | Virtual Keyboard : Aktif') !!}
-                                    @endif
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="form-bottom">
+@php
+    $sebutan_desa = ucwords(setting('sebutan_desa'));
+    $latar = default_file(LATAR_LOGIN . setting('latar_login_mandiri'), DEFAULT_LATAR_KEHADIRAN);
+    preg_match('/(\d+)/', $errors->first('email'), $matches);
+    $second = $matches[0] ?? 0;
+    $manfaat = [
+        ['fa-file-text-o', 'Ajukan surat dari rumah', 'Pilih jenis surat, isi data, lalu ambil di kantor saat siap.'],
+        ['fa-bell-o', 'Pantau permohonan', 'Lihat apakah surat Anda sedang diperiksa atau sudah siap diambil.'],
+        ['fa-comments-o', 'Kirim pesan ke ' . strtolower($sebutan_desa), 'Tanya atau sampaikan keperluan langsung ke operator.'],
+        ['fa-id-card-o', 'Data diri & keluarga', 'Cek biodata, cetak salinan KK, dan lihat bantuan yang diterima.'],
+    ];
+@endphp
 
-                            @php
-                                preg_match('/(\d+)/', $errors->first('email'), $matches);
+<body class="sl-body sl-mandiri sl-split @hasSection('lebar') sl-wide @endif">
+    <div class="sl-backdrop" aria-hidden="true" style="--sl-latar: url('{{ $latar }}')">
+        <span class="sl-terrace"></span>
+    </div>
 
-                                $second = $matches[0] ?? 0;
-                            @endphp
+    <div class="sl-shell">
+        <div class="sl-split-grid">
+            <header class="sl-intro sl-intro-left">
+                <a href="{{ base_url('/') }}" class="sl-brand" title="Ke halaman depan website">
+                    <img src="{{ gambar_desa($desa['logo']) }}" alt="Logo {{ $sebutan_desa }} {{ $desa['nama_desa'] }}" class="sl-logo">
+                    <span>
+                        <span class="sl-brand-name">{{ $sebutan_desa }} {{ $desa['nama_desa'] }}</span>
+                        <span class="sl-brand-sub">{{ ucwords(setting('sebutan_kecamatan')) }} {{ $desa['nama_kecamatan'] }}, {{ ucwords(setting('sebutan_kabupaten')) }} {{ $desa['nama_kabupaten'] }}</span>
+                    </span>
+                </a>
+                <h1 class="sl-title sl-title-xl">Layanan Mandiri <span>untuk warga</span></h1>
+                <p class="sl-lead">Urus surat dan keperluan administrasi tanpa harus antre di kantor {{ strtolower($sebutan_desa) }}.</p>
+                <ul class="sl-benefits">
+                    @foreach ($manfaat as [$ikon, $judul, $teks])
+                        <li>
+                            <span class="sl-benefit-icon"><i class="fa {{ $ikon }}"></i></span>
+                            <span><strong>{{ $judul }}</strong>{{ $teks }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            </header>
 
-                            @if ($errors->any())
-                                <div @if (!str_contains($errors->first('email'), 'Terlalu banyak upaya masuk.')) id="notif" @endif class="alert alert-danger">
-                                    @foreach ($errors->all() as $item)
-                                        @if (str_contains($item, 'Terlalu banyak upaya masuk.'))
-                                            <p id="countdown">{{ $item }}</p>
-                                        @else
-                                            <p>{{ $item }}</p>
-                                        @endif
-                                    @endforeach
-                                </div>
-                            @endif
+            <main class="sl-card">
+                <div class="sl-card-head">
+                    <h2 class="sl-card-title">@yield('judul', 'Masuk')</h2>
+                    <p class="sl-card-sub">@yield('keterangan', 'Masukkan NIK dan PIN dari operator ' . strtolower($sebutan_desa) . '.')</p>
+                </div>
 
-                            @if ($notif = $ci->session->flashdata('notif'))
-                                <div id="notif" class="alert alert-danger">
-                                    <p>{{ $notif }}</p>
-                                </div>
-                            @endif
-
-                            @yield('content')
-
-                            <div class="login-footer-bottom">
-                                <a href="https://github.com/OpenSID/OpenSID" class="content-color-secondary" rel="noopener noreferrer" target="_blank">OpenSID v<?= AmbilVersi() ?></a>
-                            </div>
+                @if ($errors->any())
+                    <div @if (!str_contains($errors->first('email'), 'Terlalu banyak upaya masuk.')) id="notif" @endif class="sl-alert sl-alert-danger" role="alert">
+                        <i class="fa fa-exclamation-circle"></i>
+                        <div>
+                            @foreach ($errors->all() as $item)
+                                @if (str_contains($item, 'Terlalu banyak upaya masuk.'))
+                                    <p id="countdown">{{ $item }}</p>
+                                @else
+                                    <p>{{ $item }}</p>
+                                @endif
+                            @endforeach
                         </div>
                     </div>
-                </div>
-            </div>
+                @endif
+
+                @if ($notif = $ci->session->flashdata('notif'))
+                    <div id="notif" class="sl-alert sl-alert-danger" role="alert">
+                        <i class="fa fa-exclamation-circle"></i>
+                        <div><p>{{ $notif }}</p></div>
+                    </div>
+                @endif
+
+                @yield('content')
+
+                @hasSection('tanpa_catatan')
+                @else
+                    <p class="sl-note"><i class="fa fa-info-circle"></i><span>Belum punya PIN? Datang ke kantor {{ strtolower($sebutan_desa) }} dengan membawa KTP, operator akan membuatkannya.</span></p>
+                @endif
+            </main>
         </div>
+
+        <footer class="sl-foot">
+            <a href="{{ base_url('/') }}"><i class="fa fa-arrow-left"></i> Kembali ke website</a>
+            @php
+                $info_perangkat = ['Alamat IP ' . request()->ip()];
+                if ($cek_anjungan) {
+                    if ($cek_anjungan['mac_address']) {
+                        $info_perangkat[] = 'MAC ' . $cek_anjungan['mac_address'];
+                    }
+                    $info_perangkat[] = 'Anjungan Mandiri' . ($cek_anjungan['keyboard'] == 1 ? ' (keyboard virtual aktif)' : '');
+                }
+            @endphp
+            <span class="sl-foot-meta">{{ implode(', ', $info_perangkat) }}</span>
+            <span><a href="https://github.com/OpenSID/OpenSID" rel="noopener noreferrer" target="_blank">OpenSID</a> v{{ AmbilVersi() }}</span>
+        </footer>
     </div>
 
     @include('admin.layouts.components.konfirmasi_cookie', ['cookie_name' => 'pengunjung'])
@@ -161,7 +176,9 @@
         }
 
         $(document).ready(function() {
-            if ($('#pin').length) {
+            if ($('#nik').length && !$('#nik').val()) {
+                $('#nik').focus();
+            } else if ($('#pin').length) {
                 $('#pin').focus();
             } else if ($('#tag').length) {
                 $('#tag').focus();

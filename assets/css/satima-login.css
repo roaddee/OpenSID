@@ -346,7 +346,7 @@ html, body { margin: 0; min-height: 100%; }
 
 .sl-alert,
 .sl-card .alert {
-    display: flex;
+    display: block;
     gap: 0.6rem;
     margin: 0 0 1rem;
     padding: 0.75rem 0.9rem;
@@ -355,7 +355,9 @@ html, body { margin: 0; min-height: 100%; }
     font-size: 0.8125rem;
     line-height: 1.45;
 }
+.sl-alert { display: flex; }
 .sl-alert p, .sl-card .alert p { margin: 0; }
+.sl-card .alert p + p, .sl-card .alert h5 + p { margin-top: 0.4rem; }
 .sl-alert > .fa { margin-top: 2px; }
 .sl-alert-danger, .sl-card .alert-danger { background: #fdeeee; border-color: #f6cfcf; color: #8f2525; }
 .sl-card .alert-success { background: #e9f7ef; border-color: #c4e8d3; color: #1d6b3f; }
@@ -404,3 +406,128 @@ html, body { margin: 0; min-height: 100%; }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
+
+/* ================================================================ Layanan Mandiri: tata letak terbelah */
+
+.sl-card-sub:empty { display: none; }
+
+.sl-split .sl-backdrop { height: 30rem; }
+.sl-terrace {
+    position: absolute;
+    inset: auto -5% 2.5rem -5%;
+    height: 65%;
+    background: linear-gradient(180deg, transparent, rgb(243 210 122 / 0.6));
+    -webkit-mask: url('../images/terasering.svg') center bottom / 100% 100% no-repeat;
+    mask: url('../images/terasering.svg') center bottom / 100% 100% no-repeat;
+    opacity: 0.4;
+}
+
+.sl-split-grid {
+    display: grid;
+    gap: 0;
+    width: 100%;
+    max-width: 66rem;
+    justify-items: center;
+}
+
+.sl-intro-left { align-items: flex-start; max-width: 30rem; text-align: left; }
+.sl-brand { display: flex; align-items: center; gap: 0.8rem; color: #fff !important; text-decoration: none !important; }
+.sl-brand .sl-logo { width: 52px; height: 52px; padding: 6px; border-radius: 16px; }
+.sl-brand-name { display: block; font-weight: 800; font-size: 1rem; line-height: 1.2; }
+.sl-brand-sub { display: block; font-size: 0.75rem; color: rgb(255 255 255 / 0.75); }
+
+.sl-title-xl { margin-top: 1.4rem; font-size: 2rem; line-height: 1.08; letter-spacing: -0.03em; }
+.sl-title-xl span { display: block; }
+.sl-lead { margin: 0.75rem 0 0; max-width: 34ch; font-size: 0.9375rem; color: rgb(255 255 255 / 0.85); }
+
+.sl-benefits { display: none; margin: 2rem 0 0; padding: 0; list-style: none; }
+.sl-benefits li { display: flex; gap: 0.9rem; margin: 0 0 1.1rem; color: var(--sl-text); font-size: 0.875rem; line-height: 1.45; }
+.sl-benefits strong { display: block; color: var(--sl-ink); font-size: 0.9375rem; }
+.sl-benefit-icon {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #fff;
+    color: var(--sl-primary);
+    font-size: 1.05rem;
+    box-shadow: 0 1px 2px rgb(21 36 28 / 0.06), 0 6px 16px -8px rgb(21 36 28 / 0.25);
+}
+
+.sl-switch { margin: 1.1rem 0 0; text-align: center; font-size: 0.875rem; color: var(--sl-muted); }
+.sl-switch a { font-weight: 700; }
+
+.sl-scan { display: flex; justify-content: center; margin: 0 0 1rem; padding: 1rem; border-radius: 0.75rem; background: color-mix(in srgb, var(--sl-primary) 6%, white); }
+.sl-scan img { width: 96px; height: auto; mix-blend-mode: multiply; }
+
+.sl-card a > button.btn { width: 100%; }
+
+@media (min-width: 960px) {
+    .sl-split .sl-backdrop { height: 100%; inset: 0 auto 0 0; width: 52%; }
+    .sl-split .sl-backdrop::before,
+    .sl-split .sl-backdrop::after { display: none; }
+    .sl-split .sl-terrace { inset: auto -10% 0 -10%; height: 55%; }
+    .sl-split .sl-shell { justify-content: center; }
+    .sl-split .sl-shell { padding: 0; }
+    .sl-split-grid { flex: 1; max-width: none; grid-template-columns: 52% 48%; align-items: center; padding-block: 3rem 0; }
+    .sl-split .sl-intro-left { justify-self: center; width: 100%; max-width: 30rem; padding: 0 2rem; }
+    .sl-split .sl-card { justify-self: center; margin: 0 2rem; }
+    .sl-title-xl { font-size: 2.75rem; }
+    .sl-benefits { display: block; }
+    .sl-benefits li { color: rgb(255 255 255 / 0.82); }
+    .sl-benefits strong { color: #fff; }
+    .sl-benefit-icon { background: rgb(255 255 255 / 0.12); color: var(--sl-accent); box-shadow: none; border: 1px solid rgb(255 255 255 / 0.16); }
+    .sl-split .sl-foot { display: grid; grid-template-columns: 52% 24% 24%; width: 100%; padding: 1.5rem 0; align-items: center; }
+    .sl-split .sl-foot > :first-child { justify-self: center; color: #fff; }
+    .sl-split .sl-foot > :nth-child(2), .sl-split .sl-foot > :nth-child(3) { justify-self: center; }
+}
+
+/* halaman lebar (pendaftaran): kartu di tengah, sambutan di atas */
+.sl-wide .sl-split-grid { grid-template-columns: 1fr; gap: 0; max-width: 46rem; }
+.sl-wide .sl-backdrop { width: 100% !important; height: 27rem !important; }
+.sl-wide .sl-backdrop::before, .sl-wide .sl-backdrop::after { display: block !important; }
+.sl-wide .sl-intro-left { align-items: center; text-align: center; padding-top: 2.25rem; }
+.sl-wide .sl-benefits { display: none; }
+.sl-wide .sl-title-xl { font-size: 2rem; }
+.sl-wide .sl-card { max-width: 46rem; margin-block: 1.75rem 1.25rem !important; justify-self: center !important; }
+.sl-wide .sl-foot { flex-direction: column !important; }
+.sl-wide .sl-foot > :first-child { color: var(--sl-primary) !important; }
+
+/* bootstrap grid di formulir pendaftaran */
+.sl-card .row { margin-inline: -0.5rem; }
+.sl-card .row > [class*="col-"] { padding-inline: 0.5rem; }
+.sl-card .input-group { display: flex; width: 100%; }
+.sl-card .input-group .form-control { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.sl-card .input-group-addon { display: inline-flex; align-items: center; padding: 0 0.85rem; border: 1px solid var(--sl-line); border-left: 0; border-radius: 0 0.65rem 0.65rem 0; background: #f4f6f9; color: var(--sl-muted); width: auto; }
+.sl-card input[style*="height: 35px"] { height: 46px !important; }
+.sl-card input[type="file"] { height: auto; padding: 0.55rem; }
+
+/* ---------------------------------------------------------------- modal Bootstrap 3 (cookie dll.) */
+
+.sl-body .fade { opacity: 0; transition: opacity .15s linear; }
+.sl-body .fade.in { opacity: 1; }
+.sl-body .modal { position: fixed; inset: 0; z-index: 1050; display: none; overflow-x: hidden; overflow-y: auto; outline: 0; }
+.sl-body .modal-backdrop { position: fixed; inset: 0; z-index: 1040; background: rgb(10 25 18 / 0.5); }
+.sl-body .modal-backdrop.fade { opacity: 0; }
+.sl-body .modal-backdrop.in { opacity: 1; }
+.sl-body .modal-dialog { position: relative; width: auto; max-width: 30rem; margin: 15vh 1rem 1rem; }
+@media (min-width: 520px) { .sl-body .modal-dialog { margin: 15vh auto 1rem; } }
+.sl-body .modal-content { position: relative; overflow: hidden; border-radius: 1rem; background: #fff; box-shadow: 0 24px 48px -16px rgb(0 0 0 / 0.45); font-family: var(--sl-font); }
+.sl-body .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 1px solid var(--sl-line); }
+.sl-body .modal-title { margin: 0; font-size: 1rem; font-weight: 800; color: var(--sl-ink); }
+.sl-body .modal-title .fa { color: var(--sl-primary) !important; margin-right: 0.35rem; }
+.sl-body .modal-header .close { order: 2; border: 0; background: transparent; font-size: 1.5rem; line-height: 1; color: var(--sl-muted); cursor: pointer; }
+.sl-body .modal-body { padding: 1rem 1.25rem; background: #fff !important; color: var(--sl-text) !important; font-size: 0.875rem; }
+.sl-body .modal-body h3 { margin: 0 0 0.4rem; font-size: 1rem; font-weight: 800; color: var(--sl-ink); }
+.sl-body .modal-footer { display: flex; justify-content: flex-end; gap: 0.5rem; padding: 0.9rem 1.25rem 1.1rem; border-top: 1px solid var(--sl-line); }
+.sl-body .modal-footer .btn {
+    display: inline-flex; align-items: center; gap: 0.4rem; min-height: 40px; margin: 0 !important; padding: 0.5rem 0.95rem;
+    border: 1px solid var(--sl-line); border-radius: 0.65rem; background: #fff; color: var(--sl-ink); font: inherit; font-size: 0.8125rem; font-weight: 700; cursor: pointer;
+}
+.sl-body .modal-footer .btn-danger { border-color: var(--sl-primary); background: var(--sl-primary); color: #fff; }
+.sl-body .modal-footer .btn-danger:hover { background: var(--sl-primary-dark); }
+.sl-body .modal-footer .btn .fa { display: none; }
+body.modal-open { overflow: hidden; }

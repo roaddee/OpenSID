@@ -41,6 +41,7 @@ use App\Models\Keluarga;
 use App\Models\Pendapat;
 use App\Models\Penduduk;
 use App\Models\PendudukMandiri;
+use App\Models\PermohonanSurat;
 use App\Models\PesanMandiri;
 
 defined('BASEPATH') || exit('No direct script access allowed');
@@ -56,14 +57,25 @@ class Beranda extends Mandiri_Controller
         $this->otp = new OtpManager();
     }
 
-    public function index(): void
+    public function index()
     {
-        $inbox = PesanMandiri::belumDibaca($this->is_login->id_pend)->count();
-        if ($inbox) {
-            redirect('layanan-mandiri/pesan-masuk');
-        } else {
-            redirect('layanan-mandiri/permohonan-surat');
+        // Edisi Satima: halaman beranda sendiri (dulu langsung dialihkan ke Pesan atau Surat)
+        $idPend     = (int) $this->is_login->id_pend;
+        $permohonan = collect();
+        $inbox      = 0;
+
+        try {
+            $inbox      = PesanMandiri::belumDibaca($idPend)->count();
+            $permohonan = PermohonanSurat::with('surat:id,nama')->milikPenduduk($idPend)
+                ->latest('created_at')->limit(3)->get(['id', 'id_surat', 'status', 'no_antrian', 'created_at']);
+        } catch (Throwable $e) {
+            log_message('error', 'Beranda Layanan Mandiri: ' . $e->getMessage());
         }
+
+        return view('layanan_mandiri.beranda.index', [
+            'inbox'      => $inbox,
+            'permohonan' => $permohonan,
+        ]);
     }
 
     public function profil()
