@@ -1,8 +1,7 @@
 @extends('admin.layouts.index')
 
 @push('css')
-    <link rel="stylesheet" href="{{ asset('css/satima-font.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/satima-beranda.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/satima-beranda.css') }}">
     <style>
         .catatan-scroll {
             height: 400px;

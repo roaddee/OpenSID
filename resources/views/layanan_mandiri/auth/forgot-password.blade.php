@@ -8,7 +8,7 @@
         <div class="form-group form-login sl-field">
             <label for="nik" class="sl-label">NIK</label>
             <div class="sl-input">
-                <i class="fa fa-id-card-o" aria-hidden="true"></i>
+                @include('admin.layouts.components.ikon', ['n' => 'id', 'k' => 'sl-input-ikon'])
                 <input
                     type="text"
                     inputmode="numeric"
@@ -23,8 +23,8 @@
             </div>
         </div>
         <div class="sl-actions sl-actions-2">
-            <button type="submit" class="btn sl-btn sl-btn-primary" name="via" value="telegram"><i class="fa fa-paper-plane"></i> Telegram</button>
-            <button type="submit" class="btn sl-btn sl-btn-primary" name="via" value="email"><i class="fa fa-envelope"></i> Email</button>
+            <button type="submit" class="btn sl-btn sl-btn-primary" name="via" value="telegram">@include('admin.layouts.components.ikon', ['n' => 'send']) Telegram</button>
+            <button type="submit" class="btn sl-btn sl-btn-primary" name="via" value="email">@include('admin.layouts.components.ikon', ['n' => 'mail']) Email</button>
         </div>
         <div class="sl-divider"><span>sudah ingat?</span></div>
         <div class="sl-actions sl-actions-2">

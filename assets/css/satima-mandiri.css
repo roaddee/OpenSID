@@ -51,8 +51,7 @@ body.sm-body {
     position: sticky;
     top: 0;
     z-index: 1030;
-    background: rgb(255 255 255 / 0.95);
-    backdrop-filter: saturate(1.4) blur(10px);
+    background: #fff;
     border-bottom: 1px solid var(--sm-line);
 }
 .sm-topbar-inner { display: flex; align-items: center; gap: 12px; min-height: 66px; }

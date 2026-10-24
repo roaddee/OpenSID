@@ -76,7 +76,8 @@ class Beranda extends Admin_Controller
             'saas'            => Saas::peringatan(),
             'notif_langganan' => $notif_langganan,
             'notif_percobaan' => $notif_percobaan,
-            'ringkasan'       => $this->ringkasan(),
+            // disimpan 2 menit agar beranda tetap cepat; permohonan baru tampil paling lambat 2 menit kemudian
+            'ringkasan'       => cache()->remember('satima_ringkasan_beranda_' . identitas('id'), 120, fn (): array => $this->ringkasan()),
         ];
 
         return view('admin.home.index', $data);

@@ -11,7 +11,7 @@
         <div class="form-group sl-field">
             <label for="username" class="sl-label">Nama pengguna</label>
             <div class="sl-input">
-                <i class="fa fa-user-o" aria-hidden="true"></i>
+                @include('admin.layouts.components.ikon', ['n' => 'user', 'k' => 'sl-input-ikon'])
                 <input
                     id="username"
                     name="username"
@@ -31,7 +31,7 @@
                 <a href="{{ site_url('siteman/lupa_sandi') }}" class="sl-link">Lupa kata sandi?</a>
             </div>
             <div class="sl-input">
-                <i class="fa fa-lock" aria-hidden="true"></i>
+                @include('admin.layouts.components.ikon', ['n' => 'lock', 'k' => 'sl-input-ikon'])
                 <input
                     id="password"
                     name="password"
@@ -42,7 +42,7 @@
                     class="form-username form-control required"
                     maxlength="100"
                 >
-                <button type="button" class="sl-eye" id="checkbox" aria-label="Tampilkan kata sandi" aria-pressed="false" @disabled($second)><i class="fa fa-eye"></i></button>
+                <button type="button" class="sl-eye" id="checkbox" aria-label="Tampilkan kata sandi" aria-pressed="false" @disabled($second)>@include('admin.layouts.components.ikon', ['n' => 'eye', 'k' => 'sl-eye-on'])@include('admin.layouts.components.ikon', ['n' => 'eye-off', 'k' => 'sl-eye-off'])</button>
             </div>
         </div>
 
@@ -52,10 +52,8 @@
             <div class="form-group sl-field">
                 <label for="captcha_code" class="sl-label">Kode keamanan</label>
                 <div class="sl-captcha">
-                    <a href="#" id="b-captcha" class="sl-captcha-img" title="Ganti gambar kode" onclick="event.preventDefault(); document.getElementById('captcha').src = '{{ site_url('captcha') }}?' + Math.random();">
-                        <img id="captcha" src="{{ site_url('captcha') }}" alt="Kode keamanan" />
-                        <span class="sl-captcha-refresh"><i class="fa fa-refresh"></i> Ganti</span>
-                    </a>
+                    <span class="sl-captcha-img"><img id="captcha" src="{{ site_url('captcha') }}" alt="Kode keamanan" width="150" height="44" /></span>
+                    <button type="button" id="b-captcha" class="sl-captcha-btn" title="Ganti gambar kode" aria-label="Ganti gambar kode" onclick="document.getElementById('captcha').src = '{{ site_url('captcha') }}?' + Math.random();">@include('admin.layouts.components.ikon', ['n' => 'refresh'])</button>
                     <div class="sl-input captcha">
                         <input
                             id="captcha_code"
@@ -79,7 +77,7 @@
         @if (setting('login_otp'))
             <div class="sl-divider"><span>atau</span></div>
             <div class="form-group">
-                <a href="{{ ci_route('siteman.otp.form_login_otp') }}" class="btn sl-btn sl-btn-ghost" role="button"><i class="fa fa-mobile"></i> Masuk dengan kode OTP</a>
+                <a href="{{ ci_route('siteman.otp.form_login_otp') }}" class="btn sl-btn sl-btn-ghost" role="button">@include('admin.layouts.components.ikon', ['n' => 'phone']) Masuk dengan kode OTP</a>
             </div>
         @endif
     </form>
@@ -134,8 +132,7 @@
             $('#checkbox').click(function() {
                 var tampil = pass.attr('type') === 'password';
                 pass.attr('type', tampil ? 'text' : 'password');
-                $(this).attr('aria-pressed', tampil).attr('aria-label', tampil ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi')
-                    .find('i').toggleClass('fa-eye', !tampil).toggleClass('fa-eye-slash', tampil);
+                $(this).attr('aria-pressed', tampil).attr('aria-label', tampil ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
             });
             if ($('#countdown').length) {
                 start_countdown();

@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex">
     <meta name="theme-color" content="#002853">
-    <link rel="stylesheet" href="{{ asset('bootstrap/css/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('js/sweetalert2/sweetalert2.min.css') }}">
+    {{-- Ringan: ikon SVG sebaris (tanpa Font Awesome), CSS SweetAlert sudah ada di sweetalert2.all.min.js --}}
+    <link rel="preload" href="{{ base_url('assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ base_url('assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-800-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="{{ asset('css/satima-font.css') }}">
     <link rel="stylesheet" href="{{ asset('css/satima-login.css') }}">
     @if (is_file('desa/pengaturan/siteman/siteman.css'))
@@ -34,6 +35,7 @@
     </div>
 
     <div class="sl-shell">
+        <div class="sl-side">
         <header class="sl-intro">
             <a href="{{ site_url() }}" class="sl-logo-link" title="Ke halaman depan website">
                 <img src="{{ gambar_desa($header['logo']) }}" alt="Logo {{ $sebutan_desa }} {{ $header['nama_desa'] }}" class="sl-logo">
@@ -44,9 +46,15 @@
                 {{ ucwords(setting('sebutan_kecamatan')) }} {{ $header['nama_kecamatan'] }}, {{ ucwords(setting('sebutan_kabupaten')) }} {{ $header['nama_kabupaten'] }}
             </p>
             @if ($header['alamat_kantor'])
-                <p class="sl-tags"><span><i class="fa fa-map-marker"></i> {{ $header['alamat_kantor'] }}@if ($header['kode_pos']), {{ $header['kode_pos'] }}@endif</span></p>
+                <p class="sl-tags"><span>@include('admin.layouts.components.ikon', ['n' => 'pin']) {{ $header['alamat_kantor'] }}@if ($header['kode_pos']), {{ $header['kode_pos'] }}@endif</span></p>
             @endif
         </header>
+
+        <footer class="sl-foot sl-foot-side">
+            <a href="{{ site_url() }}">@include('admin.layouts.components.ikon', ['n' => 'back']) Kembali ke website</a>
+            <span><a href="https://github.com/OpenSID/OpenSID" target="_blank" rel="noopener">OpenSID</a> v{{ AmbilVersi() }}-perjuangan</span>
+        </footer>
+        </div>
 
         <main class="sl-card">
             <div class="sl-card-head">
@@ -56,7 +64,7 @@
 
             @if ($errors?->any())
                 <div class="sl-alert sl-alert-danger" role="alert">
-                    <i class="fa fa-exclamation-circle"></i>
+                    @include('admin.layouts.components.ikon', ['n' => 'alert'])
                     <div>
                         @foreach ($errors->all() as $item)
                             @if (str_contains($item, 'Terlalu banyak upaya masuk.'))
@@ -70,7 +78,7 @@
             @endif
             @if ($notif = session('notif'))
                 <div class="sl-alert sl-alert-danger" role="alert">
-                    <i class="fa fa-exclamation-circle"></i>
+                    @include('admin.layouts.components.ikon', ['n' => 'alert'])
                     <div><p>{{ $notif }}</p></div>
                 </div>
             @endif
@@ -82,8 +90,8 @@
             @endif
         </main>
 
-        <footer class="sl-foot">
-            <a href="{{ site_url() }}"><i class="fa fa-arrow-left"></i> Kembali ke website</a>
+        <footer class="sl-foot sl-foot-bottom">
+            <a href="{{ site_url() }}">@include('admin.layouts.components.ikon', ['n' => 'back']) Kembali ke website</a>
             <span><a href="https://github.com/OpenSID/OpenSID" target="_blank" rel="noopener">OpenSID</a> v{{ AmbilVersi() }}-perjuangan</span>
         </footer>
     </div>

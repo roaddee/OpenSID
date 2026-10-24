@@ -206,6 +206,8 @@ html, body { margin: 0; min-height: 100%; }
 .sl-link { font-size: 0.8125rem; font-weight: 600; }
 
 .sl-input { position: relative; display: flex; align-items: center; }
+.sl-ikon { flex: none; width: 1.1em; height: 1.1em; vertical-align: -0.15em; }
+.sl-input > .sl-input-ikon,
 .sl-input > .fa:first-child {
     position: absolute;
     left: 0.95rem;
@@ -237,8 +239,12 @@ html, body { margin: 0; min-height: 100%; }
     transition: border-color .15s, box-shadow .15s;
 }
 .sl-card textarea { height: auto; min-height: 96px; padding-block: 0.6rem; }
+.sl-input > .sl-input-ikon ~ .form-control,
+.sl-input > .sl-input-ikon ~ input,
 .sl-input > .fa:first-child ~ .form-control,
 .sl-input > .fa:first-child ~ input { padding-left: 2.6rem; }
+.sl-eye .sl-eye-off, .sl-eye[aria-pressed="true"] .sl-eye-on { display: none; }
+.sl-eye[aria-pressed="true"] .sl-eye-off { display: inline; }
 .sl-input .sl-eye ~ .form-control, .sl-input:has(.sl-eye) .form-control { padding-right: 2.9rem; }
 .sl-card .form-control::placeholder, .sl-card input::placeholder { color: #9aa7b6; }
 .sl-card .form-control:focus,
@@ -268,30 +274,33 @@ html, body { margin: 0; min-height: 100%; }
 }
 .sl-eye:hover { background: #f1f4f8; color: var(--sl-ink); }
 
-.sl-captcha { display: flex; gap: 0.6rem; align-items: stretch; }
+.sl-captcha { display: flex; gap: 0.5rem; align-items: stretch; }
 .sl-captcha-img {
-    position: relative;
     flex: none;
     display: block;
     overflow: hidden;
-    width: 150px;
+    width: 132px;
     height: 46px;
     border: 1px solid var(--sl-line);
     border-radius: 0.65rem;
     background: #fff;
 }
-.sl-captcha-img img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.sl-captcha-refresh {
-    position: absolute;
-    right: 4px;
-    bottom: 4px;
-    padding: 1px 6px;
-    border-radius: 999px;
-    background: rgb(0 0 0 / 0.55);
-    color: #fff;
-    font-size: 0.625rem;
-    font-weight: 700;
+.sl-captcha-img img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.sl-captcha-btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border: 1px solid var(--sl-line);
+    border-radius: 0.65rem;
+    background: #fff;
+    color: var(--sl-muted);
+    cursor: pointer;
 }
+.sl-captcha-btn:hover { border-color: var(--sl-primary); color: var(--sl-primary); }
+.sl-captcha-btn:active .sl-ikon { transform: rotate(180deg); transition: transform .3s; }
 .sl-captcha .sl-input { flex: 1; min-width: 0; }
 .sl-card .captcha .form-control { letter-spacing: 0.2em; text-transform: uppercase; }
 .sl-recaptcha { margin-bottom: 1rem; }
@@ -358,7 +367,7 @@ html, body { margin: 0; min-height: 100%; }
 .sl-alert { display: flex; }
 .sl-alert p, .sl-card .alert p { margin: 0; }
 .sl-card .alert p + p, .sl-card .alert h5 + p { margin-top: 0.4rem; }
-.sl-alert > .fa { margin-top: 2px; }
+.sl-alert > .fa, .sl-alert > .sl-ikon { margin-top: 1px; }
 .sl-alert-danger, .sl-card .alert-danger { background: #fdeeee; border-color: #f6cfcf; color: #8f2525; }
 .sl-card .alert-success { background: #e9f7ef; border-color: #c4e8d3; color: #1d6b3f; }
 .sl-card .alert-warning, .sl-card .callout-warning { background: #fff7e6; border-color: #f5dfae; color: #7a5300; }
@@ -531,3 +540,120 @@ html, body { margin: 0; min-height: 100%; }
 .sl-body .modal-footer .btn-danger:hover { background: var(--sl-primary-dark); }
 .sl-body .modal-footer .btn .fa { display: none; }
 body.modal-open { overflow: hidden; }
+
+
+/* ================================================================ Admin: selalu muat satu layar */
+
+.sl-admin .sl-side { display: contents; }
+.sl-admin .sl-foot-side { display: none; }
+.sl-admin .sl-intro { padding-top: 1.5rem; }
+.sl-admin .sl-logo { width: 60px; height: 60px; border-radius: 18px; }
+.sl-admin .sl-chip { margin-top: 0.75rem; }
+.sl-admin .sl-title { margin-top: 0.6rem; font-size: 1.5rem; }
+.sl-admin .sl-card { margin-block: 1.25rem 1rem; padding: 1.6rem 1.4rem 1.4rem; }
+.sl-admin .sl-card-head { margin-bottom: 1rem; }
+.sl-admin .sl-card .form-group { margin-bottom: 0.85rem; }
+.sl-admin .sl-label { margin-bottom: 0.3rem; }
+.sl-admin .sl-divider { margin: 0.8rem 0; }
+.sl-admin .sl-backdrop { height: 22rem; }
+@media (max-width: 899px) {
+    .sl-admin .sl-tags, .sl-admin .sl-chip { display: none; }
+    .sl-admin .sl-card-sub { display: none; }
+}
+
+/* layar lebar: sambutan di kiri, kartu di kanan, tengah vertikal, latar penuh */
+@media (min-width: 900px) {
+    .sl-admin .sl-backdrop { height: 100%; }
+    .sl-admin .sl-backdrop::before { bottom: -4.5rem; height: 9rem; }
+    .sl-admin .sl-backdrop::after { bottom: -5.8rem; height: 9rem; }
+    .sl-admin .sl-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 30rem) 27rem;
+        justify-content: center;
+        align-content: center;
+        column-gap: clamp(2rem, 6vw, 6rem);
+        height: 100vh;
+        height: 100dvh;
+        min-height: 34rem;
+        padding: 1.5rem 2rem 4.5rem;
+    }
+    .sl-admin .sl-side { display: flex; flex-direction: column; justify-content: center; }
+    .sl-admin .sl-intro { align-items: flex-start; max-width: none; padding-top: 0; text-align: left; }
+    .sl-admin .sl-title { font-size: 2.25rem; line-height: 1.1; }
+    .sl-admin .sl-tags { justify-content: flex-start; }
+    .sl-admin .sl-card { margin: 0; align-self: center; }
+    .sl-admin .sl-foot-side { display: flex; align-items: flex-start; margin-top: 2rem; padding: 0; text-align: left; color: rgb(255 255 255 / 0.7); }
+    .sl-admin .sl-foot-side a { color: #fff; }
+    .sl-admin .sl-foot-bottom { display: none; }
+}
+@media (min-width: 900px) and (max-height: 640px) {
+    .sl-admin .sl-card-sub, .sl-admin .sl-chip { display: none; }
+    .sl-admin .sl-card { padding-block: 1.25rem 1.1rem; }
+    .sl-admin .sl-card .form-control, .sl-admin .sl-card .btn, .sl-admin .sl-captcha-img, .sl-admin .sl-captcha-btn { height: 42px; min-height: 42px; }
+}
+
+/* HP: dipadatkan agar muat satu layar (diuji 360x640 & 390x700) */
+@media (max-width: 899px) {
+    .sl-admin .sl-intro { padding-top: 0.9rem; }
+    .sl-admin .sl-logo { width: 46px; height: 46px; padding: 6px; border-radius: 14px; }
+    .sl-admin .sl-title { margin-top: 0.45rem; font-size: 1.25rem; }
+    .sl-admin .sl-sub { margin-top: 0.2rem; font-size: 0.75rem; }
+    .sl-admin .sl-backdrop { height: 15rem; }
+    .sl-admin .sl-card { margin-block: 0.8rem 0.5rem; padding: 1.15rem 1.1rem 1.1rem; }
+    .sl-admin .sl-card-head { margin-bottom: 0.75rem; }
+    .sl-admin .sl-card-title { font-size: 1.0625rem; }
+    .sl-admin .sl-card .form-group { margin-bottom: 0.65rem; }
+    .sl-admin .sl-card .form-control, .sl-admin .sl-card .btn, .sl-admin .sl-captcha-img, .sl-admin .sl-captcha-btn { height: 44px; min-height: 44px; }
+    .sl-admin .sl-captcha-img { width: 116px; }
+    .sl-admin .sl-card .captcha .form-control { letter-spacing: 0.08em; }
+    .sl-admin .sl-divider { margin: 0.5rem 0; }
+    .sl-admin .sl-foot-bottom { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 0.25rem 0.75rem; padding: 0.25rem 1rem 0.75rem; }
+}
+@media (max-width: 899px) and (max-height: 680px) {
+    .sl-admin .sl-card-head { display: none; }
+}
+
+/* ================================================================ Layanan Mandiri: teks & kolom lebih besar */
+
+.sl-mandiri { font-size: 16px; }
+.sl-mandiri .sl-card { max-width: 31rem; padding: 2.25rem 1.75rem 2rem; }
+@media (min-width: 640px) { .sl-mandiri .sl-card { padding-inline: 2.5rem; } }
+.sl-mandiri .sl-card-title { font-size: 1.625rem; }
+.sl-mandiri .sl-card-sub { font-size: 0.9375rem; }
+.sl-mandiri .sl-card-head { margin-bottom: 1.4rem; }
+.sl-mandiri .sl-label { margin-bottom: 0.5rem; font-size: 0.9375rem; }
+.sl-mandiri .sl-link { font-size: 0.9375rem; }
+.sl-mandiri .sl-card .form-group { margin-bottom: 1.15rem; }
+.sl-mandiri .sl-card .form-control,
+.sl-mandiri .sl-card input[type="text"],
+.sl-mandiri .sl-card input[type="password"] { height: 56px; padding-inline: 1.1rem; border-radius: 0.8rem; font-size: 1.0625rem; }
+.sl-mandiri .sl-input > .sl-input-ikon { left: 1.05rem; width: 1.25rem; height: 1.25rem; }
+.sl-mandiri .sl-input > .sl-input-ikon ~ .form-control,
+.sl-mandiri .sl-input > .sl-input-ikon ~ input { padding-left: 3rem; }
+.sl-mandiri .sl-pin { font-size: 1.375rem !important; }
+.sl-mandiri .sl-pin::placeholder { font-size: 1.0625rem; }
+.sl-mandiri .sl-eye { width: 44px; height: 44px; right: 0.45rem; }
+.sl-mandiri .sl-eye .sl-ikon { width: 1.3rem; height: 1.3rem; }
+.sl-mandiri .sl-card .btn,
+.sl-mandiri .sl-btn { min-height: 56px; border-radius: 0.8rem; font-size: 1.0625rem; }
+.sl-mandiri .sl-divider { font-size: 0.875rem; margin: 1.25rem 0; }
+.sl-mandiri .sl-switch { font-size: 1rem; }
+.sl-mandiri .sl-note { font-size: 0.9375rem; padding: 0.9rem 1rem; }
+.sl-mandiri .sl-alert { font-size: 0.9375rem; }
+.sl-mandiri .sl-lead { font-size: 1.0625rem; }
+.sl-mandiri .sl-brand-name { font-size: 1.125rem; }
+.sl-mandiri .sl-brand-sub { font-size: 0.8125rem; }
+.sl-mandiri .sl-benefits li { font-size: 0.9375rem; }
+.sl-mandiri .sl-benefits strong { font-size: 1.0625rem; }
+.sl-mandiri .sl-benefit-icon .sl-ikon { width: 1.25rem; height: 1.25rem; }
+.sl-mandiri .sl-foot { font-size: 0.8125rem; }
+@media (min-width: 960px) { .sl-mandiri .sl-title-xl { font-size: 3rem; } }
+@media (min-width: 960px) {
+    .sl-mandiri .sl-split-grid { padding-block: 1.5rem 0; }
+    .sl-mandiri.sl-split .sl-foot { padding-block: 0.9rem; }
+}
+@media (min-width: 960px) and (max-height: 760px) {
+    .sl-mandiri .sl-card { padding-block: 1.6rem 1.5rem; }
+    .sl-mandiri .sl-card-head { margin-bottom: 1rem; }
+    .sl-mandiri .sl-note { display: none; }
+}

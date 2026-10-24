@@ -11,11 +11,14 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <meta name="theme-color" content="#0f4f33">
     <link rel="shortcut icon" href="{{ favico_desa() }}" />
-    <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.bar.css') }}" media="screen">
-    <!-- bootstrap datetimepicker -->
-    <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap-datetimepicker.min.css') }}">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ asset('bootstrap/css/font-awesome.min.css') }}">
+    @hasSection('lebar')
+        {{-- Hanya formulir pendaftaran yang butuh grid Bootstrap, pemilih tanggal & Font Awesome --}}
+        <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.bar.css') }}" media="screen">
+        <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap-datetimepicker.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bootstrap/css/font-awesome.min.css') }}">
+    @endif
+    <link rel="preload" href="{{ base_url('assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ base_url('assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-800-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="{{ asset('css/satima-font.css') }}">
     <link rel="stylesheet" href="{{ asset('css/satima-login.css') }}">
     @if (is_file('desa/pengaturan/siteman/siteman_mandiri.css'))
@@ -38,10 +41,10 @@
     preg_match('/(\d+)/', $errors->first('email'), $matches);
     $second = $matches[0] ?? 0;
     $manfaat = [
-        ['fa-file-text-o', 'Ajukan surat dari rumah', 'Pilih jenis surat, isi data, lalu ambil di kantor saat siap.'],
-        ['fa-bell-o', 'Pantau permohonan', 'Lihat apakah surat Anda sedang diperiksa atau sudah siap diambil.'],
-        ['fa-comments-o', 'Kirim pesan ke ' . strtolower($sebutan_desa), 'Tanya atau sampaikan keperluan langsung ke operator.'],
-        ['fa-id-card-o', 'Data diri & keluarga', 'Cek biodata, cetak salinan KK, dan lihat bantuan yang diterima.'],
+        ['file', 'Ajukan surat dari rumah', 'Pilih jenis surat, isi data, lalu ambil di kantor saat siap.'],
+        ['bell', 'Pantau permohonan', 'Lihat apakah surat Anda sedang diperiksa atau sudah siap diambil.'],
+        ['chat', 'Kirim pesan ke ' . strtolower($sebutan_desa), 'Tanya atau sampaikan keperluan langsung ke operator.'],
+        ['users', 'Data diri & keluarga', 'Cek biodata, cetak salinan KK, dan lihat bantuan yang diterima.'],
     ];
 @endphp
 
@@ -65,7 +68,7 @@
                 <ul class="sl-benefits">
                     @foreach ($manfaat as [$ikon, $judul, $teks])
                         <li>
-                            <span class="sl-benefit-icon"><i class="fa {{ $ikon }}"></i></span>
+                            <span class="sl-benefit-icon">@include('admin.layouts.components.ikon', ['n' => $ikon])</span>
                             <span><strong>{{ $judul }}</strong>{{ $teks }}</span>
                         </li>
                     @endforeach
@@ -80,7 +83,7 @@
 
                 @if ($errors->any())
                     <div @if (!str_contains($errors->first('email'), 'Terlalu banyak upaya masuk.')) id="notif" @endif class="sl-alert sl-alert-danger" role="alert">
-                        <i class="fa fa-exclamation-circle"></i>
+                        @include('admin.layouts.components.ikon', ['n' => 'alert'])
                         <div>
                             @foreach ($errors->all() as $item)
                                 @if (str_contains($item, 'Terlalu banyak upaya masuk.'))
@@ -95,7 +98,7 @@
 
                 @if ($notif = $ci->session->flashdata('notif'))
                     <div id="notif" class="sl-alert sl-alert-danger" role="alert">
-                        <i class="fa fa-exclamation-circle"></i>
+                        @include('admin.layouts.components.ikon', ['n' => 'alert'])
                         <div><p>{{ $notif }}</p></div>
                     </div>
                 @endif
@@ -104,13 +107,13 @@
 
                 @hasSection('tanpa_catatan')
                 @else
-                    <p class="sl-note"><i class="fa fa-info-circle"></i><span>Belum punya PIN? Datang ke kantor {{ strtolower($sebutan_desa) }} dengan membawa KTP, operator akan membuatkannya.</span></p>
+                    <p class="sl-note">@include('admin.layouts.components.ikon', ['n' => 'info'])<span>Belum punya PIN? Datang ke kantor {{ strtolower($sebutan_desa) }} dengan membawa KTP, operator akan membuatkannya.</span></p>
                 @endif
             </main>
         </div>
 
         <footer class="sl-foot">
-            <a href="{{ base_url('/') }}"><i class="fa fa-arrow-left"></i> Kembali ke website</a>
+            <a href="{{ base_url('/') }}">@include('admin.layouts.components.ikon', ['n' => 'back']) Kembali ke website</a>
             @php
                 $info_perangkat = ['Alamat IP ' . request()->ip()];
                 if ($cek_anjungan) {
@@ -128,23 +131,14 @@
     @include('admin.layouts.components.konfirmasi_cookie', ['cookie_name' => 'pengunjung'])
     @include('admin.layouts.components.aktifkan_cookie')
 
-    <!-- jQuery 3 -->
-    <script src="{{ asset('bootstrap/js/jquery.min.js') }}"></script>
-    <!-- Bootstrap 3.3.7 -->
+    <!-- Bootstrap 3.3.7 (modal cookie & keyboard anjungan); jQuery sudah dimuat di <head> -->
     <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
-    <!-- bootstrap Moment -->
-    <script src="{{ asset('bootstrap/js/moment.min.js') }}"></script>
-    <script src="{{ asset('bootstrap/js/moment-timezone.js') }}"></script>
-    <script src="{{ asset('bootstrap/js/moment-timezone-with-data.js') }}"></script>
-    <!-- bootstrap Date time picker -->
-    <script src="{{ asset('bootstrap/js/bootstrap-datetimepicker.min.js') }}"></script>
-    <script src="{{ asset('bootstrap/js/id.js') }}"></script>
-    <!-- SlimScroll -->
-    <script src="{{ asset('bootstrap/js/jquery.slimscroll.min.js') }}"></script>
-    <!-- FastClick -->
-    <script src="{{ asset('bootstrap/js/fastclick.js') }}"></script>
-    <!-- AdminLTE App -->
-    <script src="{{ asset('js/adminlte.min.js') }}"></script>
+    @hasSection('lebar')
+        <script src="{{ asset('bootstrap/js/moment.min.js') }}"></script>
+        <script src="{{ asset('bootstrap/js/moment-timezone-with-data.js') }}"></script>
+        <script src="{{ asset('bootstrap/js/bootstrap-datetimepicker.min.js') }}"></script>
+        <script src="{{ asset('bootstrap/js/id.js') }}"></script>
+    @endif
     <!-- Validasi -->
     <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('js/validasi.js') }}"></script>

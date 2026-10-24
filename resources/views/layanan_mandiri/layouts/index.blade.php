@@ -44,6 +44,8 @@
     <!-- Style Mandiri Modification CSS -->
     <link rel="stylesheet" href="{{ asset('css/mandiri-style.css') }}">
     <!-- Tampilan Layanan Mandiri edisi Satima -->
+    <link rel="preload" href="{{ base_url('assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ base_url('assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-800-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="{{ asset('css/satima-font.css') }}">
     <link rel="stylesheet" href="{{ asset('css/satima-mandiri.css') }}">
 

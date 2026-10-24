@@ -15,7 +15,7 @@
 </head>
 
 <body class="font-primary bg-gray-100">
-    @include('theme::commons.loading_screen')
+    {{-- Edisi Satima: tanpa layar muat, isi langsung tampil (lebih cepat dari versi standar yang menahan 1,5 detik) --}}
     @include('theme::commons.header')
 
     @yield('layout')

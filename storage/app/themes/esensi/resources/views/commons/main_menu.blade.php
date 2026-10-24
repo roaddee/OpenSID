@@ -1,11 +1,24 @@
 {{-- Menu utama desktop: menu statis buatan admin (Admin Web → Menu), sampai 4 tingkat. --}}
 @php
     $menu_atas = menu_tema() ?: [];
-    // Menu yang tidak muat di satu baris dipindah ke "Lainnya"
-    $batas_menu = 6;
-    if (count($menu_atas) > $batas_menu + 1) {
-        $menu_lain = array_slice($menu_atas, $batas_menu);
-        $menu_atas = array_slice($menu_atas, 0, $batas_menu);
+    // Menu yang tidak muat di satu baris dipindah ke "Lainnya" supaya tidak menabrak tombol Layanan Mandiri.
+    // Lebar tiap menu diperkirakan dari panjang namanya (huruf 14px tebal ≈ 8,3px, jarak 26px, panah 16px).
+    // Anggaran 630px = ruang menu pada layar desktop terkecil (1200px) setelah logo & tombol kanan.
+    $lebar_menu = static fn (array $m): float => mb_strlen(trim(strip_tags($m['nama']))) * 8.3 + 26 + (count($m['childrens'] ?? []) ? 16 : 0);
+    $anggaran = 630 - $lebar_menu(['nama' => 'Beranda']);
+    $total = array_sum(array_map($lebar_menu, $menu_atas));
+    if ($total > $anggaran) {
+        $anggaran -= $lebar_menu(['nama' => 'Lainnya', 'childrens' => [1]]);
+        $muat = [];
+        foreach ($menu_atas as $m) {
+            if ($anggaran - $lebar_menu($m) < 0) {
+                break;
+            }
+            $anggaran -= $lebar_menu($m);
+            $muat[] = $m;
+        }
+        $menu_lain = array_slice($menu_atas, count($muat));
+        $menu_atas = $muat;
         $menu_atas[] = ['nama' => 'Lainnya', 'link_url' => '#!', 'childrens' => $menu_lain];
     }
 @endphp

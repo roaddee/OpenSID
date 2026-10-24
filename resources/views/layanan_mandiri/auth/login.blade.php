@@ -12,7 +12,7 @@
         <div class="form-group form-login sl-field">
             <label for="nik" class="sl-label">NIK</label>
             <div class="sl-input">
-                <i class="fa fa-id-card-o" aria-hidden="true"></i>
+                @include('admin.layouts.components.ikon', ['n' => 'id', 'k' => 'sl-input-ikon'])
                 <input type="text" inputmode="numeric" autocomplete="off" id="nik" class="form-control angka required {!! $kb !!}" name="nik" maxlength="16" placeholder="16 digit sesuai KTP">
             </div>
         </div>
@@ -24,7 +24,7 @@
                 <a href="{{ site_url('layanan-mandiri/lupa-pin') }}" class="sl-link">Lupa PIN?</a>
             </div>
             <div class="sl-input">
-                <i class="fa fa-lock" aria-hidden="true"></i>
+                @include('admin.layouts.components.ikon', ['n' => 'lock', 'k' => 'sl-input-ikon'])
                 <input
                     type="password"
                     inputmode="numeric"
@@ -35,7 +35,7 @@
                     id="pin"
                     maxlength="6"
                 >
-                <button type="button" class="sl-eye" id="checkbox" aria-label="Tampilkan PIN" aria-pressed="false"><i class="fa fa-eye"></i></button>
+                <button type="button" class="sl-eye" id="checkbox" aria-label="Tampilkan PIN" aria-pressed="false">@include('admin.layouts.components.ikon', ['n' => 'eye', 'k' => 'sl-eye-on'])@include('admin.layouts.components.ikon', ['n' => 'eye-off', 'k' => 'sl-eye-off'])</button>
             </div>
         </div>
         <div class="form-group">
@@ -45,9 +45,9 @@
         <div class="sl-divider"><span>atau</span></div>
 
         <div class="sl-actions {{ $ada_anjungan ? 'sl-actions-2' : '' }}">
-            <a href="{{ site_url('layanan-mandiri/masuk-ektp') }}" class="btn sl-btn sl-btn-ghost"><i class="fa fa-credit-card"></i> Masuk dengan e-KTP</a>
+            <a href="{{ site_url('layanan-mandiri/masuk-ektp') }}" class="btn sl-btn sl-btn-ghost">@include('admin.layouts.components.ikon', ['n' => 'card']) Masuk dengan e-KTP</a>
             @if ($ada_anjungan)
-                <a href="<?= route('anjungan.index') ?>" class="btn sl-btn sl-btn-ghost"><i class="fa fa-desktop"></i> Anjungan</a>
+                <a href="<?= route('anjungan.index') ?>" class="btn sl-btn sl-btn-ghost">@include('admin.layouts.components.ikon', ['n' => 'monitor']) Anjungan</a>
             @endif
         </div>
 
@@ -64,8 +64,7 @@
             $('#checkbox').click(function() {
                 var tampil = pass.attr('type') === 'password';
                 pass.attr('type', tampil ? 'text' : 'password');
-                $(this).attr('aria-pressed', tampil).attr('aria-label', tampil ? 'Sembunyikan PIN' : 'Tampilkan PIN')
-                    .find('i').toggleClass('fa-eye', !tampil).toggleClass('fa-eye-slash', tampil);
+                $(this).attr('aria-pressed', tampil).attr('aria-label', tampil ? 'Sembunyikan PIN' : 'Tampilkan PIN');
             });
 
             // Get UUID from local storage and set it to the hidden input

@@ -155,14 +155,13 @@ a { text-underline-offset: 3px; }
     position: sticky;
     top: 0;
     z-index: 60;
-    background: rgb(255 255 255 / 0.94);
-    backdrop-filter: saturate(1.4) blur(10px);
+    background: #fff;
     border-bottom: 1px solid var(--es-line);
 }
 .es-navbar-inner { display: flex; align-items: center; gap: 16px; min-height: 72px; }
 
 .es-brand { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
-@media (min-width: 1200px) { .es-brand { flex: none; } }
+@media (min-width: 1200px) { .es-brand { flex: none; max-width: 250px; } }
 .es-brand-logo { width: 44px; height: 44px; object-fit: contain; flex: none; }
 .es-brand-text { display: flex; flex-direction: column; min-width: 0; }
 .es-brand-name { font-weight: 800; font-size: 1.0625rem; line-height: 1.2; color: var(--es-ink); letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -242,7 +241,7 @@ a { text-underline-offset: 3px; }
 .es-search-form input:focus { outline: none; box-shadow: none; }
 
 /* laci menu HP */
-.es-drawer-backdrop { position: fixed; inset: 0; z-index: 80; background: rgb(11 30 20 / 0.45); backdrop-filter: blur(2px); }
+.es-drawer-backdrop { position: fixed; inset: 0; z-index: 80; background: rgb(11 30 20 / 0.5); }
 .es-drawer {
     position: fixed;
     top: 0;

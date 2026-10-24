@@ -24,7 +24,7 @@
             <div class="form-group form-login sl-field">
                 <label for="pin" class="sl-label">PIN</label>
                 <div class="sl-input">
-                    <i class="fa fa-lock" aria-hidden="true"></i>
+                    @include('admin.layouts.components.ikon', ['n' => 'lock', 'k' => 'sl-input-ikon'])
                     <input type="password" inputmode="numeric" id="pin" class="form-control required number sl-pin" name="password" placeholder="6 digit" autocomplete="off" maxlength="6">
                 </div>
             </div>
@@ -34,10 +34,10 @@
         @endif
         <div class="sl-divider"><span>atau</span></div>
         <div class="sl-actions">
-            <a href="{{ site_url('layanan-mandiri/masuk') }}" class="btn sl-btn sl-btn-ghost"><i class="fa fa-id-card-o"></i> Masuk dengan NIK</a>
-            <a href="{{ site_url('layanan-mandiri/lupa-pin') }}" class="btn sl-btn sl-btn-ghost"><i class="fa fa-question-circle"></i> Lupa PIN</a>
+            <a href="{{ site_url('layanan-mandiri/masuk') }}" class="btn sl-btn sl-btn-ghost">@include('admin.layouts.components.ikon', ['n' => 'id']) Masuk dengan NIK</a>
+            <a href="{{ site_url('layanan-mandiri/lupa-pin') }}" class="btn sl-btn sl-btn-ghost">@include('admin.layouts.components.ikon', ['n' => 'help']) Lupa PIN</a>
             @if (in_array(\Modules\Anjungan\Models\Anjungan::ANJUNGAN, $cek_anjungan['tipe'] ?? []))
-                <a href="{{ route('anjungan.index') }}" class="btn sl-btn sl-btn-ghost"><i class="fa fa-desktop"></i> Anjungan</a>
+                <a href="{{ route('anjungan.index') }}" class="btn sl-btn sl-btn-ghost">@include('admin.layouts.components.ikon', ['n' => 'monitor']) Anjungan</a>
             @endif
         </div>
         @if (setting('tampilkan_pendaftaran'))
