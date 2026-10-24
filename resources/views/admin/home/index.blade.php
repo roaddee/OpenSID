@@ -219,7 +219,7 @@
                             <a href="{{ site_url('mandiri') }}"><i class="fa fa-key"></i> Akun & PIN warga</a>
                         @endcan
                     </div>
-                    <p class="sb-version">OpenSID v{{ AmbilVersi() }}, edisi Satima</p>
+                    <p class="sb-version">OpenSID v{{ AmbilVersi() }}-perjuangan</p>
                 </section>
             </div>
         </div>

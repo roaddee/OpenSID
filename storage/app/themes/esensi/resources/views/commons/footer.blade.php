@@ -106,7 +106,7 @@
             <p>&copy; {{ date('Y') }} {{ $nama_desa }}. Hak cipta dilindungi.</p>
             <p>
                 Tema <a href="https://github.com/OpenSID/tema-esensi" target="_blank" rel="noopener">Esensi</a> {{ $themeVersion }},
-                <a href="https://opensid.my.id" target="_blank" rel="noopener">OpenSID</a> {{ ambilVersi() }}
+                <a href="https://opensid.my.id" target="_blank" rel="noopener">OpenSID</a> v{{ ambilVersi() }}-perjuangan
                 @if (file_exists('mitra'))
                     , hosting didukung
                     <a href="https://my.idcloudhost.com/aff.php?aff=3172" rel="noopener noreferrer" target="_blank">
