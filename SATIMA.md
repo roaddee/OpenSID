@@ -24,6 +24,24 @@ ditambah perbaikan & pengerasan dari PT. Satima Putra Informa. Dipasang oleh Pan
 | vendor deprecated | `#[\AllowDynamicProperties]` di 139 kelas CI3 (`vendor/` & `storage/app/vendor/`), 111 parameter implicit nullable → `?Tipe` (13 paket), `E_STRICT` → 2048, `${var}` → `{$var}` | tanpa peringatan deprecated di PHP 8.4 (siap PHP 9); hilang bila `composer update` — terapkan ulang |
 | vendor aman | lihat "Pembaruan vendor keamanan" di bawah | `composer audit` 2607 menemukan ±50 advisory di 14 paket |
 
+## Tampilan edisi Satima (24 Okt 2026, branch `satima-tampilan`)
+
+| Bagian | Berkas | Isi |
+|---|---|---|
+| Tema Esensi | `storage/app/themes/esensi/` (commons, layouts, partials artikel/slider/headline/sidebar), `assets/css/satima.css` & `custom.css` tema | navbar lengket + menu "Lainnya", beranda dengan judul besar & motif garis terasering, layanan cepat (hanya menu yang aktif di Admin Web → Menu), kartu berita, widget, kaki baru; layar muat hilang sendiri (CSS) |
+| Tema bawaan | `donjo-app/models/seeders/SettingSeeder.php`, `app/database/seeders/DataAwal/SettingAplikasi.php` | instalasi baru memakai **Esensi** (dulu Natra). Situs lama tidak diubah — aktifkan dari Admin Web → Tema |
+| Masuk admin | `resources/views/admin/auth/*`, `assets/css/satima-login.css` | senada login Panel Satima (navy, gelombang, kartu bergaris enam warna); lupa sandi, atur ulang, 2FA, OTP ikut |
+| Beranda admin | `resources/views/admin/home/index.blade.php`, `assets/css/satima-beranda.css`, `donjo-app/controllers/Beranda.php` (`ringkasan()`) | banner sambutan + pintasan sesuai hak akses, kartu statistik, permohonan surat warga, berita terbaru, komposisi penduduk; tiap kueri dibungkus try/catch |
+| Masuk warga | `resources/views/layanan_mandiri/auth/*` | layar terbelah hijau desa, NIK/PIN berikon, e-KTP, lupa PIN, daftar; modal cookie dirapikan |
+| Halaman warga | `resources/views/layanan_mandiri/layouts/index.blade.php`, `beranda/index.blade.php`, `assets/css/satima-mandiri.css`, `donjo-app/controllers/fmandiri/Beranda.php` | bilah atas, menu samping, tab bawah + laci di HP, beranda warga baru (dulu langsung dialihkan); isi halaman lama dirapikan lewat CSS |
+| Font | `assets/fonts/plus-jakarta-sans/`, `assets/css/satima-font.css` | Plus Jakarta Sans (OFL) lokal, tanpa Google Fonts |
+
+Diuji di sandbox (Apache + MariaDB + PHP 8.3, desktop 1366 px & HP 390 px): beranda, artikel, kategori, arsip, pencarian,
+pengaduan, peta, galeri, lapak, pembangunan, SOTK, 404; /siteman (produksi + captcha, salah sandi, tombol lihat sandi);
+beranda admin; Layanan Mandiri masuk (salah PIN, benar), beranda, surat (buat → isi form → kirim → tampil di beranda),
+pesan, dokumen, bantuan, profil, ganti PIN, laci menu HP, keluar lewat modal penilaian. Bila memperbarui dari rilis
+OpenSID baru: berkas di tabel ini menimpa versi resmi, cek dulu apakah rilis mengubah view yang sama.
+
 ## Pembaruan vendor keamanan (24 Okt 2026)
 
 `composer audit` pada rilis 2607 menemukan advisory di 14 paket (beberapa HIGH). Diperbarui di dalam versi mayor yang
