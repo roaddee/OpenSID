@@ -262,8 +262,8 @@ $config = [
     'server' => [
         'php' => [
             'name'    => 'PHP Version',
-            'version' => '>= 8.1.0 | <= 8.3.0',
-            'check'   => static fn (): bool => version_compare(PHP_VERSION, '8.1', '>=') && version_compare(PHP_VERSION, '8.3', '<='),
+            'version' => '>= ' . minPhpVersion . ' | <= ' . maxPhpVersion . '.x',
+            'check'   => static fn (): bool => version_compare(PHP_VERSION, minPhpVersion, '>=') && version_compare(PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION, maxPhpVersion, '<='),
         ],
         'pdo' => [
             'name'  => 'PDO',

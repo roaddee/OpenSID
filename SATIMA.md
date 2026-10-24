@@ -19,6 +19,7 @@ ditambah perbaikan & pengerasan dari PT. Satima Putra Informa. Dipasang oleh Pan
 | wilayah RW/RT | `'true'`/`'false'` untuk `refreshOrder` | `var refreshOrder = ;` mematikan skrip halaman RW/RT |
 | header admin | blok lama menu pengguna/Informasi/Pengaturan dibuang, `$is_mobile` didefinisikan | ikon tampil dua kali di semua halaman admin; HTML rusak di HP (bawaan 2607.0.0) |
 | surat & pesan mandiri | `fmandiri/Surat::kirim()` & `Pesan::kirim()`: event menerima `Penduduk::find(id_pend)`, bukan `auth('penduduk')->user()`; pemohon dari sesi login; ubah permohonan hanya milik sendiri berstatus 0; kegagalan notifikasi dicatat saja | guard `penduduk` mengembalikan `PendudukMandiri` → TypeError, ajuan surat/pesan warga selalu error setelah "Lanjut"; `nik`/`id` dari form bisa dipakai atas nama warga lain |
+| PHP 8.4 | batas versi PHP di installer & Info Sistem: `maxPhpVersion` = `8.4`, dibandingkan dengan versi mayor.minor | versi resmi membandingkan `PHP_VERSION` dengan `8.3.0`, jadi 8.3.1+ dan 8.4 dianggap tidak memenuhi syarat (installer web berhenti di langkah Server). Diuji di PHP 8.4.27: install web, 233 halaman admin, halaman publik, Layanan Mandiri (login, ajukan surat, pesan), Excel (openspout/fast-excel), PDF (html2pdf/tcpdf) — hasil identik dengan PHP 8.3 |
 | vendor aman | lihat "Pembaruan vendor keamanan" di bawah | `composer audit` 2607 menemukan ±50 advisory di 14 paket |
 
 ## Pembaruan vendor keamanan (24 Okt 2026)
