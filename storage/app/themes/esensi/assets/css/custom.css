@@ -1,8 +1,9 @@
 :root {
-  --primary-base-color: #008BA9;
-  --primary-darken-color: #006A82;
-  --secondary-base-color: #D08E0D;
-  --secondary-darken-color: #946200;
-  --accent-base-color: #00BA88;
-  --accent-darken-color: #00966D;
+  /* Warna tema Esensi edisi Satima: hijau sawah, kuning padi, biru irigasi */
+  --primary-base-color: #166b45;
+  --primary-darken-color: #0f4f33;
+  --secondary-base-color: #c9950f;
+  --secondary-darken-color: #8f6a0a;
+  --accent-base-color: #1f6fa8;
+  --accent-darken-color: #175583;
 }

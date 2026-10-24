@@ -161,7 +161,7 @@ class SettingSeeder extends Seeder
             [
                 'judul'      => 'Web Theme',
                 'key'        => 'web_theme',
-                'value'      => config_item('web_theme') ?: 'natra',
+                'value'      => config_item('web_theme') ?: 'esensi',
                 'keterangan' => 'Tema penampilan modul web',
                 'jenis'      => 'option',
                 'option'     => null,
