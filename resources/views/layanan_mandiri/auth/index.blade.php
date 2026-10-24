@@ -121,7 +121,7 @@
                 }
             @endphp
             <span class="sl-foot-meta">{{ implode(', ', $info_perangkat) }}</span>
-            <span><a href="https://github.com/OpenSID/OpenSID" rel="noopener noreferrer" target="_blank">OpenSID</a> v{{ AmbilVersi() }}</span>
+            <span><a href="https://github.com/OpenSID/OpenSID" rel="noopener noreferrer" target="_blank">OpenSID</a> v{{ AmbilVersi() }}-perjuangan</span>
         </footer>
     </div>
 

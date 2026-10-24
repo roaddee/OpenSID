@@ -84,7 +84,7 @@
 
         <footer class="sl-foot">
             <a href="{{ site_url() }}"><i class="fa fa-arrow-left"></i> Kembali ke website</a>
-            <span><a href="https://github.com/OpenSID/OpenSID" target="_blank" rel="noopener">OpenSID</a> v{{ AmbilVersi() }}</span>
+            <span><a href="https://github.com/OpenSID/OpenSID" target="_blank" rel="noopener">OpenSID</a> v{{ AmbilVersi() }}-perjuangan</span>
         </footer>
     </div>
 

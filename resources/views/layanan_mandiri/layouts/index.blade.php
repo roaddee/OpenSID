@@ -184,7 +184,7 @@
     <footer class="sm-footer">
         <div class="sm-wrap sm-footer-inner">
             <span>Layanan Mandiri {{ $sebutan_desa }} {{ $desa['nama_desa'] }}</span>
-            <span><a href="https://github.com/OpenSID/OpenSID" target="_blank" rel="noopener">{{ config_item('nama_aplikasi') }}</a> v{{ AmbilVersi() }}</span>
+            <span><a href="https://github.com/OpenSID/OpenSID" target="_blank" rel="noopener">{{ config_item('nama_aplikasi') }}</a> v{{ AmbilVersi() }}-perjuangan</span>
         </div>
     </footer>
 
