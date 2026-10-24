@@ -2,8 +2,17 @@
     "name": "league/flysystem",
     "description": "File storage abstraction for PHP",
     "keywords": [
-        "filesystem", "filesystems", "files", "storage", "aws",
-        "s3", "ftp", "sftp", "webdav", "file", "cloud"
+        "filesystem",
+        "filesystems",
+        "files",
+        "storage",
+        "aws",
+        "s3",
+        "ftp",
+        "sftp",
+        "webdav",
+        "file",
+        "cloud"
     ],
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse -l 6 src"
@@ -18,7 +27,7 @@
     },
     "require": {
         "php": "^8.0.2",
-        "league/flysystem-local":  "^3.0.0",
+        "league/flysystem-local": "^3.0.0",
         "league/mime-type-detection": "^1.0.0"
     },
     "require-dev": {
@@ -68,5 +77,6 @@
                 }
             }
         }
-    ]
+    ],
+    "version": "3.36.0"
 }

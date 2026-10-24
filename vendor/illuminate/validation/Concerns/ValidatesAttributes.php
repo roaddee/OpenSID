@@ -827,6 +827,11 @@ trait ValidatesAttributes
             return false;
         }
 
+        // Satima: backport CVE-2026-48019 (Laravel 12.60) — tolak CR/LF di alamat email.
+        if (preg_match('/[\r\n]/', (string) $value) > 0) {
+            return false;
+        }
+
         $validations = collect($parameters)
             ->unique()
             ->map(fn ($validation) => match (true) {

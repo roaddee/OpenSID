@@ -18,6 +18,42 @@ ditambah perbaikan & pengerasan dari PT. Satima Putra Informa. Dipasang oleh Pan
 | cookie | `assets/js/id_browser.js`: elemen `#pengunjung` opsional | tombol "Terima semua cookie" diam & modal menutupi form login |
 | wilayah RW/RT | `'true'`/`'false'` untuk `refreshOrder` | `var refreshOrder = ;` mematikan skrip halaman RW/RT |
 | header admin | blok lama menu pengguna/Informasi/Pengaturan dibuang, `$is_mobile` didefinisikan | ikon tampil dua kali di semua halaman admin; HTML rusak di HP (bawaan 2607.0.0) |
+| vendor aman | lihat "Pembaruan vendor keamanan" di bawah | `composer audit` 2607 menemukan ±50 advisory di 14 paket |
+
+## Pembaruan vendor keamanan (24 Okt 2026)
+
+`composer audit` pada rilis 2607 menemukan advisory di 14 paket (beberapa HIGH). Diperbarui di dalam versi mayor yang
+sama (tetap PHP ≥ 8.1), `vendor/` + `composer.lock` + `assets/js/tinymce-72` ikut di-commit:
+
+| Paket | Lama → baru | Advisory utama |
+|---|---|---|
+| guzzlehttp/guzzle | 7.10.0 → 7.16.0 | downgrade proxy HTTPS, kebocoran/injeksi cookie, Proxy-Authorization ke origin, host noncanonical (HIGH) |
+| guzzlehttp/psr7 | 2.8.0 → 2.13.2 | CRLF injection & host confusion |
+| guzzlehttp/promises | 2.3.0 → 2.6.0 | (dibutuhkan guzzle 7.16) |
+| league/commonmark | 2.8.0 → 2.10.4 | XSS `on*` bypass, DisallowedRawHtml bypass, beberapa DoS (HIGH) |
+| league/flysystem (+ -local) | 3.30.2 → 3.36.0 / 3.35.3 | bypass pemeriksaan karakter kontrol path |
+| phpseclib/phpseclib | 3.0.48 → **dihapus** | padding oracle, DoS OID, SSRF X.509 — google/apiclient 2.20 tidak memerlukannya lagi (tanda tangan lewat OpenSSL) |
+| firebase/php-jwt | 6.11.1 → 7.2.1 | kunci lemah diterima (google/auth 1.55 & apiclient 2.20 mendukung ^7) |
+| google/auth, google/apiclient | 1.49.0 → 1.55.2, 2.18.4 → 2.20.1 | (agar php-jwt 7 & guzzle baru bisa dipakai) |
+| symfony/http-foundation | 6.4.30 → 6.4.48 | SSRF IPv6 transisi, ReDoS Cache-Control |
+| symfony/mime, symfony/mailer | 6.4.30/6.4.27 → 6.4.46 | CRLF/SMTP command injection, argument injection sendmail (HIGH) |
+| symfony/process | 6.4.26 → 6.4.48 | escaping argumen (Windows) |
+| symfony/polyfill-intl-idn | 1.33.0 → 1.43.0 | ekuivalensi punycode |
+| tinymce/tinymce | 7.9.1 → 7.9.3 | 3 XSS (HIGH); `plugins/image` tetap versi resmi seperti sebelumnya |
+| phpunit/phpunit (dev, hanya lock) | 9.6.31 → 9.6.38 | unsafe deserialization |
+
+**illuminate/mail & illuminate/validation 10.49 (CVE-2026-48019, CRLF di alamat email):** Laravel 10 sudah EOL, tidak ada
+rilis perbaikan. Perbaikan resmi Laravel 12.60 di-backport ke `vendor/illuminate/mail/Message.php`,
+`Mailables/Address.php` dan `vendor/illuminate/validation/Concerns/ValidatesAttributes.php`; salinannya di
+`storage/app/vendor/illuminate/` supaya `composer install` (skrip copy-file) memasangnya lagi. CVE ini dicatat di
+`config.audit.ignore` composer.json beserta alasannya, sehingga `composer audit` bersih.
+
+Diuji di sandbox (Apache 2.4 + MariaDB + PHP 8.3): web installer sampai selesai, login admin, 396 halaman admin dijelajah
+(tanpa error baru), aset TinyMCE 200, berkas sensitif 403, 22 uji pustaka (guzzle, CRLF ditolak di mime/Laravel,
+validasi email, commonmark, flysystem, process, JWT HS256/RS256, Google Client & tanda tangan service account tanpa
+phpseclib). PHP 8.1 tidak tersedia di sandbox — uji satu situs PHP 8.1 dulu sebelum massal.
+
+Cek ulang kapan saja: `composer audit --locked` (butuh akses packagist).
 
 Dekoder obfuscate (tanpa eval) untuk berkas yang mungkin muncul lagi di rilis berikutnya: lihat
 handoff `handoff-opensid-satima-umum.md` di project Panel Satima.
@@ -31,6 +67,8 @@ git cherry-pick <commit Satima satu per satu>       # lewati yang sudah diperbai
 ```
 Cek dulu: rute `captcha` & `app/Http/Controllers/Controller.php` sudah ada di rilis baru? Endpoint rentan lama
 (`dokumen_web`, `tampil/`, `unduh/`) tidak kembali? `PlaywrightController` masih dibatasi ENVIRONMENT?
+Jalankan `composer audit --locked`; bila vendor rilis baru masih rentan, ulangi pembaruan vendor di atas (dan cek apakah
+backport `illuminate/mail` masih diperlukan — hapus dari `config.audit.ignore` & `storage/app/vendor/illuminate/` bila sudah tidak).
 
 **Jangan** memakai branch `teknis/rilis-2701-integrasi` untuk produksi: masih tahap integrasi, dibuat dari kode
 Premium v2601.0.2 sehingga tidak membawa perbaikan keamanan 2607.0.1 & 2607.0.2, butuh PHP ≥ 8.2, sistem

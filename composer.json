@@ -101,6 +101,11 @@
         }
     },
     "config": {
+        "audit": {
+            "ignore": {
+                "CVE-2026-48019": "Satima: perbaikan Laravel 12.60 (CRLF di alamat email) di-backport ke illuminate/mail & illuminate/validation 10.49 — vendor + storage/app/vendor; Laravel 10 tidak menerima rilis perbaikan"
+            }
+        },
         "allow-plugins": {
             "ergebnis/composer-normalize": true
         },

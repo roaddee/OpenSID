@@ -2,6 +2,8 @@
 
 namespace Illuminate\Mail\Mailables;
 
+use InvalidArgumentException;
+
 class Address
 {
     /**
@@ -27,6 +29,10 @@ class Address
      */
     public function __construct(string $address, ?string $name = null)
     {
+        if (preg_match('/[\r\n]/', $address) > 0) {
+            throw new InvalidArgumentException('Email addresses may not contain line break characters.');
+        }
+
         $this->address = $address;
         $this->name = $name;
     }

@@ -1,7 +1,13 @@
 {
     "name": "league/flysystem-local",
     "description": "Local filesystem adapter for Flysystem.",
-    "keywords": ["flysystem", "filesystem", "local", "file", "files"],
+    "keywords": [
+        "flysystem",
+        "filesystem",
+        "local",
+        "file",
+        "files"
+    ],
     "type": "library",
     "prefer-stable": true,
     "autoload": {
@@ -21,5 +27,6 @@
             "name": "Frank de Jonge",
             "email": "info@frankdejonge.nl"
         }
-    ]
+    ],
+    "version": "3.35.3"
 }

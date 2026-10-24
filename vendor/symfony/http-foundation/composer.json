@@ -35,10 +35,13 @@
         "symfony/cache": "<6.4.12|>=7.0,<7.1.5"
     },
     "autoload": {
-        "psr-4": { "Symfony\\Component\\HttpFoundation\\": "" },
+        "psr-4": {
+            "Symfony\\Component\\HttpFoundation\\": ""
+        },
         "exclude-from-classmap": [
             "/Tests/"
         ]
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "version": "6.4.48"
 }

@@ -38,10 +38,13 @@
         "symfony/twig-bridge": "<6.2.1"
     },
     "autoload": {
-        "psr-4": { "Symfony\\Component\\Mailer\\": "" },
+        "psr-4": {
+            "Symfony\\Component\\Mailer\\": ""
+        },
         "exclude-from-classmap": [
             "/Tests/"
         ]
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "version": "6.4.46"
 }
