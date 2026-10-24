@@ -24,7 +24,10 @@ ditambah perbaikan & pengerasan dari PT. Satima Putra Informa. Dipasang oleh Pan
 | vendor deprecated | `#[\AllowDynamicProperties]` di 139 kelas CI3 (`vendor/` & `storage/app/vendor/`), 111 parameter implicit nullable → `?Tipe` (13 paket), `E_STRICT` → 2048, `${var}` → `{$var}` | tanpa peringatan deprecated di PHP 8.4 (siap PHP 9); hilang bila `composer update` — terapkan ulang |
 | vendor aman | lihat "Pembaruan vendor keamanan" di bawah | `composer audit` 2607 menemukan ±50 advisory di 14 paket |
 
-## Tampilan edisi Satima (24 Okt 2026, branch `satima-tampilan`)
+## Tampilan edisi Satima (24 Okt 2026, branch `satima-umum-perjuangan`)
+
+Branch ini = `satima-umum` + perubahan tampilan di bawah. Bila `satima-umum` mendapat perbaikan baru, gabungkan juga ke
+sini (`git checkout satima-umum-perjuangan && git merge satima-umum`) agar keduanya tetap setara selain tampilan.
 
 | Bagian | Berkas | Isi |
 |---|---|---|
