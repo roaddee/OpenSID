@@ -72,7 +72,9 @@ RewriteCond %{REQUEST_URI} !^/resources
 RewriteCond %{REQUEST_URI} !^/robots\.txt
 
 # Route all requests to index.php
-RewriteRule ^(.*)$ index.php/$1 [L,QSA]
+# Satima: "index.php?/$1" (bukan "index.php/$1") — di OpenLiteSpeed bentuk PATH_INFO membuat CSS/JS gagal dimuat;
+# di Apache keduanya sama-sama jalan. Routing CodeIgniter tetap dari REQUEST_URI (uri_protocol).
+RewriteRule ^(.*)$ index.php?/$1 [L,QSA]
 
 # ============================================================================
 # SECURITY - Folder Protection
