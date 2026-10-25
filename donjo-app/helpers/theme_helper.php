@@ -264,8 +264,10 @@ if (! function_exists('media_sosial')) {
 if (! function_exists('sinergi_program')) {
     function sinergi_program()
     {
+        // Satima: kembalikan array kosong (bukan null) agar count() di widget tema tidak fatal
+        // di PHP 8 ketika tabel/data sinergi program tidak ada (natra & esensi memanggil count()).
         if (Schema::hasTable('sinergi_program') === false) {
-            return null;
+            return [];
         }
 
         return cache()->rememberForever('sinergi_program', static fn () => App\Models\SinergiProgram::status(App\Models\SinergiProgram::ACTIVE)->orderBy('urut')->get()->toArray());
