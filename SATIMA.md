@@ -77,3 +77,27 @@ backport `illuminate/mail` masih diperlukan — hapus dari `config.audit.ignore`
 **Jangan** memakai branch `teknis/rilis-2701-integrasi` untuk produksi: masih tahap integrasi, dibuat dari kode
 Premium v2601.0.2 sehingga tidak membawa perbaikan keamanan 2607.0.1 & 2607.0.2, butuh PHP ≥ 8.2, sistem
 migrasi baru, dan membuang modul Anjungan/Pelanggan/BukuTamu.
+
+## Surat RTF/DOCX — fondasi (25 Okt 2026, branch `satima-surat-rtf`)
+
+Langkah 1–2 dari rencana backport surat RTF (OpenSID v2407.0.0) ke 2607. Belum ada perubahan perilaku cetak:
+semua surat tetap TinyMCE sampai engine RTF dipasang.
+
+| Bagian | Berkas | Isi |
+|---|---|---|
+| Kolom engine | `donjo-app/models/migrations/Migrasi_2026102581.php`, `app/Models/FormatSurat.php` | `tweb_surat_format.engine` = `tinymce` (bawaan) / `rtf` / `docx`, dipilih per surat TinyMCE. Kode `jenis` 1/2 sengaja tidak dipakai ulang (lihat baris berikut) |
+| Baris surat hantu | `Migrasi_2026102581::hapusBarisSuratHantu()` | `Migrator::tambah_surat_tinymce()` upstream menyimpan surat bawaan dengan `jenis = 1` (RTF) walau komentarnya TINYMCE_SISTEM → setiap instalasi baru punya 43 salinan tersembunyi. Dihapus bila punya template HTML, url tanpa `sistem-`, dan tidak dipakai `log_surat`/`permohonan_surat`. Surat RTF asli 2407 (tanpa template) tidak tersentuh |
+| Pengaturan | `satima_libreoffice_path`, `satima_libreoffice_maks_proses` (kategori sistem) | Awalan `satima_` wajib: `libreoffice_path` termasuk `unusedKeys()` upstream dan dihapus `Migrasi_required` setiap migrasi |
+| `VERSI_DATABASE` | `donjo-app/helpers/opensid_helper.php` | `2026070151` → `2026102581` agar migrasi Satima jalan di situs yang sudah terpasang. Saat menggabung rilis upstream baru: ambil nilai yang lebih besar, dan beri migrasi Satima berikutnya nomor `<tanggal>81` |
+| Template RTF sistem | `storage/app/template/rtf/sistem/<url_surat 2607>.rtf` (43), `raw/`, `peta-url-2407.json` | Dari `template-surat/` v2407.0.0, dinamai ulang ke `sistem-surat-…` (dicocokkan lewat nama, lalu kode surat bila unik — `S-41` dipakai dua surat di 2407). Domisili Usaha Non-Warga (S-37) tidak punya padanan 2607 |
+| Pembersih kode isian | `app/Libraries/Surat/Rtf/BersihkanKodeIsian.php` | Pengganti `bersihkan_kode_isian()` 2407: kata kendali dibuang utuh, kurung grup diseimbangkan, `[` yang bukan kode tidak menelan teks |
+| Alat | `bin/satima/audit-kode-rtf.php`, `bin/satima/uji-bersihkan-kode.php`, `storage/app/template/rtf/AUDIT-KODE.md` | Audit asal nilai setiap kode isian template (daftar kerja alias) dan uji pembersih. `bin/` sudah ditolak `.htaccess`; skrip juga menolak selain CLI |
+
+Diuji di sandbox (PHP 8.3 + MariaDB 10.11 + LibreOffice): instalasi baru (hanya 43 surat jenis 3, kolom & pengaturan
+ada), pembaruan situs 2607 yang sudah terpasang (43 baris hantu terhapus, migrasi aman diulang), cetak surat
+Keterangan Domisili TinyMCE sebelum/sesudah perubahan — teks PDF dan render per piksel identik; 43 template hasil
+pembersihan dibuka LibreOffice tanpa galat.
+
+Catatan untuk engine RTF: di TinyMCE huruf kode menentukan huruf hasil (`[nama]` → huruf kecil, `caseWord()`),
+sedangkan di RTF 2407 kode diganti persis (`[nama]` dicetak HURUF BESAR). Engine RTF tidak boleh memakai
+`case_replace()` untuk template lama.

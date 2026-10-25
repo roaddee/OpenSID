@@ -1,0 +1,260 @@
+{
+  "surat_bio_penduduk": {
+    "url_2607": "sistem-surat-biodata-penduduk",
+    "kode_surat": "S-03",
+    "nama": "Biodata Penduduk",
+    "cocok_lewat": "nama"
+  },
+  "surat_domisili_usaha_non_warga": {
+    "url_2607": null,
+    "kode_surat": "S-37",
+    "nama": "Domisili Usaha Non-Warga",
+    "cocok_lewat": null
+  },
+  "surat_izin_keramaian": {
+    "url_2607": "sistem-surat-pengantar-izin-keramaian",
+    "kode_surat": "S-12",
+    "nama": "Pengantar Izin Keramaian",
+    "cocok_lewat": "nama"
+  },
+  "surat_izin_orangtua_suami_istri": {
+    "url_2607": "sistem-surat-keterangan-izin-orang-tua-suami-istri",
+    "kode_surat": "S-39",
+    "nama": "Keterangan Izin Orang Tua/Suami/Istri",
+    "cocok_lewat": "kode"
+  },
+  "surat_jalan": {
+    "url_2607": "sistem-surat-keterangan-bepergian",
+    "kode_surat": "S-10",
+    "nama": "Keterangan Bepergian / Jalan",
+    "cocok_lewat": "kode"
+  },
+  "surat_ket_beda_identitas_kis": {
+    "url_2607": "sistem-surat-keterangan-beda-identitas-kis",
+    "kode_surat": "S-38",
+    "nama": "Keterangan Beda Identitas KIS",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_beda_nama": {
+    "url_2607": "sistem-surat-keterangan-beda-identitas",
+    "kode_surat": "S-09",
+    "nama": "Keterangan Beda Identitas",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_catatan_kriminal": {
+    "url_2607": "sistem-surat-pengantar-surat-keterangan-catatan-kepolisian",
+    "kode_surat": "S-07",
+    "nama": "Pengantar Surat Keterangan Catatan Kepolisian",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_domisili": {
+    "url_2607": "sistem-surat-keterangan-domisili",
+    "kode_surat": "S-41",
+    "nama": "Keterangan Domisili",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_domisili_usaha": {
+    "url_2607": "sistem-surat-keterangan-domisili-usaha",
+    "kode_surat": "S-16",
+    "nama": "Keterangan Domisili Usaha",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_jamkesos": {
+    "url_2607": "sistem-surat-keterangan-jamkesos",
+    "kode_surat": "S-15",
+    "nama": "Keterangan JAMKESOS",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_jual_beli": {
+    "url_2607": "sistem-surat-keterangan-jual-beli",
+    "kode_surat": "S-05",
+    "nama": "Keterangan Jual Beli",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_kehilangan": {
+    "url_2607": "sistem-surat-pengantar-laporan-kehilangan",
+    "kode_surat": "S-13",
+    "nama": "Pengantar Laporan Kehilangan",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_kelahiran": {
+    "url_2607": "sistem-surat-keterangan-kelahiran",
+    "kode_surat": "S-17",
+    "nama": "Keterangan Kelahiran",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_kematian": {
+    "url_2607": "sistem-surat-keterangan-kematian",
+    "kode_surat": "S-21",
+    "nama": "Keterangan Kematian",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_kepemilikan_kendaraan": {
+    "url_2607": "sistem-surat-keterangan-kepemilikan-kendaraan",
+    "kode_surat": "S-48",
+    "nama": "Keterangan Kepemilikan Kendaraan",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_kepemilikan_tanah": {
+    "url_2607": "sistem-surat-keterangan-kepemilikan-tanah",
+    "kode_surat": "S-49",
+    "nama": "Keterangan Kepemilikan Tanah",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_ktp_dalam_proses": {
+    "url_2607": "sistem-surat-keterangan-ktp-dalam-proses",
+    "kode_surat": "S-08",
+    "nama": "Keterangan KTP dalam Proses",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_kurang_mampu": {
+    "url_2607": "sistem-surat-keterangan-kurang-mampu",
+    "kode_surat": "S-11",
+    "nama": "Keterangan Kurang Mampu",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_lahir_mati": {
+    "url_2607": "sistem-surat-keterangan-lahir-mati",
+    "kode_surat": "S-22",
+    "nama": "Keterangan Lahir Mati",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_nikah": {
+    "url_2607": "sistem-surat-keterangan-nikah",
+    "kode_surat": "S-23",
+    "nama": "Keterangan Untuk Nikah (N-1 s/d N-7)",
+    "cocok_lewat": "kode"
+  },
+  "surat_ket_nikah_non_muslim": {
+    "url_2607": "sistem-surat-keterangan-untuk-nikah-warga-non-muslim",
+    "kode_surat": "S-50",
+    "nama": "Keterangan Untuk Nikah Warga Non Muslim",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_penduduk": {
+    "url_2607": "sistem-surat-keterangan-penduduk",
+    "kode_surat": "S-02",
+    "nama": "Keterangan Penduduk",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_pengantar": {
+    "url_2607": "sistem-surat-keterangan-pengantar",
+    "kode_surat": "S-01",
+    "nama": "Keterangan Pengantar",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_penghasilan_ayah": {
+    "url_2607": "sistem-surat-keterangan-penghasilan-ayah",
+    "kode_surat": "S-44",
+    "nama": "Keterangan Penghasilan Ayah",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_penghasilan_ibu": {
+    "url_2607": "sistem-surat-keterangan-penghasilan-ibu",
+    "kode_surat": "S-45",
+    "nama": "Keterangan Penghasilan Ibu",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_penghasilan_orangtua": {
+    "url_2607": "sistem-surat-keterangan-penghasilan-orang-tua",
+    "kode_surat": "S-42",
+    "nama": "Keterangan Penghasilan Orangtua",
+    "cocok_lewat": "kode"
+  },
+  "surat_ket_pergi_kawin": {
+    "url_2607": "sistem-surat-keterangan-pergi-kawin",
+    "kode_surat": "S-30",
+    "nama": "Keterangan Pergi Kawin",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_pindah_penduduk": {
+    "url_2607": "sistem-surat-keterangan-pindah-penduduk",
+    "kode_surat": "S-04",
+    "nama": "Keterangan Pindah Penduduk",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_rujuk_cerai": {
+    "url_2607": "sistem-surat-keterangan-pengantar-rujuk-atau-cerai",
+    "kode_surat": "S-35",
+    "nama": "Keterangan Pengantar Rujuk/Cerai",
+    "cocok_lewat": "kode"
+  },
+  "surat_ket_usaha": {
+    "url_2607": "sistem-surat-keterangan-usaha",
+    "kode_surat": "S-14",
+    "nama": "Keterangan Usaha",
+    "cocok_lewat": "nama"
+  },
+  "surat_ket_wali_hakim": {
+    "url_2607": "sistem-surat-keterangan-wali-hakim",
+    "kode_surat": "S-32",
+    "nama": "Keterangan Wali Hakim",
+    "cocok_lewat": "nama"
+  },
+  "surat_kuasa": {
+    "url_2607": "sistem-surat-kuasa",
+    "kode_surat": "S-47",
+    "nama": "Kuasa",
+    "cocok_lewat": "nama"
+  },
+  "surat_perintah_perjalanan_dinas": {
+    "url_2607": "sistem-surat-perintah-perjalanan-dinas",
+    "kode_surat": "S-46",
+    "nama": "Perintah Perjalanan Dinas",
+    "cocok_lewat": "nama"
+  },
+  "surat_permohonan_akta": {
+    "url_2607": "sistem-surat-permohonan-akta-lahir",
+    "kode_surat": "S-18",
+    "nama": "Permohonan Akta Lahir",
+    "cocok_lewat": "nama"
+  },
+  "surat_permohonan_cerai": {
+    "url_2607": "sistem-surat-permohonan-cerai",
+    "kode_surat": "S-34",
+    "nama": "Permohonan Cerai",
+    "cocok_lewat": "nama"
+  },
+  "surat_permohonan_duplikat_kelahiran": {
+    "url_2607": "sistem-surat-permohonan-duplikat-kelahiran",
+    "kode_surat": "S-20",
+    "nama": "Permohonan Duplikat Kelahiran",
+    "cocok_lewat": "nama"
+  },
+  "surat_permohonan_duplikat_surat_nikah": {
+    "url_2607": "sistem-surat-permohonan-duplikat-surat-nikah",
+    "kode_surat": "S-33",
+    "nama": "Permohonan Duplikat Surat Nikah",
+    "cocok_lewat": "nama"
+  },
+  "surat_permohonan_kartu_keluarga": {
+    "url_2607": "sistem-surat-permohonan-kartu-keluarga",
+    "kode_surat": "S-36",
+    "nama": "Permohonan Kartu Keluarga",
+    "cocok_lewat": "nama"
+  },
+  "surat_permohonan_penerbitan_buku_pas_lintas": {
+    "url_2607": "sistem-surat-pengantar-permohonan-penerbitan-buku-pas-lintas",
+    "kode_surat": "S-43",
+    "nama": "Pengantar Permohonan Penerbitan Buku Pas Lintas",
+    "cocok_lewat": "nama"
+  },
+  "surat_permohonan_perubahan_kartu_keluarga": {
+    "url_2607": "sistem-surat-permohonan-perubahan-kartu-keluarga",
+    "kode_surat": "S-41",
+    "nama": "Permohonan Perubahan Kartu Keluarga",
+    "cocok_lewat": "nama"
+  },
+  "surat_pernyataan_akta": {
+    "url_2607": "sistem-surat-pernyataan-belum-memiliki-akta-lahir",
+    "kode_surat": "S-19",
+    "nama": "Pernyataan Belum Memiliki Akta Lahir",
+    "cocok_lewat": "nama"
+  },
+  "surat_sporadik": {
+    "url_2607": "sistem-surat-pernyataan-penguasaan-fisik-bidang-tanah-sporadik",
+    "kode_surat": "S-40",
+    "nama": "Pernyataan Penguasaan Fisik Bidang Tanah (SPORADIK)",
+    "cocok_lewat": "kode"
+  }
+}

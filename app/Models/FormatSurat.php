@@ -65,6 +65,16 @@ class FormatSurat extends BaseModel
     public const DEFAULT_ORIENTATAIONS = 'Potrait';
     public const DEFAULT_SIZES         = 'F4';
 
+    // Satima: engine render surat, dipilih per surat TinyMCE (kolom `engine`)
+    public const ENGINE_TINYMCE = 'tinymce';
+    public const ENGINE_RTF     = 'rtf';
+    public const ENGINE_DOCX    = 'docx';
+    public const ENGINE         = [
+        self::ENGINE_TINYMCE => 'TinyMCE (editor di browser)',
+        self::ENGINE_RTF     => 'RTF (template Word/LibreOffice)',
+        self::ENGINE_DOCX    => 'DOCX (template Word)',
+    ];
+
     /**
      * Static data masa berlaku surat.
      *
@@ -162,6 +172,7 @@ class FormatSurat extends BaseModel
         'kunci',
         'favorit',
         'jenis',
+        'engine',
         'mandiri',
         'masa_berlaku',
         'satuan_masa_berlaku',
@@ -466,6 +477,15 @@ class FormatSurat extends BaseModel
     public function isBawaan(): bool
     {
         return $this->jenis == self::TINYMCE_SISTEM;
+    }
+
+    /**
+     * Satima: surat dirender dari template berkas (RTF/DOCX), bukan dari editor TinyMCE.
+     * Kolom `engine` baru ada setelah Migrasi_2026102581; sebelum itu selalu TinyMCE.
+     */
+    public function pakaiEngineBerkas(): bool
+    {
+        return in_array($this->engine ?? self::ENGINE_TINYMCE, [self::ENGINE_RTF, self::ENGINE_DOCX], true);
     }
 
     protected function scopeSistem(Builder $query)

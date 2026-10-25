@@ -94,7 +94,9 @@ define('VERSION', '2607.0.1');
  *
  * Varsi database jika premium = 2025061501, jika umum = 2024101651 (6 bulan setelah rilis premium, namun rilis beta)
  */
-define('VERSI_DATABASE', '2026070151');
+// Satima: dinaikkan ke migrasi Satima terakhir (akhiran 81) agar Migrasi_2026102581 dijalankan
+// di situs yang sudah terpasang. Versi resmi 2607: '2026070151'.
+define('VERSI_DATABASE', '2026102581');
 
 // Kode laporan statistik
 define('JUMLAH', 666);
