@@ -1,6 +1,5 @@
-<div class="fixed bottom-0 mb-5 right-0 mr-5" x-data="{ backTop: false }" @scroll.window="backTop = window.scrollY > document.querySelector('header').getBoundingClientRect().top + 800">
-    <a href="#" class="flex items-center justify-center h-10 w-10 rounded-full btn btn-accent p-0 transition duration:300 shadow-lg" :class="{ 'opacity-100': backTop, 'opacity-0': !backTop }" aria-label="tombol kembali ke atas">
-        <i class="fa fa-chevron-up" aria-label="ikon kembali ke atas">
-        </i>
+<div class="es-totop" x-data="{ show: false }" @scroll.window="show = window.scrollY > 900">
+    <a href="#" class="es-icon-btn es-icon-btn-solid" :class="{ 'is-visible': show }" aria-label="Kembali ke atas" @click.prevent="window.scrollTo({ top: 0, behavior: 'smooth' })">
+        <i class="fas fa-arrow-up"></i>
     </a>
 </div>

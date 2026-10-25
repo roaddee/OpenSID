@@ -1,8 +1,9 @@
-<div class="container">
+<div class="es-wrap es-apbdes">
     @includeWhen($transparansi, 'theme::partials.apbdesa', $transparansi)
 </div>
 
 @php
+    $nama_desa = ucwords(setting('sebutan_desa')) . ' ' . ucwords($desa['nama_desa']);
     $social_media = [
         'facebook' => [
             'color' => 'bg-blue-600',
@@ -41,37 +42,78 @@
 
 @include('theme::commons.back_to_top')
 
-<footer class="container mx-auto lg:px-5 px-3 pt-5 footer">
-    <div class="bg-zinc-700 text-white py-5 px-5 rounded-t-xl text-sm flex flex-col gap-3 lg:flex-row justify-between items-center text-center lg:text-left">
-        <span class="space-y-2">
-            <p>Hak cipta situs &copy; {{ date('Y') }} - {{ $nama_desa }}</p>
+<footer class="es-footer">
+    <div class="es-footer-terrace" aria-hidden="true"></div>
+    <div class="es-wrap es-footer-grid">
+        <div class="es-footer-id">
+            <img src="{{ gambar_desa($desa['logo']) }}" alt="Logo {{ $nama_desa }}" class="es-footer-logo">
+            <div>
+                <p class="es-footer-name">{{ $nama_desa }}</p>
+                <p>{{ ucfirst(setting('sebutan_kecamatan')) }} {{ ucwords($desa['nama_kecamatan']) }}, {{ ucfirst(setting('sebutan_kabupaten')) }} {{ ucwords($desa['nama_kabupaten']) }}</p>
+                <p>{{ ucwords($desa['nama_propinsi']) }}</p>
+            </div>
+        </div>
+
+        <div>
+            <p class="es-footer-head">Kantor {{ ucwords(setting('sebutan_desa')) }}</p>
+            <ul class="es-footer-list">
+                @if ($desa['alamat_kantor'])
+                    <li><i class="fas fa-map-marker-alt"></i><span>{{ $desa['alamat_kantor'] }}@if ($desa['kode_pos']), {{ $desa['kode_pos'] }}@endif</span></li>
+                @endif
+                @if ($desa['telepon'])
+                    <li><i class="fas fa-phone-alt"></i><a href="tel:{{ preg_replace('/[^0-9+]/', '', $desa['telepon']) }}">{{ $desa['telepon'] }}</a></li>
+                @endif
+                @if ($desa['email_desa'])
+                    <li><i class="fas fa-envelope"></i><a href="mailto:{{ $desa['email_desa'] }}">{{ $desa['email_desa'] }}</a></li>
+                @endif
+            </ul>
+        </div>
+
+        <div>
+            <p class="es-footer-head">Jelajahi</p>
+            <ul class="es-footer-links">
+                <li><a href="{{ site_url('arsip') }}">Semua berita</a></li>
+                <li><a href="{{ site_url('data-statistik') }}">Data statistik</a></li>
+                <li><a href="{{ site_url('informasi-publik') }}">Informasi publik</a></li>
+                <li><a href="{{ site_url('pengaduan') }}">Pengaduan warga</a></li>
+                <li><a href="{{ site_url('peta') }}">Peta wilayah</a></li>
+                <li><a href="{{ site_url('galeri') }}">Galeri</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <p class="es-footer-head">Ikuti kami</p>
+            @php $ada_sosmed = collect($social_media)->contains(fn ($sm) => !empty($sm['link'])) @endphp
+            @if ($ada_sosmed)
+                <ul class="es-footer-social">
+                    @foreach ($social_media as $nama_sm => $sm)
+                        @if ($link = $sm['link'] ?? null)
+                            <li><a href="{{ $link }}" target="_blank" rel="noopener" aria-label="{{ ucfirst($nama_sm) }}"><i class="fab {{ $sm['icon'] }}"></i></a></li>
+                        @endif
+                    @endforeach
+                </ul>
+            @else
+                <p class="es-footer-muted">Belum ada media sosial yang ditautkan.</p>
+            @endif
+            @if (setting('tte'))
+                <img src="{{ asset('assets/images/bsre.png?v', false) }}" alt="Didukung BSrE" class="es-footer-bsre" />
+            @endif
+        </div>
+    </div>
+
+    <div class="es-footer-bottom">
+        <div class="es-wrap es-footer-bottom-inner">
+            <p>&copy; {{ date('Y') }} {{ $nama_desa }}. Hak cipta dilindungi.</p>
             <p>
-                <a href="https://www.trivusi.web.id" class="underline decoration-pink-500 underline-offset-1 decoration-2" target="_blank" rel="noopener">Esensi {{ $themeVersion }}</a> -
-                <a href="https://opensid.my.id" class="underline decoration-green-500 underline-offset-1 decoration-2" target="_blank" rel="noopener">OpenSID {{ ambilVersi() }}</a> -
+                Tema <a href="https://github.com/OpenSID/tema-esensi" target="_blank" rel="noopener">Esensi</a> {{ $themeVersion }},
+                <a href="https://opensid.my.id" target="_blank" rel="noopener">OpenSID</a> v{{ ambilVersi() }}-perjuangan
                 @if (file_exists('mitra'))
-                    Hosting didukung
+                    , hosting didukung
                     <a href="https://my.idcloudhost.com/aff.php?aff=3172" rel="noopener noreferrer" target="_blank">
-                        <img src="{{ base_url('/assets/images/Logo-IDcloudhost.png') }}" class="h-4 inline-block" alt="Logo-IDCloudHost" title="Logo-IDCloudHost">
+                        <img src="{{ base_url('/assets/images/Logo-IDcloudhost.png') }}" class="es-footer-mitra" alt="IDCloudHost">
                     </a>
                 @endif
             </p>
-        </span>
-        @if (setting('tte'))
-            <div class="space-x-1">
-                <img src="{{ asset('assets/images/bsre.png?v', false) }}" alt="Bsre" class="img-responsive" style="width: 185px;" />
-            </div>
-        @endif
-
-        <ul class="space-x-1">
-            @foreach ($social_media as $sm)
-                @if ($link = $sm['link'])
-                    <li class="inline-block">
-                        <a href="{{ $link }}" class="inline-flex items-center justify-center {{ $sm['color'] }} h-8 w-8 rounded-full">
-                            <i class="fab fa-lg {{ $sm['icon'] }}"></i>
-                        </a>
-                    </li>
-                @endif
-            @endforeach
-        </ul>
+        </div>
     </div>
 </footer>

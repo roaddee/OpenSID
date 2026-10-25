@@ -1,22 +1,26 @@
 @php
     $url = $post->url_slug;
-    $abstract = potong_teks(strip_tags($post['isi']), 300);
-    $image = $post['gambar'] ? AmbilFotoArtikel($post['gambar'], 'sedang') : gambar_desa($desa['logo']);
+    $abstract = potong_teks(html_entity_decode(strip_tags($post['isi'])), 160);
+    $ada_gambar = $post['gambar'] && is_file(LOKASI_FOTO_ARTIKEL . 'sedang_' . $post['gambar']);
+    $image = $ada_gambar ? AmbilFotoArtikel($post['gambar'], 'sedang') : gambar_desa($desa['logo']);
+    $kategori = $post['kategori'] ? $post['category']['kategori'] ?? null : null;
 @endphp
 
-<div class="max-w-full w-full bg-white shadow rounded-lg p-3 lg:p-5 border overflow-auto mt-5">
-    <figure class="h-auto lg:h-32 w-1/3 float-left pr-3 pb-3">
-        <img src="{{ $image }}" alt="{{ $post['judul'] }}" class="lg:h-32 object-cover object-center max-w-full mx-auto h-auto">
-    </figure>
-    <div class="space-y-3">
-        <a href="{{ $url }}" class="text-h5 hover:text-primary-100">{{ potong_teks($post['judul'], 80) }}{{ strlen($post['judul']) > 80 ? '...' : '' }}</a>
-        <p style="word-break: break-all;" class="line-clamp-4">{!! potong_teks(html_entity_decode($abstract), 100) !!}{{ strlen($abstract) > 100 ? '...' : '' }}</p>
-        <ul class="inline-flex gap-x-5 gap-y-3 text-xs lg:text-sm text-gray-500 flex-wrap">
-            <li><i class="fas fa-calendar-alt mr-1 text-primary-100"></i> {{ tgl_indo($post['tgl_upload']) }}</li>
-            <li><i class="fas fa-user mr-1 text-primary-100"></i> {{ $post['owner'] }}</li>
-            @if ($post['kategori'])
-                <li><i class="fas fa-bookmark mr-1 text-primary-100"></i> {{ $post['category']['kategori'] }}</li>
+<article class="es-post">
+    <a href="{{ $url }}" class="es-post-media {{ $ada_gambar ? '' : 'is-logo' }}" tabindex="-1" aria-hidden="true">
+        <img src="{{ $image }}" alt="" loading="lazy">
+    </a>
+    <div class="es-post-body">
+        @if ($kategori)
+            <span class="es-post-cat">{{ $kategori }}</span>
+        @endif
+        <h3 class="es-post-title"><a href="{{ $url }}">{{ $post['judul'] }}</a></h3>
+        <p class="es-post-excerpt">{{ $abstract }}</p>
+        <p class="es-post-meta">
+            <span><i class="far fa-calendar"></i> {{ tgl_indo($post['tgl_upload']) }}</span>
+            @if ($post['owner'])
+                <span><i class="far fa-user"></i> {{ $post['owner'] }}</span>
             @endif
-        </ul>
+        </p>
     </div>
-</div>
+</article>

@@ -15,7 +15,7 @@
 <meta name='designer' content='Diki Siswanto' />
 <meta name='theme:designer' content='Diki Siswanto' />
 <meta name='theme:version' content='{{ $themeVersion }}' />
-<meta name="theme-color" content="#efefef">
+<meta name="theme-color" content="#0b3a26">
 <meta name='keywords'
     content="{{ $desa_title }} @if (!strpos($desa_title, $nama_desa)) {{ $nama_desa }} @endif {{ ucfirst(setting('sebutan_kecamatan')) }} {{ ucwords($desa['nama_kecamatan']) }}, {{ ucfirst(setting('sebutan_kabupaten')) }} {{ ucwords($desa['nama_kabupaten']) }}, Provinsi  {{ ucwords($desa['nama_propinsi']) }}"
 />

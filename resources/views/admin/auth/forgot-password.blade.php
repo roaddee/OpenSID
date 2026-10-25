@@ -1,5 +1,8 @@
 @extends('admin.auth.index')
 
+@section('judul', 'Lupa kata sandi')
+@section('keterangan', 'Masukkan email akun Anda. Tautan untuk mengatur ulang kata sandi akan dikirim ke email atau Telegram.')
+
 @section('content')
     @if (empty(setting('email_notifikasi')) && empty(setting('telegram_notifikasi')))
         <br>
@@ -11,31 +14,39 @@
             </p>
         </div>
     @else
-        <form id="validasi" class="login-form mt-4" action="<?= site_url('siteman/kirim_lupa_sandi') ?>" method="post">
-            <div class="form-group">
-                <input name="email" type="text" placeholder="Email Pengguna" class="form-control required">
+        <form id="validasi" class="login-form sl-form" action="<?= site_url('siteman/kirim_lupa_sandi') ?>" method="post">
+            <div class="form-group sl-field">
+                <label for="email" class="sl-label">Email pengguna</label>
+                <div class="sl-input">
+                    @include('admin.layouts.components.ikon', ['n' => 'mail', 'k' => 'sl-input-ikon'])
+                    <input id="email" name="email" type="email" autocomplete="email" placeholder="nama@contoh.id" class="form-control required">
+                </div>
+            </div>
+            <div class="form-group sl-field">
+                <label for="captcha_code" class="sl-label">Kode keamanan</label>
+                <div class="sl-captcha">
+                    <span class="sl-captcha-img"><img id="captcha" src="<?= site_url('captcha') ?>" alt="Kode keamanan" width="150" height="44" /></span>
+                    <button type="button" id="b-captcha" class="sl-captcha-btn" title="Ganti gambar kode" aria-label="Ganti gambar kode" onclick="document.getElementById('captcha').src = '<?= site_url('captcha') ?>?' + Math.random();">@include('admin.layouts.components.ikon', ['n' => 'refresh'])</button>
+                    <div class="sl-input captcha">
+                        <input
+                            id="captcha_code"
+                            name="captcha_code"
+                            type="text"
+                            class="form-control"
+                            maxlength="6"
+                            placeholder="Ketik kode"
+                            autocomplete="off"
+                            required
+                        />
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
-                <a href="#" id="b-captcha" onclick="document.getElementById('captcha').src = '<?= site_url('captcha') ?>?' + Math.random();" style="color: #000;">
-                    <img id="captcha" src="<?= site_url('captcha') ?>" alt="CAPTCHA Image" />
-                </a>
+                <button type="submit" class="btn sl-btn sl-btn-primary">Kirim tautan</button>
             </div>
-
-            <div class="form-group captcha">
-                <input
-                    name="captcha_code"
-                    type="text"
-                    class="form-control"
-                    maxlength="6"
-                    placeholder="Masukkan kode di atas"
-                    autocomplete="off"
-                    required
-                />
-            </div>
-
             <div class="form-group">
-                <button type="submit" class="btn btn-primary w-100">Kirim Lupa Sandi</button>
+                <a href="<?= site_url('siteman') ?>" class="btn sl-btn sl-btn-ghost">@include('admin.layouts.components.ikon', ['n' => 'back']) Kembali ke halaman masuk</a>
             </div>
         </form>
     @endif

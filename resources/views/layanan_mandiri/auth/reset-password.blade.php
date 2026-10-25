@@ -1,5 +1,9 @@
 @extends('layanan_mandiri.auth.index')
 
+@section('judul', 'Buat PIN baru')
+@section('keterangan', '')
+@section('tanpa_catatan', '1')
+
 @section('content')
     <form id="validasi" class="login-form" action="<?= site_url('layanan-mandiri/reset-password') ?>" method="post">
         <div class="form-group">
@@ -35,7 +39,7 @@
             >
         </div>
         <div class="form-group">
-            <button type="submit" class="btn">Reset Sandi</button>
+            <button type="submit" class="btn sl-btn sl-btn-primary">Simpan PIN baru</button>
         </div>
     </form>
 @endsection

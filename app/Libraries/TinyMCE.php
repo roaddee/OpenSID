@@ -72,6 +72,8 @@ defined('BASEPATH') || exit('No direct script access allowed');
 define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
 define('K_PATH_FONTS', LOKASI_FONT_DESA);
 
+use App\Libraries\Surat\LampiranPath as SuratLampiranPath;
+
 class TinyMCE
 {
     public const HEADER = '
@@ -653,7 +655,8 @@ class TinyMCE
     {
         $lampiran               = [];
         $daftar_lampiran_sistem = glob(DEFAULT_LOKASI_LAMPIRAN_SURAT . '*', GLOB_ONLYDIR);
-        $daftar_lampiran_desa   = glob(LOKASI_LAMPIRAN_SURAT_DESA . '*', GLOB_ONLYDIR);
+        // Satima: lampiran desa hanya didaftarkan bila memang dimuat (lihat berkasLampiran())
+        $daftar_lampiran_desa   = config_item('satima_lampiran_desa_php') === true ? glob(LOKASI_LAMPIRAN_SURAT_DESA . '*', GLOB_ONLYDIR) : [];
         $daftar_lampiran        = array_merge($daftar_lampiran_desa, $daftar_lampiran_sistem);
 
         foreach ($daftar_lampiran as $value) {
@@ -665,11 +668,51 @@ class TinyMCE
         return collect($lampiran)->unique()->sort()->values();
     }
 
+    /**
+     * Satima: lokasi data.php & view.php untuk satu lampiran, atau null bila nama tidak sah.
+     *
+     * - Nama harus nama folder polos (huruf, angka, titik, garis) dan folder itu harus ada di
+     *   lampiran sistem (storage/app/template/lampiran/) atau lampiran desa; hasil realpath wajib
+     *   tetap di dalam folder asalnya.
+     * - Lampiran desa (desa/template-surat/lampiran/) berisi PHP yang di-include, sedangkan folder
+     *   desa adalah folder data. Secara bawaan tidak dimuat; aktifkan per situs dengan
+     *   $config['satima_lampiran_desa_php'] = true; di desa/config/config.php (hanya pengelola
+     *   server yang bisa mengubahnya, bukan akun admin).
+     *
+     * @return array{0: string|null, 1: string}|null [data.php atau null, view.php]
+     */
+    public static function berkasLampiran(string $nama): ?array
+    {
+        $nama = strtolower(trim($nama));
+
+        if (! SuratLampiranPath::namaSah($nama)) {
+            log_message('error', 'Lampiran surat ditolak, nama tidak sah: ' . json_encode($nama));
+
+            return null;
+        }
+
+        $baseDirs = [];
+        if (config_item('satima_lampiran_desa_php') === true) {
+            $baseDirs[] = FCPATH . LOKASI_LAMPIRAN_SURAT_DESA;
+        } elseif (is_file(FCPATH . LOKASI_LAMPIRAN_SURAT_DESA . $nama . '/view.php')) {
+            log_message('notice', "Lampiran desa {$nama} dilewati; pakai lampiran sistem. Aktifkan dengan \$config['satima_lampiran_desa_php'] = true; di desa/config/config.php");
+        }
+        $baseDirs[] = FCPATH . DEFAULT_LOKASI_LAMPIRAN_SURAT;
+
+        $hasil = SuratLampiranPath::resolve($nama, $baseDirs);
+
+        if ($hasil === null) {
+            log_message('error', "Lampiran surat {$nama} tidak ditemukan");
+        }
+
+        return $hasil;
+    }
+
     public function getDaftarLampiranSuratDinas()
     {
         $lampiran               = [];
         $daftar_lampiran_sistem = glob(DEFAULT_LOKASI_LAMPIRAN_SURAT_DINAS . '*', GLOB_ONLYDIR);
-        $daftar_lampiran_desa   = glob(LOKASI_LAMPIRAN_SURAT_DINAS_DESA . '*', GLOB_ONLYDIR);
+        $daftar_lampiran_desa   = config_item('satima_lampiran_desa_php') === true ? glob(LOKASI_LAMPIRAN_SURAT_DINAS_DESA . '*', GLOB_ONLYDIR) : [];
         $daftar_lampiran        = array_merge($daftar_lampiran_desa, $daftar_lampiran_sistem);
 
         foreach ($daftar_lampiran as $value) {
@@ -749,28 +792,23 @@ class TinyMCE
         $processed_lampiran = [];
 
         foreach ($lampiran_list as $lampiran_name) {
-            $lampiran_name = strtolower($lampiran_name);
-            $view_path     = FCPATH . LOKASI_LAMPIRAN_SURAT_DESA . $lampiran_name . '/view.php';
-            $data_path     = FCPATH . LOKASI_LAMPIRAN_SURAT_DESA . $lampiran_name . '/data.php';
-
-            // Fallback to default paths if specific desa paths do not exist
-            if (! file_exists($view_path)) {
-                $view_path = FCPATH . DEFAULT_LOKASI_LAMPIRAN_SURAT . $lampiran_name . '/view.php';
+            // Satima: nama lampiran berasal dari isian form, jadi hanya nama folder lampiran yang
+            // dikenal yang boleh dimuat (cegah path traversal ke include)
+            $berkas_lampiran = self::berkasLampiran((string) $lampiran_name);
+            if ($berkas_lampiran === null) {
+                continue;
             }
 
-            if (! file_exists($data_path)) {
-                $data_path = FCPATH . DEFAULT_LOKASI_LAMPIRAN_SURAT . $lampiran_name . '/data.php';
-            }
+            $lampiran_name = strtolower(trim((string) $lampiran_name));
+            [$data_path, $view_path] = $berkas_lampiran;
 
-            if (file_exists($data_path)) {
+            if ($data_path !== null) {
                 include $data_path;
             }
 
             ob_start();
 
-            if (file_exists($view_path)) {
-                include $view_path;
-            }
+            include $view_path;
 
             $html = ob_get_clean();
 

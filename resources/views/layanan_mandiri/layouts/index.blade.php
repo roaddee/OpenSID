@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Layanan Mandiri {{ ucwords(setting('sebutan_desa') . ' ' . ($desa['nama_desa'] ?? '')) . get_dynamic_title_page_from_path() }}</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta name="theme-color" content="#0f4f33">
     <link rel="shortcut icon" href="{{ favico_desa() }}" />
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
@@ -42,6 +43,11 @@
 
     <!-- Style Mandiri Modification CSS -->
     <link rel="stylesheet" href="{{ asset('css/mandiri-style.css') }}">
+    <!-- Tampilan Layanan Mandiri edisi Satima -->
+    <link rel="preload" href="{{ base_url('assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ base_url('assets/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-800-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{{ asset('css/satima-font.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/satima-mandiri.css') }}">
 
     <!-- Jquery Confirm -->
     <link rel="stylesheet" href="{{ asset('front/css/jquery-confirm.min.css') }}">
@@ -56,192 +62,141 @@
     @stack('css')
 </head>
 
-<body class="hold-transition skin-blue fixed layout-top-nav">
-    <div class="wrapper">
-        <header class="main-header">
-            <nav class="navbar navbar-static-top">
-                <div class="container">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="{{ site_url() }}">
-                            <img src="{{ gambar_desa($desa['logo']) }}" class="logo-brand" alt="{{ $desa['nama_desa'] }}" />
-                        </a>
-                        <div class="navbar-brand">
-                            {{ ucwords(setting('sebutan_desa') . ' ' . $desa['nama_desa']) }}
-                        </div>
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
-                            <i class="fa fa-bars"></i>
-                        </button>
-                    </div>
+@php
+    $pengguna = $ci->is_login;
+    $kunci = $pengguna->ganti_pin === '1';
+    $halaman = $ci->uri->segment(2);
+    $sebutan_desa = ucwords(setting('sebutan_desa'));
+    $foto_pengguna = AmbilFoto($pengguna->foto, '', $pengguna->sex);
+    $tautan = fn (string $uri) => $kunci ? '#' : site_url('layanan-mandiri/' . $uri);
+    $aktif = fn (array $segmen) => in_array($halaman, $segmen, true) ? 'is-active' : '';
+    $menu_layanan = [
+        ['beranda', 'Beranda', 'fa-home', ['beranda']],
+        ['permohonan-surat', 'Surat', 'fa-file-text-o', ['permohonan-surat', 'arsip-surat', 'surat']],
+        ['pesan-masuk', 'Pesan', 'fa-envelope-o', ['pesan-masuk', 'pesan-keluar', 'pesan']],
+        ['dokumen', 'Dokumen', 'fa-folder-open-o', ['dokumen']],
+        ['bantuan', 'Bantuan sosial', 'fa-handshake-o', ['bantuan']],
+        ['lapak', 'Lapak', 'fa-shopping-basket', ['lapak']],
+        ['produk', 'Produk saya', 'fa-cube', ['produk']],
+        ['kehadiran', 'Kehadiran perangkat', 'fa-users', ['kehadiran']],
+    ];
+    $menu_akun = [
+        ['profil', 'Profil saya', 'fa-user-o', ['profil'], false],
+        ['cetak-biodata', 'Cetak biodata', 'fa-print', [], true],
+        $pengguna->id_kk != null ? ['cetak-kk', 'Cetak salinan KK', 'fa-print', [], true] : null,
+        ['verifikasi', 'Verifikasi email & Telegram', 'fa-check-circle-o', ['verifikasi'], false],
+    ];
+@endphp
 
-                    <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
-                        <ul class="nav navbar-nav">
-                            <li><a href="{{ site_url('layanan-mandiri/profil') }}">Profil</a></li>
-                            <li><a href="{{ site_url('layanan-mandiri/permohonan-surat') }}">Surat</a></li>
-                            <li><a href="{{ site_url('layanan-mandiri/pesan-masuk') }}">Pesan</a></li>
-                            <li><a href="{{ site_url('layanan-mandiri/lapak') }}">Lapak</a></li>
-                            <li><a href="{{ site_url('layanan-mandiri/bantuan') }}">Bantuan</a></li>
-                            <li><a href="{{ site_url('layanan-mandiri/kehadiran') }}">Perangkat</a></li>
-                        </ul>
-                    </div>
-                    <div class="navbar-custom-menu">
-                        <ul class="nav navbar-nav">
-                            <li>
-                                <a href="{{ site_url('layanan-mandiri/permohonan-surat') }}" title="Permohonan Surat">
-                                    <i class="fa fa-file-word-o"></i>
-                                    <span class="label label-danger" id="b_surat" title="Surat perlu perhatian" style="display: none;"></span>
-                                </a>
-                            </li>
+<body class="sm-body hold-transition">
+    <a href="#sm-konten" class="sm-skip">Langsung ke isi</a>
 
-                            <li>
-                                <a href="{{ site_url('layanan-mandiri/pesan-masuk') }}" title="Pesan Masuk">
-                                    <i class="fa fa-envelope-o"></i>
-                                    <span class="label label-danger" id="b_pesan" style="display: none;"></span>
-                                </a>
-                            </li>
+    <header class="sm-topbar">
+        <div class="sm-wrap sm-topbar-inner">
+            <a class="sm-brand" href="{{ site_url() }}" title="Ke website {{ $sebutan_desa }}">
+                <img src="{{ gambar_desa($desa['logo']) }}" alt="" class="sm-brand-logo" />
+                <span class="sm-brand-text">
+                    <span class="sm-brand-name">Layanan Mandiri</span>
+                    <span class="sm-brand-sub">{{ $sebutan_desa }} {{ $desa['nama_desa'] }}</span>
+                </span>
+            </a>
 
-                            <li class="dropdown user user-menu">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <img class="user-image" src="{{ AmbilFoto($ci->is_login->foto, '', $ci->is_login->sex) }}" alt="Foto Penduduk">
-                                    <span class="hidden-xs">{{ $ci->is_login->nama }}</span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li class="user-header">
-                                        <img class="img-circle" src="{{ AmbilFoto($ci->is_login->foto, '', $ci->is_login->sex) }}" alt="Foto Penduduk">
-                                        <p>{{ $ci->is_login->nama }}
-                                            <small><b>NIK : {{ $ci->is_login->nik }}</b></small>
-                                    </li>
-                                    <li class="user-footer">
-                                        <div class="pull-left">
-                                            <a href="{{ site_url('layanan-mandiri/profil') }}" class="btn btn-default">Profil</a>
-                                        </div>
-                                        <div class="pull-right">
-                                            <button type="button" class="btn btn-block btn-social bg-red" data-toggle="modal" data-target="#pendapat"><i class="fa fa-sign-out"></i>Keluar</button>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
+            <nav class="sm-topbar-actions" aria-label="Pemberitahuan">
+                <a href="{{ $tautan('permohonan-surat') }}" class="sm-icon-btn" title="Permohonan surat" aria-label="Permohonan surat">
+                    <i class="fa fa-file-text-o"></i>
+                    <span class="sm-badge" id="b_surat" title="Surat perlu perhatian" style="display: none;"></span>
+                </a>
+                <a href="{{ $tautan('pesan-masuk') }}" class="sm-icon-btn" title="Pesan masuk" aria-label="Pesan masuk">
+                    <i class="fa fa-envelope-o"></i>
+                    <span class="sm-badge" id="b_pesan" style="display: none;"></span>
+                </a>
+                <div class="dropdown sm-user">
+                    <a href="#" class="dropdown-toggle sm-user-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="{{ $foto_pengguna }}" alt="" class="sm-avatar">
+                        <span class="sm-user-name">{{ $pengguna->nama }}</span>
+                        <i class="fa fa-angle-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right sm-dropdown">
+                        <li class="sm-dropdown-head">
+                            <strong>{{ $pengguna->nama }}</strong>
+                            <span>NIK {{ $pengguna->nik }}</span>
+                        </li>
+                        <li><a href="{{ $tautan('profil') }}"><i class="fa fa-user-o"></i> Profil saya</a></li>
+                        <li><a href="{{ site_url('layanan-mandiri/ganti-pin') }}"><i class="fa fa-key"></i> Ganti PIN</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#" data-toggle="modal" data-target="#pendapat" class="sm-danger"><i class="fa fa-sign-out"></i> Keluar</a></li>
+                    </ul>
                 </div>
             </nav>
-        </header>
-
-        <div class="content-wrapper" style="background: #ecf0f5;">
-            <div class="container">
-                <section class="content-header fixed">
-                    <div class="row hidden-xs">
-                        <a href="{{ site_url('layanan-mandiri/permohonan-surat') }}">
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                                <div class="info-box bg-green">
-                                    <span class="info-box-icon"><i class="fa fa-file-word-o"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text-widget">Surat</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="{{ site_url('layanan-mandiri/pesan-masuk') }}">
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                                <div class="info-box bg-yellow">
-                                    <span class="info-box-icon"><i class="fa fa-envelope-o"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text-widget">Pesan</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="{{ site_url('layanan-mandiri/lapak') }}">
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                                <div class="info-box bg-aqua">
-                                    <span class="info-box-icon"><i class="fa fa-cart-plus"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text-widget">Lapak</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="{{ site_url('layanan-mandiri/kehadiran') }}">
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                                <div class="info-box bg-red">
-                                    <span class="info-box-icon"><i class="fa fa-users"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text-widget">Perangkat</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </section>
-
-                <section class="content">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="box box-solid">
-                                <div class="box-body box-line">
-                                    <img class="img-circle" src="{{ AmbilFoto($ci->is_login->foto, '', $ci->is_login->sex) }}" alt="Foto" width="100%">
-                                </div>
-                                <div class="box-body">
-                                    @if (cek_anjungan())
-                                        @include('admin.layouts.components.tombol_kembali_layanan_mandiri', ['url' => $ci->is_login->ganti_pin === '1' ? '#' : site_url('layanan-mandiri'), 'label' => 'Anjungan'])
-                                    @endif
-                                    <a href="{{ $ci->is_login->ganti_pin === '1' ? '#' : site_url('layanan-mandiri/profil') }}" class="btn btn-block btn-social bg-blue">
-                                        <i class="fa fa-user-o"></i> Profil
-                                    </a>
-                                    <a href="{{ $ci->is_login->ganti_pin === '1' ? '#' : site_url('layanan-mandiri/produk') }}" class="btn btn-block btn-social bg-blue">
-                                        <i class="fa fa-cart-plus"></i> Produk
-                                    </a>
-                                    <a href="{{ $ci->is_login->ganti_pin === '1' ? '#' : site_url('layanan-mandiri/cetak-biodata') }}" class="btn btn-block btn-social bg-green" target="_blank" rel="noopener noreferrer">
-                                        <i class="fa fa-print"></i> Cetak Biodata
-                                    </a>
-                                    @if ($ci->is_login->id_kk != null)
-                                        <a href="{{ $ci->is_login->ganti_pin === '1' ? '#' : site_url('layanan-mandiri/cetak-kk') }}" class="btn btn-block btn-social bg-green" target="_blank" rel="noopener noreferrer">
-                                            <i class="fa fa-print"></i> Cetak Salinan KK
-                                        </a>
-                                    @endif
-                                    <a href="{{ $ci->is_login->ganti_pin === '1' ? '#' : site_url('layanan-mandiri/dokumen') }}" class="btn btn-block btn-social bg-aqua">
-                                        <i class="fa fa-file"></i> Dokumen
-                                    </a>
-                                    <a href="{{ $ci->is_login->ganti_pin === '1' ? '#' : site_url('layanan-mandiri/bantuan') }}" class="btn btn-block btn-social bg-aqua">
-                                        <i class="fa fa-handshake-o"></i> Bantuan
-                                    </a>
-                                    <a href="{{ site_url('layanan-mandiri/ganti-pin') }}" class="btn btn-block btn-social bg-navy">
-                                        <i class="fa fa-key"></i> Ganti PIN
-                                    </a>
-                                    <a href="{{ $ci->is_login->ganti_pin === '1' ? '#' : site_url('layanan-mandiri/verifikasi') }}" class="btn btn-block btn-social bg-purple">
-                                        <i class="fa fa-key"></i> Verifikasi
-                                    </a>
-                                    <button type="button" class="btn btn-block btn-social bg-red" data-toggle="modal" data-target="#pendapat">
-                                        <i class="fa fa-sign-out"></i>Keluar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-9">
-                            @yield('content')
-
-                            @includeWhen($ci->is_login->ganti_pin === '1' && $ci->uri->segment(2) != 'ganti-pin', 'layanan_mandiri.layouts.components.notif', [
-                                'pesan' => 'Selamat datang pengguna layanan mandiri <b> ' . ucwords(setting('sebutan_desa') . ' ' . $desa['nama_desa']) . ' </b>, <br>Untuk keamanan akun anda, silakan ganti <b>PIN</b> Anda terlebih dahulu sebelum melanjutkan menggunakan layanan mandiri.',
-                                'aksi' => site_url('layanan-mandiri/ganti-pin'),
-                            ])
-
-                            @includeWhen($data['status'] == 1, 'layanan_mandiri.layouts.components.notif', $ci->session->flashdata('notif'))
-                        </div>
-                    </div>
-                </section>
-                @include('layanan_mandiri.layouts.components.pendapat')
-            </div>
         </div>
+    </header>
 
-        <footer class="main-footer">
-            <div class="container">
-                <div class="pull-right hidden-xs">
-                    <b>Versi</b> {{ AmbilVersi() }}
-                </div>
-                <strong>Aplikasi <a href="https://github.com/OpenSID/OpenSID" target="_blank"> {{ config_item('nama_aplikasi') }}</a>, dikembangkan oleh <a href="{{ config_item('fb_opendesa') }}" target="_blank">Komunitas {{ config_item('nama_aplikasi') }}</a>.</strong>
+    <div class="sm-wrap sm-layout">
+        <aside class="sm-sidebar" id="sm-menu" aria-label="Menu Layanan Mandiri">
+            <div class="sm-sidebar-head">
+                <span class="sm-sidebar-title">Menu</span>
+                <button type="button" class="sm-icon-btn sm-sidebar-close" data-sm-tutup aria-label="Tutup menu"><i class="fa fa-times"></i></button>
             </div>
-        </footer>
+            <div class="sm-me">
+                <img src="{{ $foto_pengguna }}" alt="Foto {{ $pengguna->nama }}" class="sm-me-photo">
+                <div class="sm-me-text">
+                    <strong>{{ $pengguna->nama }}</strong>
+                    <span>NIK {{ $pengguna->nik }}</span>
+                </div>
+            </div>
+
+            @if (cek_anjungan())
+                <div class="sm-nav-extra">
+                    @include('admin.layouts.components.tombol_kembali_layanan_mandiri', ['url' => $kunci ? '#' : site_url('layanan-mandiri'), 'label' => 'Anjungan'])
+                </div>
+            @endif
+
+            <p class="sm-nav-caption">Layanan</p>
+            <ul class="sm-nav">
+                @foreach ($menu_layanan as [$uri, $label, $ikon, $segmen])
+                    <li><a href="{{ $tautan($uri) }}" class="sm-nav-link {{ $aktif($segmen) }} {{ $kunci ? 'is-locked' : '' }}" @if ($aktif($segmen)) aria-current="page" @endif><i class="fa {{ $ikon }}"></i> {{ $label }}</a></li>
+                @endforeach
+            </ul>
+
+            <p class="sm-nav-caption">Akun</p>
+            <ul class="sm-nav">
+                @foreach (array_filter($menu_akun) as [$uri, $label, $ikon, $segmen, $tab_baru])
+                    <li><a href="{{ $tautan($uri) }}" class="sm-nav-link {{ $aktif($segmen) }} {{ $kunci ? 'is-locked' : '' }}" @if ($tab_baru) target="_blank" rel="noopener noreferrer" @endif><i class="fa {{ $ikon }}"></i> {{ $label }}</a></li>
+                @endforeach
+                <li><a href="{{ site_url('layanan-mandiri/ganti-pin') }}" class="sm-nav-link {{ $aktif(['ganti-pin']) }}"><i class="fa fa-key"></i> Ganti PIN</a></li>
+                <li><button type="button" class="sm-nav-link sm-danger" data-toggle="modal" data-target="#pendapat"><i class="fa fa-sign-out"></i> Keluar</button></li>
+            </ul>
+        </aside>
+        <div class="sm-sidebar-backdrop" data-sm-tutup></div>
+
+        <main class="sm-main" id="sm-konten">
+            @yield('content')
+
+            @includeWhen($kunci && $ci->uri->segment(2) != 'ganti-pin', 'layanan_mandiri.layouts.components.notif', [
+                'pesan' => 'Selamat datang pengguna layanan mandiri <b> ' . ucwords(setting('sebutan_desa') . ' ' . $desa['nama_desa']) . ' </b>, <br>Untuk keamanan akun anda, silakan ganti <b>PIN</b> Anda terlebih dahulu sebelum melanjutkan menggunakan layanan mandiri.',
+                'aksi' => site_url('layanan-mandiri/ganti-pin'),
+            ])
+
+            @includeWhen($data['status'] == 1, 'layanan_mandiri.layouts.components.notif', $ci->session->flashdata('notif'))
+        </main>
     </div>
+
+    @include('layanan_mandiri.layouts.components.pendapat')
+
+    <footer class="sm-footer">
+        <div class="sm-wrap sm-footer-inner">
+            <span>Layanan Mandiri {{ $sebutan_desa }} {{ $desa['nama_desa'] }}</span>
+            <span><a href="https://github.com/OpenSID/OpenSID" target="_blank" rel="noopener">{{ config_item('nama_aplikasi') }}</a> v{{ AmbilVersi() }}-perjuangan</span>
+        </div>
+    </footer>
+
+    <nav class="sm-tabbar" aria-label="Menu cepat">
+        <a href="{{ $tautan('beranda') }}" class="{{ $aktif(['beranda']) }}"><i class="fa fa-home"></i><span>Beranda</span></a>
+        <a href="{{ $tautan('permohonan-surat') }}" class="{{ $aktif(['permohonan-surat', 'arsip-surat', 'surat']) }}"><i class="fa fa-file-text-o"></i><span>Surat</span></a>
+        <a href="{{ $tautan('pesan-masuk') }}" class="{{ $aktif(['pesan-masuk', 'pesan-keluar', 'pesan']) }}"><i class="fa fa-envelope-o"></i><span>Pesan</span></a>
+        <a href="{{ $tautan('profil') }}" class="{{ $aktif(['profil']) }}"><i class="fa fa-user-o"></i><span>Profil</span></a>
+        <button type="button" data-sm-buka aria-controls="sm-menu"><i class="fa fa-bars"></i><span>Menu</span></button>
+    </nav>
     <!-- Diperlukan untuk global automatic base_url oleh external js file -->
     <script type="text/javascript">
         const BASE_URL = "{{ base_url() }}";
@@ -304,6 +259,11 @@
         });
 
         $('document').ready(function() {
+            // Laci menu di HP
+            $('[data-sm-buka]').on('click', function() { $('body').addClass('sm-menu-open'); });
+            $('[data-sm-tutup], #sm-menu [data-toggle="modal"]').on('click', function() { $('body').removeClass('sm-menu-open'); });
+            $(document).on('keydown', function(e) { if (e.key === 'Escape') $('body').removeClass('sm-menu-open'); });
+            $('.sm-nav-link.is-locked').on('click', function(e) { e.preventDefault(); });
 
             window.setTimeout(function() {
                 $("#notifikasi").fadeTo(500, 0).slideUp(500, function() {
