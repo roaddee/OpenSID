@@ -138,8 +138,10 @@ class Migrasi_2024070171
                 $table->timestamps();
             });
 
-            $data_sinergi_program = DB::table('widget')->where('config_id', identitas('id'))->where('isi', 'sinergi_program.php')->first()->setting;
-            $setting              = json_decode($data_sinergi_program, true);
+            // Satima: situs tanpa widget lama 'sinergi_program.php' membuat ->first() null →
+            // ->setting fatal dan tabel gagal terbentuk. Jaga null-nya.
+            $widgetSinergiLama    = DB::table('widget')->where('config_id', identitas('id'))->where('isi', 'sinergi_program.php')->first();
+            $setting              = json_decode((string) ($widgetSinergiLama->setting ?? ''), true) ?: [];
 
             if (count($setting) > 0) {
                 foreach ($setting as $key => $data) {
@@ -163,6 +165,8 @@ class Migrasi_2024070171
                 DB::table('widget')->where('config_id', identitas('id'))->where('isi', 'sinergi_program.php')->update(['form_admin' => 'sinergi_program', 'setting' => null]);
             }
 
+            // Satima: jaga null agar pembuatan tabel di atas tidak sia-sia bila modul admin-web belum ada
+            $adminWeb = DB::table('setting_modul')->where('config_id', identitas('id'))->where('slug', 'admin-web')->first();
             $this->createModul([
                 'modul'      => 'Sinergi Program',
                 'slug'       => 'sinergi-program',
@@ -173,7 +177,7 @@ class Migrasi_2024070171
                 'level'      => 1,
                 'hidden'     => 0,
                 'ikon_kecil' => 'fa-clone',
-                'parent'     => DB::table('setting_modul')->where('config_id', identitas('id'))->where('slug', 'admin-web')->first()->id,
+                'parent'     => $adminWeb->id ?? 0,
             ]);
         }
 
