@@ -12,7 +12,7 @@ ditambah perbaikan & pengerasan dari PT. Satima Putra Informa. Dipasang oleh Pan
 | Controller | `app/Http/Controllers/Controller.php` (kelas kosong + `abort()` → `show_404`) | AssetController/ServeFileController fatal → tema tanpa CSS/JS |
 | endpoint uji | hapus `PlaywrightController`, `Routes/Web/playwright.php`, `make_obfuscate.php`, `umum_obfuscate.php` | artisan/SQL bebas; skrip build bisa dipanggil tanpa login dan menulis ulang berkas inti (ikut ter-clone lewat git, tidak ada di zip rilis) |
 | decrypt | `decrypt()` hanya meng-unserialize skalar/array, `allowed_classes => false` | cegah PHP object injection bila APP_KEY bocor |
-| .htaccess | `htaccess.apache.txt`: tolak skrip di folder data/kode, PHP akar selain index.php, tests/, dotfile, kunci & arsip; `!= on` → `!=on` | berlaku juga di OpenLiteSpeed (RewriteRule, bukan FilesMatch); versi resmi membuat Apache 500 |
+| .htaccess | `htaccess.apache.txt`: tolak skrip di folder data/kode, PHP akar selain index.php, tests/, dotfile, kunci & arsip; `!= on` → `!=on` | berlaku juga di OpenLiteSpeed (RewriteRule, bukan FilesMatch); versi resmi membuat Apache 500; rute akhir `index.php?/$1` (bukan `index.php/$1`) supaya CSS/JS termuat di OLS |
 | tanpa obfuscate | 16 berkas (core_helper, Admin_Controller, Web/AdminModulController, controller Anjungan/BukuTamu/Pelanggan) dikembalikan ke kode asli | kode bisa dibaca, diperbaiki, dan dipindai; dekode statis, isi tidak diubah |
 | login mandiri | `filled('anjungan_uuid')` | field tersembunyi selalu terkirim → semua login warga ditolak "Anjungan tidak ditemukan" |
 | cookie | `assets/js/id_browser.js`: elemen `#pengunjung` opsional | tombol "Terima semua cookie" diam & modal menutupi form login |
