@@ -659,8 +659,9 @@ function periksa_file($upload, $mime_types, $exts): string
 
 function qrcode_generate(array $qrcode = [], $base64 = false): string
 {
-    $sizeqr = $qrcode['sizeqr'];
-    $foreqr = $qrcode['foreqr'];
+    $sizeqr = $qrcode['sizeqr'] ?? 6;
+    $foreqr = $qrcode['foreqr'] ?? '#000000';
+    $r      = $g = $b = 0;
 
     $barcodeobj = new TCPDF2DBarcode($qrcode['isiqr'], 'QRCODE,H');
 
@@ -674,40 +675,44 @@ function qrcode_generate(array $qrcode = [], $base64 = false): string
         $b     = hexdec($split[2]);
     }
 
-    //Hasilkan QRCode
+    // Hasilkan QRCode. Satima: nama berkas unik (dulu per detik → dua cetak bersamaan saling menimpa);
+    // "qrcode" & "_temp" tetap ada di nama karena dipakai KodeIsianGambar untuk mengenali QR lama.
     $imgData  = $barcodeobj->getBarcodePngData($sizeqr, $sizeqr, [$r, $g, $b]);
-    $filename = sys_get_temp_dir() . '/qrcode_' . date('Y_m_d_H_i_s') . '_temp.png';
+    $filename = sys_get_temp_dir() . '/qrcode_' . date('Y_m_d_H_i_s') . '_' . bin2hex(random_bytes(4)) . '_temp.png';
     file_put_contents($filename, $imgData);
 
-    //Ubah backround transparan ke warna putih supaya terbaca qrcode scanner
-    $src_qr    = imagecreatefrompng($filename);
-    $sizeqrx   = imagesx($src_qr);
-    $sizeqry   = imagesy($src_qr);
-    $backcol   = imagecreatetruecolor($sizeqrx, $sizeqry);
-    $newwidth  = $sizeqrx;
-    $newheight = ($sizeqry / $sizeqrx) * $newwidth;
-    $color     = imagecolorallocatealpha($backcol, 255, 255, 255, 1);
-    imagefill($backcol, 0, 0, $color);
-    imagecopyresampled($backcol, $src_qr, 0, 0, 0, 0, $newwidth, $newheight, $sizeqrx, $sizeqry);
-    imagepng($backcol, $filename);
+    // Ubah latar transparan ke putih supaya terbaca pemindai QR
+    $src_qr  = imagecreatefrompng($filename);
+    $sizeqrx = imagesx($src_qr);
+    $sizeqry = imagesy($src_qr);
+    $QR      = imagecreatetruecolor($sizeqrx, $sizeqry);
+    imagefill($QR, 0, 0, imagecolorallocate($QR, 255, 255, 255));
+    imagecopy($QR, $src_qr, 0, 0, 0, 0, $sizeqrx, $sizeqry);
     imagedestroy($src_qr);
-    imagedestroy($backcol);
 
-    //Tambah Logo
-    $logopath = $qrcode['logoqr']; // Logo yg tampil di tengah QRCode
-    $QR       = imagecreatefrompng($filename);
-    $logo     = imagecreatefromstring(file_get_contents($logopath));
-    imagecolortransparent($logo, imagecolorallocatealpha($logo, 0, 0, 0, 127));
-    imagealphablending($logo, false);
-    imagesavealpha($logo, true);
-    $QR_width       = imagesx($QR);
-    $logo_width     = imagesx($logo);
-    $logo_height    = imagesy($logo);
-    $logo_qr_width  = $QR_width / 4;
-    $scale          = $logo_width / $logo_qr_width;
-    $logo_qr_height = $logo_height / $scale;
-    $from_width     = ($QR_width - $logo_qr_width) / 2;
-    imagecopyresampled($QR, $logo, $from_width, $from_width, 0, 0, $logo_qr_width, $logo_qr_height, $logo_width, $logo_height);
+    // Gambar di tengah (logo desa / gambar sendiri / tanpa gambar). Satima: dipusatkan dengan menjaga
+    // rasio, maksimal 22% sisi QR, di atas kotak putih, agar QR tetap terbaca (koreksi galat tingkat H).
+    $logopath = $qrcode['logoqr'] ?? null;
+    $isiLogo  = ($logopath && is_file($logopath)) ? @file_get_contents($logopath) : false;
+    $logo     = $isiLogo ? @imagecreatefromstring($isiLogo) : false;
+
+    if ($logo !== false) {
+        $kotak = (int) round($sizeqrx * 0.22);
+        $lw    = imagesx($logo);
+        $lh    = imagesy($logo);
+        $skala = min($kotak / max(1, $lw), $kotak / max(1, $lh));
+        $dw    = max(1, (int) round($lw * $skala));
+        $dh    = max(1, (int) round($lh * $skala));
+        $pad   = max(2, (int) round($kotak * 0.08));
+        $bx    = (int) round(($sizeqrx - $dw) / 2);
+        $by    = (int) round(($sizeqry - $dh) / 2);
+
+        imagefilledrectangle($QR, $bx - $pad, $by - $pad, $bx + $dw + $pad - 1, $by + $dh + $pad - 1, imagecolorallocate($QR, 255, 255, 255));
+        imagealphablending($QR, true);
+        imagecopyresampled($QR, $logo, $bx, $by, 0, 0, $dw, $dh, $lw, $lh);
+        imagedestroy($logo);
+    }
+
     imagepng($QR, $filename);
     imagedestroy($QR);
 

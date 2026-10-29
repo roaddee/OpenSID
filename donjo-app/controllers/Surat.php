@@ -496,7 +496,7 @@ class Surat extends Admin_Controller
             header('id_arsip: ' . $logSurat->id); // sisipkan id
 
             // Replace Gambar
-            $data_gambar       = KodeIsianGambar::set($cetak['surat'], $isi_cetak, $logSurat);
+            $data_gambar       = KodeIsianGambar::set($cetak['surat'], $isi_cetak, $logSurat, false, (bool) $preview);
             $isi_cetak         = $data_gambar['result'];
             $logSurat->urls_id = $data_gambar['urls_id'];
 
@@ -515,7 +515,8 @@ class Surat extends Admin_Controller
 
             $defaultFont = underscore($this->session->pengaturan_surat['font_surat'] ?? setting('font_surat'));
 
-            $this->tinymce->generateSurat($isi_cetak, $cetak, $margin_cm_to_mm, $defaultFont);
+            // Satima: [qr_code] yang masih menunggu verifikasi TTE tetap tersimpan di arsip, tapi tidak dicetak sebagai teks
+            $this->tinymce->generateSurat(str_replace('[qr_code]', '', $isi_cetak), $cetak, $margin_cm_to_mm, $defaultFont);
             $this->tinymce->generateLampiran($logSurat->id_pend, $cetak, $cetak['input']);
 
             if ($preview) {

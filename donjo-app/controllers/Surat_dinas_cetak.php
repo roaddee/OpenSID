@@ -320,7 +320,7 @@ class Surat_dinas_cetak extends Admin_Controller
                     $qrCode = [
                         'isiqr'   => 'preview',
                         'urls_id' => 'url_preview',
-                        'logoqr'  => gambar_desa($this->header['desa']['logo'], false, true),
+                        'logoqr'  => satima_logo_qr(),
                         'sizeqr'  => 6,
                         'foreqr'  => '#000000',
                     ];
@@ -347,7 +347,7 @@ class Surat_dinas_cetak extends Admin_Controller
                     $qrCode = [
                         'isiqr'   => $isiqr,
                         'urls_id' => $surat->urls_id,
-                        'logoqr'  => gambar_desa(identitas('logo'), false, true),
+                        'logoqr'  => satima_logo_qr(),
                         'sizeqr'  => 6,
                         'foreqr'  => '#000000',
                     ];

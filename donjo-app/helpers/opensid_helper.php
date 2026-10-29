@@ -96,7 +96,7 @@ define('VERSION', '2607.0.1');
  */
 // Satima: dinaikkan ke migrasi Satima terakhir (akhiran 81) agar Migrasi_2026102581 dijalankan
 // di situs yang sudah terpasang. Versi resmi 2607: '2026070151'.
-define('VERSI_DATABASE', '2026102581');
+define('VERSI_DATABASE', '2026102981');
 
 // Kode laporan statistik
 define('JUMLAH', 666);
@@ -2882,12 +2882,37 @@ function copyFavicon(): void
     }
 }
 
+/**
+ * Satima: gambar di tengah QR surat, sesuai Pengaturan Surat → Gambar QR.
+ * Nilai setting satima_qr_gambar: '' = logo desa (bawaan), '-' = tanpa gambar,
+ * selain itu nama berkas di LOKASI_MEDIA (gambar sendiri).
+ *
+ * @return string|null jalur berkas, atau null bila QR tanpa gambar
+ */
+function satima_logo_qr(): ?string
+{
+    $pilihan = (string) (setting('satima_qr_gambar') ?? '');
+
+    if ($pilihan === '-') {
+        return null;
+    }
+
+    if ($pilihan !== '') {
+        $berkas = realpath(FCPATH . LOKASI_MEDIA . basename($pilihan));
+        if ($berkas !== false && is_file($berkas)) {
+            return $berkas;
+        }
+    }
+
+    return gambar_desa(identitas('logo'), false, true);
+}
+
 function dummyQrCode($logo)
 {
     $qrCode = [
         'isiqr'   => 'dummy qrcode OpenSID',
         'urls_id' => 'http://dummy.com',
-        'logoqr'  => gambar_desa($logo, false, true),
+        'logoqr'  => satima_logo_qr(),
         'sizeqr'  => 6,
         'foreqr'  => '#000000',
     ];
