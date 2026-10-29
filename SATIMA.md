@@ -80,6 +80,24 @@ Cek ulang kapan saja: `composer audit --locked` (butuh akses packagist).
 Dekoder obfuscate (tanpa eval) untuk berkas yang mungkin muncul lagi di rilis berikutnya: lihat
 handoff `handoff-opensid-satima-umum.md` di project Panel Satima.
 
+## QR surat & lampiran — perbaikan (29 Okt 2026, semua branch Satima)
+
+- **QR surat TinyMCE tidak bisa diverifikasi** (keluhan desa): pratinjau mengganti `[qr_code]` dengan QR contoh
+  ("dummy qrcode OpenSID") yang ikut tersimpan dan tercetak, sehingga tautan verifikasi tidak pernah dibuat. Sekarang
+  pratinjau menandai QR contoh (`alt="qrcode-surat-contoh"`), dan cetak final menggantinya dengan QR asli
+  (`…/v/<alias>` → halaman verifikasi surat). PDF pratinjau tidak membuat tautan (`KodeIsianGambar::set(..., $pratinjau)`).
+  Saat TTE menunggu verifikasi kades, `[qr_code]` tetap di arsip tapi tidak tercetak sebagai teks.
+- **Gambar tengah QR**: Pengaturan Surat → tab **QR Code**: logo desa (bawaan) / gambar sendiri (diunggah ke
+  `desa/upload/media/`) / tanpa gambar, dengan contoh QR. Setting `satima_qr_gambar` (`''` = logo desa, `'-'` = tanpa,
+  selain itu nama berkas), dibaca `satima_logo_qr()` di `opensid_helper.php`; dipakai surat layanan, surat dinas, dan
+  arsip. Migrasi `Migrasi_2026102981`, `VERSI_DATABASE` = `2026102981`.
+- `qrcode_generate()` (`pict_helper.php`): nama berkas unik (tidak saling timpa saat cetak bersamaan), latar putih,
+  logo opsional dengan rasio terjaga (maks 22% sisi QR, di atas bantalan putih).
+- Lampiran: tanpa lampiran dipilih, `TinyMCE::generateLampiran()` tidak lagi menghasilkan halaman kosong tambahan.
+
+Diuji: QR PDF final dipindai (zbarimg) → halaman verifikasi menampilkan nomor/tanggal/perihal/penandatangan; tiga
+mode gambar QR terbaca; pratinjau tidak menambah baris `urls`.
+
 ## Merawat saat OpenSID rilis baru
 
 ```sh
