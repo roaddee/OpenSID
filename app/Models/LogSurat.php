@@ -415,6 +415,16 @@ class LogSurat extends BaseModel
         return $statusPeriksa;
     }
 
+    /**
+     * Satima: arsip ini berkas RTF (surat RTF lama jenis 1/2, atau surat ber-engine RTF
+     * yang tersimpan .rtf). Ditentukan per arsip, bukan dari pengaturan surat saat ini.
+     */
+    public function isBerkasRtf(): bool
+    {
+        return in_array($this->formatSuratArsip?->jenis, FormatSurat::RTF)
+            || str_ends_with(strtolower((string) $this->nama_surat), '.rtf');
+    }
+
     public function rtfFile(): string
     {
         $nama_surat = pathinfo($this->nama_surat, PATHINFO_FILENAME);

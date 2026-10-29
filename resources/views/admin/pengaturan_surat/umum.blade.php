@@ -354,6 +354,48 @@
             </div>
         </div>
 
+        {{-- Satima: engine render surat --}}
+        @if (\Illuminate\Support\Facades\Schema::hasColumn('tweb_surat_format', 'engine'))
+            @php($adaRtf = $suratMaster->id ? $suratMaster->templateRtf() !== null : false)
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="engine">Engine Surat</label>
+                <div class="col-sm-8">
+                    <select id="engine" name="engine" class="form-control input-sm">
+                        <option value="tinymce" @selected(($suratMaster->engine ?? 'tinymce') === 'tinymce')>TinyMCE (editor di browser)</option>
+                        <option value="rtf" @selected(($suratMaster->engine ?? '') === 'rtf') @disabled(! $adaRtf)>RTF (template Word/LibreOffice){{ $adaRtf ? '' : ' — template belum tersedia' }}</option>
+                    </select>
+                    <p class="help-block">RTF mencetak dari template .rtf: tampilan di layar sama dengan hasil cetak. Isian form tetap memakai pengaturan surat ini.</p>
+                    @if ($viewOnly ?? false)
+                        <button type="button" id="simpan-engine" class="btn btn-social btn-info btn-sm" data-url="{{ ci_route('surat_master.update', $suratMaster->id) }}">
+                            <i class="fa fa-check"></i> Simpan Engine
+                        </button>
+                        <span id="hasil-engine" class="help-block" style="display:inline-block;margin-left:8px"></span>
+                    @endif
+                </div>
+            </div>
+            @if ($viewOnly ?? false)
+                @push('scripts')
+                    <script>
+                        $(function() {
+                            $('#simpan-engine').on('click', function() {
+                                const $btn = $(this).prop('disabled', true);
+                                $.post($btn.data('url'), {
+                                    engine: $('#engine').val(),
+                                    [csrfParam]: getCsrfToken()
+                                }).done(function(r) {
+                                    $('#hasil-engine').text(r.message || 'Tersimpan').css('color', 'green');
+                                }).fail(function(x) {
+                                    $('#hasil-engine').text((x.responseJSON && x.responseJSON.message) || 'Gagal menyimpan').css('color', 'red');
+                                }).always(function() {
+                                    $btn.prop('disabled', false);
+                                });
+                            });
+                        });
+                    </script>
+                @endpush
+            @endif
+        @endif
+
         @if (setting('tte'))
             <div class="form-group">
                 <label class="col-sm-3 control-label" for="kecamatan">Kirim ke Kecamatan</label>

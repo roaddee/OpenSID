@@ -134,10 +134,12 @@
                 $('form :button')
                     .not('#tutup-restore')
                     .not('#preview')
+                    .not('#simpan-engine')
                     .prop('disabled', true);
 
                 // If using select2, disable it separately
-                $('select').prop('disabled', true).trigger('change');
+                // Satima: pilihan engine tetap aktif untuk surat bawaan sistem
+                $('select').not('#engine').prop('disabled', true).trigger('change');
 
                 // Disable all <a> links within the form
                 $('form a')

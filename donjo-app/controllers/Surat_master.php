@@ -44,6 +44,7 @@ use App\Libraries\TinyMCE;
 use App\Libraries\TinyMCE\KodeIsianPendudukLuar;
 use App\Models\AliasKodeIsian;
 use App\Models\FormatSurat;
+use Illuminate\Support\Facades\Schema;
 use App\Models\KlasifikasiSurat;
 use App\Models\LogSurat;
 use App\Models\SettingAplikasi;
@@ -171,8 +172,10 @@ class Surat_master extends Admin_Controller
 
                     return $aksi;
                 })
+                // Satima: penanda surat yang dicetak dari template RTF
+                ->editColumn('nama', static fn ($row): string => e($row->nama) . (($row->engine ?? FormatSurat::ENGINE_TINYMCE) === FormatSurat::ENGINE_RTF ? ' <span class="label label-primary" title="Dicetak dari template RTF">RTF</span>' : ''))
                 ->editColumn('lampiran', static fn ($row): string => kode_format($row->lampiran))
-                ->rawColumns(['ceklist', 'aksi', 'template_surat'])
+                ->rawColumns(['ceklist', 'aksi', 'template_surat', 'nama'])
                 ->make();
         }
 
@@ -359,6 +362,17 @@ class Surat_master extends Admin_Controller
         }
 
         if (in_array($data->jenis, FormatSurat::SISTEM)) {
+            // Satima: surat bawaan sistem tetap terkunci, kecuali pilihan engine (TinyMCE/RTF)
+            if (isset($this->request['engine']) && Schema::hasColumn('tweb_surat_format', 'engine')) {
+                $engine = self::engineSah($this->request['engine'], $data);
+                if ($engine === null) {
+                    return json(['success' => false, 'message' => 'Template RTF untuk surat ini belum tersedia, engine RTF tidak bisa dipakai'], 500);
+                }
+                $data->update(['engine' => $engine]);
+
+                return json(['success' => true, 'message' => 'Surat bawaan sistem: hanya engine yang disimpan', 'redirect' => site_url('surat_master')], 200);
+            }
+
             return redirect_with('error', 'Surat bawaan sistem tidak dapat diubah');
         }
 
@@ -689,6 +703,18 @@ class Surat_master extends Admin_Controller
         }
     }
 
+    /** Satima: engine yang boleh dipakai; null bila RTF diminta tapi template tidak ada. */
+    private static function engineSah($diminta, ?FormatSurat $surat): ?string
+    {
+        $engine = in_array($diminta, [FormatSurat::ENGINE_TINYMCE, FormatSurat::ENGINE_RTF], true) ? $diminta : FormatSurat::ENGINE_TINYMCE;
+
+        if ($engine === FormatSurat::ENGINE_RTF && null === $surat?->templateRtf()) {
+            return null;
+        }
+
+        return $engine;
+    }
+
     private function validate($request = [], $jenis = 4, $id = null): array
     {
         // fix bagian key select-manual
@@ -863,6 +889,18 @@ class Surat_master extends Admin_Controller
 
         if (null === $id) {
             $data['url_surat'] = unique_slug('tweb_surat_format', "surat-{$data['nama']}", $id, 'url_surat', '-');
+        }
+
+        // Satima: engine render surat; hanya diubah bila dikirim form, RTF butuh template
+        if (isset($request['engine']) && Schema::hasColumn('tweb_surat_format', 'engine')) {
+            $engine = self::engineSah($request['engine'], null === $id ? null : FormatSurat::find($id));
+            if ($engine === null) {
+                return [
+                    'success' => false,
+                    'message' => 'Template RTF untuk surat ini belum tersedia, engine RTF tidak bisa dipakai',
+                ];
+            }
+            $data['engine'] = $engine;
         }
 
         // Margin

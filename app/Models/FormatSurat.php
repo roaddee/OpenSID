@@ -483,6 +483,23 @@ class FormatSurat extends BaseModel
      * Satima: surat dirender dari template berkas (RTF/DOCX), bukan dari editor TinyMCE.
      * Kolom `engine` baru ada setelah Migrasi_2026102581; sebelum itu selalu TinyMCE.
      */
+    /** Satima: lokasi template RTF surat ini (desa menimpa sistem), atau null bila tidak ada. */
+    public function templateRtf(): ?string
+    {
+        // Salinan surat desa (url tanpa awalan sistem-) memakai template surat sistem asalnya
+        $nama = array_unique([$this->url_surat, 'sistem-' . preg_replace('/^sistem-/', '', (string) $this->url_surat)]);
+
+        foreach ([FCPATH . 'desa/template-surat/rtf/', FCPATH . 'storage/app/template/rtf/sistem/'] as $folder) {
+            foreach ($nama as $url) {
+                if (is_file($folder . $url . '.rtf')) {
+                    return $folder . $url . '.rtf';
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function pakaiEngineBerkas(): bool
     {
         return in_array($this->engine ?? self::ENGINE_TINYMCE, [self::ENGINE_RTF, self::ENGINE_DOCX], true);

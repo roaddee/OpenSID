@@ -41,6 +41,7 @@ use App\Enums\JenisKelaminEnum;
 use App\Enums\SHDKEnum;
 use App\Enums\StatusEnum;
 use App\Enums\StatusSuratKecamatanEnum;
+use App\Libraries\Surat\RtfEngine;
 use App\Libraries\TinyMCE;
 use App\Libraries\TinyMCE\KodeIsianGambar;
 use App\Models\DokumenHidup;
@@ -111,8 +112,10 @@ class Surat extends Admin_Controller
 
                     return $aksi;
                 })
+                // Satima: penanda surat yang dicetak dari template RTF
+                ->editColumn('nama', static fn ($row): string => e($row->nama) . (($row->engine ?? FormatSurat::ENGINE_TINYMCE) === FormatSurat::ENGINE_RTF ? ' <span class="label label-primary" title="Dicetak dari template RTF">RTF</span>' : ''))
                 ->editColumn('lampiran', static fn ($row): string => kode_format($row->lampiran))
-                ->rawColumns(['aksi', 'template_surat'])
+                ->rawColumns(['aksi', 'template_surat', 'nama'])
                 ->make();
         }
 
@@ -355,6 +358,11 @@ class Surat extends Admin_Controller
 
             foreach ($daftar_kategori as $key => $kategori) {
                 $log_surat['kategori'][$key] = $this->request['id_pend_' . $key];
+            }
+
+            // Satima: surat ber-engine RTF langsung dirender ke berkas, tanpa konsep TinyMCE
+            if ($surat->engine === FormatSurat::ENGINE_RTF) {
+                return $this->cetakRtf($log_surat, $id_pamong);
             }
 
             $isi_surat = $this->tinymce->gantiKodeIsian($log_surat, false);
@@ -850,6 +858,59 @@ class Surat extends Admin_Controller
         }
 
         return Pamong::kepalaDesa()->first()->pamong_id;
+    }
+
+    /**
+     * Satima: cetak surat ber-engine RTF. Nilai kode isian diambil dari mesin 2607,
+     * template RTF dirender RtfEngine, berkas disimpan di arsip dan dicatat di log_surat.
+     */
+    private function cetakRtf(array $log_surat, $id_pamong)
+    {
+        $surat = $log_surat['surat'];
+        $input = $log_surat['input'];
+
+        if (LogSurat::isDuplikat('log_surat', $input['nomor'], $surat->url_surat)) {
+            return redirect_with('error', 'Nomor surat ' . $input['nomor'] . ' sudah digunakan', "surat/form/{$surat->url_surat}");
+        }
+
+        $nilai  = $this->tinymce->getFormatedKodeIsian($log_surat, true);
+        $engine = new RtfEngine();
+        $penduduk = $log_surat['id_pend'] ? Penduduk::select('id', 'nik', 'foto')->find($log_surat['id_pend']) : null;
+        $foto     = $penduduk?->foto ? FCPATH . LOKASI_USER_PICT . $penduduk->foto : null;
+        $rtf      = $engine->render($surat, $nilai, [
+            'input'     => $input,
+            'logo_path' => $surat->logo_garuda ? FCPATH . 'assets/images/garuda.png' : gambar_desa(identitas('logo'), false, true),
+            'foto_path' => $foto,
+            'qr_path'   => null, // QR verifikasi surat RTF menyusul
+        ]);
+
+        if ($rtf === '') {
+            return redirect_with('error', 'Template RTF untuk surat ini tidak ditemukan', "surat/form/{$surat->url_surat}");
+        }
+
+        if ($engine->kodeTidakDikenal !== []) {
+            log_message('notice', "Surat RTF {$surat->url_surat}: kode tidak dikenal " . implode(', ', $engine->kodeTidakDikenal));
+        }
+
+        $nik        = $penduduk?->nik ?? $log_surat['nik_non_warga'];
+        $nama_surat = preg_replace('/\.pdf$/', '.rtf', $this->nama_surat_arsip($surat->url_surat, (string) $nik, $input['nomor']));
+
+        file_put_contents(FCPATH . LOKASI_ARSIP . $nama_surat, $rtf);
+
+        $data = $log_surat;
+        unset($data['surat'], $data['isi_surat'], $data['kategori'], $data['pengikut_surat'], $data['pengikut_kis'], $data['pengikut_kartu_kis'], $data['pengikut_pindah'], $data['pengikut_pi'], $data['pengikut_pi_pendidikan_pekerjaan'], $data['pengikut_pi_agama_lainnya'], $data['pengikut_semua_anggota'], $data['pengikut_ubahan_pendidikan_pekerjaan'], $data['pengikut_ubahan_agama_lainnya']);
+        $data['input']               = json_encode($input);
+        $data['nama_surat']          = $nama_surat;
+        $data['id_user']             = ci_auth()->id;
+        $data['status']              = LogSurat::CETAK;
+        $data['verifikasi_operator'] = (setting('verifikasi_sekdes') || setting('verifikasi_kades')) ? LogSurat::PERIKSA : LogSurat::TERIMA;
+
+        LogSurat::create($data);
+
+        return $this->output
+            ->set_content_type('application/rtf')
+            ->set_header('Content-Disposition: attachment; filename="' . $nama_surat . '"')
+            ->set_output($rtf);
     }
 
     private function nama_surat_arsip(string $url, string $nik, $nomor): string

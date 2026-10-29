@@ -222,14 +222,14 @@ class Keluar extends Admin_Controller
                     $aksi          = '';
                     $statusPeriksa = $row->statusPeriksa($jabatanId, $idJabatanKades, $idJabatanSekdes);
                     if ($state == 'arsip' && $canUpdate) {
-                        if (in_array($row->formatSuratArsip->jenis, FormatSurat::RTF)) {
+                        if ($row->isBerkasRtf()) {
                             $aksi .= View::make('admin.layouts.components.buttons.edit', [
                                 'url'   => 'keluar/edit_keterangan/' . $row->id,
                                 'judul' => 'Ubah Keterangan',
                                 'modal' => true,
                             ])->render();
                         }
-                        if (! in_array($row->formatSuratArsip->jenis, FormatSurat::RTF) && $row->status == 0) {
+                        if (! $row->isBerkasRtf() && $row->status == 0) {
                             $aksi .= View::make('admin.layouts.components.buttons.edit', [
                                 'url'   => 'surat/cetak/' . $row->id,
                                 'blank' => true,
@@ -261,7 +261,7 @@ class Keluar extends Admin_Controller
                     }
                     // hanya untuk surat permohonan
                     if (in_array($state, ['masuk', 'tolak']) && $canUpdate) {
-                        if (in_array($row->formatSuratArsip->jenis, FormatSurat::RTF) && $operator) {
+                        if ($row->isBerkasRtf() && $operator) {
                             $aksi .= View::make('admin.layouts.components.buttons.edit', [
                                 'url'   => 'keluar/edit_keterangan/' . $row->id,
                                 'judul' => 'Ubah Keterangan',
@@ -292,7 +292,7 @@ class Keluar extends Admin_Controller
 
                     // hanya untuk arsip surat -->
                     if ($row->status == '1') {
-                        if (in_array($row->formatSuratArsip->jenis, FormatSurat::RTF)) {
+                        if ($row->isBerkasRtf()) {
                             if (is_file($row->rtfFile())) {
                                 $aksi .= View::make('admin.layouts.components.buttons.btn', [
                                     'url'        => ci_route('keluar.unduh.rtf', $row->id),
@@ -337,7 +337,7 @@ class Keluar extends Admin_Controller
                             }
                         }
                         if ($row->verifikasi == '1' && ! $row->log_verifikasi) {
-                            if (! in_array($row->formatSuratArsip->jenis, FormatSurat::RTF)) {
+                            if (! $row->isBerkasRtf()) {
                                 $aksi .= View::make('admin.layouts.components.buttons.btn', [
                                     'url'        => ci_route('keluar.unduh.tinymce', $row->id),
                                     'judul'      => 'Cetak Surat PDF',

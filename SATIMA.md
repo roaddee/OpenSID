@@ -122,3 +122,36 @@ pembersihan dibuka LibreOffice tanpa galat.
 Catatan untuk engine RTF: di TinyMCE huruf kode menentukan huruf hasil (`[nama]` → huruf kecil, `caseWord()`),
 sedangkan di RTF 2407 kode diganti persis (`[nama]` dicetak HURUF BESAR). Engine RTF tidak boleh memakai
 `case_replace()` untuk template lama.
+
+## Surat RTF — engine & cetak (29 Okt 2026, branch `satima-surat-rtf`)
+
+Surat bisa dicetak dari template RTF. Pilihan per surat: Pengaturan Surat → **Engine Surat** (TinyMCE / RTF).
+Surat bawaan sistem tetap terkunci, kecuali pilihan engine (tombol "Simpan Engine"). Opsi RTF hanya aktif bila
+template RTF surat itu ada (`desa/template-surat/rtf/<url>.rtf` menimpa `storage/app/template/rtf/sistem/<url>.rtf`;
+salinan surat desa memakai template `sistem-<url>`). Daftar Cetak Surat & Pengaturan Surat menandai surat RTF dengan label **RTF**.
+
+| Bagian | Berkas | Isi |
+|---|---|---|
+| Mesin | `app/Libraries/Surat/RtfEngine.php` | Template dibersihkan (`BersihkanKodeIsian`), properti dokumen, logo/pas foto/QR placeholder diganti (JPG/GIF → PNG lewat GD; foto/QR tanpa berkas → gambar kosong), tanda tangan (`<br>` → `\par`), lalu setiap `[kode]` diisi nilai mesin kode isian 2607 (`TinyMCE::getFormatedKodeIsian`) + alias kode lama, di-escape `RtfEscape`. Perilaku 2407 dipertahankan: nama pemohon HURUF BESAR, `sebutan_*` mengikuti huruf kodenya, tanggal berlaku "29 Oktober 2026", format nomor surat diuraikan |
+| Alias | `app/Libraries/Surat/Rtf/AliasKodeLama.php` | Kode 2407 → 2607 (`[no_ktp]`→`[nik]`, `[nama_des]`→`[nama_desa]`, `[d_nama_ayah]`→`[nama_ayah]`, `[tgl_akhir]`→`[berlaku_sampai]`, …) |
+| Cetak | `donjo-app/controllers/Surat.php` (`pratinjau()` → `cetakRtf()`) | Surat ber-engine RTF tidak lewat konsep TinyMCE: langsung dirender, disimpan di `desa/arsip/<…>.rtf`, dicatat di `log_surat` (status cetak, verifikasi seperti TinyMCE), diunduh. Kode yang tak dikenal dicatat di log (`notice`) |
+| Arsip | `app/Models/LogSurat.php` (`isBerkasRtf()`), `donjo-app/controllers/Keluar.php` | Tombol arsip ditentukan per arsip dari berkasnya (`.rtf`), bukan dari `jenis` — arsip RTF tetap benar walau engine surat dikembalikan ke TinyMCE |
+| Pengaturan | `Surat_master.php` (`engineSah()`, `update()`), `pengaturan_surat/umum.blade.php`, `form.blade.php` | Dropdown engine; validasi RTF butuh template; mode lihat surat sistem tidak mengunci `#engine` |
+| Model | `app/Models/FormatSurat.php` (`templateRtf()`) | Lokasi template RTF surat |
+
+Status 43 template sistem (cetak dengan penduduk contoh, isian form umum saja):
+- **Bersih (0 kode tersisa):** Bepergian, Domisili, KTP Dalam Proses, Penduduk, Pengantar, Pergi Kawin, Wali Hakim, Pengantar SKCK,
+  Permohonan KK, Permohonan Perubahan KK, Pernyataan Belum Memiliki Akta Lahir.
+- **Sisa 1–5 kode** (umumnya isian form khusus surat itu yang namanya berbeda di form 2607): Biodata, Domisili Usaha, Jamkesos, Usaha,
+  Izin Keramaian, Laporan Kehilangan, Duplikat Surat Nikah, Lahir Mati, Penghasilan Ayah/Ibu, Akta Lahir, Beda Identitas.
+- **Perlu alias per surat** (data pasangan/pelapor/saksi, tabel pengikut, isian khusus): Kematian, Rujuk/Cerai, Permohonan Cerai, Jual Beli,
+  Kepemilikan Kendaraan/Tanah, Duplikat Kelahiran, Penghasilan Orang Tua, SPPD, Izin Orang Tua/Suami/Istri, Kuasa, Nikah Non Muslim,
+  Sporadik, Pindah Penduduk, Kurang Mampu, Kelahiran, Beda Identitas KIS, Nikah, Pas Lintas.
+- Harga Tanah: surat baru 2607, tidak ada template RTF (opsi RTF nonaktif).
+
+Belum: QR verifikasi surat RTF (placeholder diganti gambar kosong), konversi PDF lewat LibreOffice, lampiran surat RTF, unggah
+template RTF desa, alias per surat untuk daftar ketiga di atas.
+
+Diuji di sandbox (PHP 8.3 + MariaDB 10.11 + LibreOffice): Domisili RTF form → cetak → arsip → unduh ulang identik; render LibreOffice
+sesuai tata letak template dengan logo desa (JPG); cetak TinyMCE tetap normal; daftar arsip menampilkan tombol RTF; UI pilih engine
+diuji di Chromium (Playwright): engine tetap bisa dipilih di mode lihat surat sistem, RTF ditolak untuk surat tanpa template.
