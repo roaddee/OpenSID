@@ -284,7 +284,8 @@ class Install extends CI_Controller
             'instalasi',
         ]);
 
-        redirect('/');
+        // edisi Satima: langsung ke halaman masuk admin dengan akun yang baru dibuat
+        redirect('siteman');
     }
 
     public function syarat_sandi($password)
