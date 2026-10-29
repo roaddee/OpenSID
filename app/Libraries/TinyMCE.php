@@ -832,6 +832,11 @@ class TinyMCE
             return $processed_lampiran;
         }
 
+        // Satima: tidak ada lampiran yang dipilih → jangan buat PDF kosong (dulu jadi halaman kosong di surat)
+        if ($processed_lampiran === []) {
+            return null;
+        }
+
         $final_html = implode('', $processed_lampiran);
 
         // pengecekan jika surat nikah maka gunakan margin yang berbeda
@@ -964,7 +969,8 @@ class TinyMCE
 
         // convert in PDF
         try {
-            $this->generateSurat($isi_cetak, $cetak, $margin_cm_to_mm, $this->defaultFont);
+            // Satima: [qr_code] yang masih menunggu verifikasi TTE tidak dicetak sebagai teks
+            $this->generateSurat(str_replace('[qr_code]', '', $isi_cetak), $cetak, $margin_cm_to_mm, $this->defaultFont);
             $this->generateLampiran($surat->id_pend, $cetak, $input);
 
             $this->pdfMerge->merge(FCPATH . LOKASI_ARSIP . $nama_surat, 'FI');

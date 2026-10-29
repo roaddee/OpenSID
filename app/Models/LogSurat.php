@@ -267,7 +267,7 @@ class LogSurat extends BaseModel
             $qrCode = [
                 'isiqr'   => $urls['isiqr'],
                 'urls_id' => $urls['urls_id'],
-                'logoqr'  => gambar_desa($logo, false, true),
+                'logoqr'  => satima_logo_qr(),
                 'sizeqr'  => 6,
                 'foreqr'  => '#000000',
             ];
