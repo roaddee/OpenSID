@@ -22,6 +22,7 @@
             <li><a href="#tte" data-toggle="tab">Pengaturan TTE</a></li>
             <li><a href="#sumber-penduduk" data-toggle="tab">Form Penduduk Luar</a></li>
             <li><a href="#kode-isian" data-toggle="tab">Kode Isian Alias</a></li>
+            <li><a href="#qr-code" data-toggle="tab">QR Code</a></li>
             <li><a href="#lainnya" data-toggle="tab">Lainnya</a></li>
         </ul>
         <div class="tab-content">
@@ -32,6 +33,7 @@
             @include('admin.pengaturan_surat.partials.pengaturan_tte')
             @include('admin.pengaturan_surat.partials.pengaturan_sumber_penduduk')
             @include('admin.pengaturan_surat.partials.pengaturan_kodeisian')
+            @include('admin.pengaturan_surat.partials.pengaturan_qr')
             @include('admin.pengaturan_surat.partials.pengaturan_lainnya')
             <div class="box-footer">
                 <button type="reset" class="btn btn-social btn-danger btn-sm"><i class="fa fa-times"></i>

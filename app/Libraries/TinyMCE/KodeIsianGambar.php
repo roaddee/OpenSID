@@ -44,15 +44,18 @@ class KodeIsianGambar
 {
     private $urls_id;
 
-    public function __construct(private $request, private $result, private $surat = null, private $lampiran = false)
+    public function __construct(private $request, private $result, private $surat = null, private $lampiran = false, private bool $pratinjau = false)
     {
     }
 
-    public static function set($request, $result, $surat = null, $lampiran = false): array
+    /**
+     * @param bool $pratinjau Satima: PDF pratinjau (arsip dihapus setelahnya) → pakai QR contoh, bukan QR verifikasi
+     */
+    public static function set($request, $result, $surat = null, $lampiran = false, bool $pratinjau = false): array
     {
         $result = str_replace(['alt="[logo]"', 'alt="[logo_bsre]"', 'alt="[foto_penduduk]"'], 'alt=""', $result);
 
-        return (new self($request, $result, $surat, $lampiran))->setKodeIsianGambar();
+        return (new self($request, $result, $surat, $lampiran, $pratinjau))->setKodeIsianGambar();
     }
 
     public function setKodeIsianGambar(): array
@@ -96,63 +99,97 @@ class KodeIsianGambar
         $this->result = str_replace($placeholder, $imgTag, $this->result);
     }
 
+    /** Satima: QR contoh di pratinjau (dummy) — diganti QR verifikasi asli saat surat dicetak. */
+    public const ALT_QR_CONTOH = 'qrcode-surat-contoh';
+
+    public const ALT_QR = 'qrcode-surat';
+
     /**
      * Menangani logika kode QR, memastikan kompatibilitas dengan Html2Pdf.
+     *
+     * Satima: dulu pratinjau mengganti [qr_code] dengan QR dummy ("dummy qrcode OpenSID") yang ikut
+     * terkirim ke cetak final, sehingga tag [qr_code] sudah hilang dan QR verifikasi asli tidak
+     * pernah dibuat. Kini QR pratinjau diberi penanda ALT_QR_CONTOH dan diganti saat cetak.
      */
     private function handleQrCode(): void
     {
-        // Jika tidak ada tag [qr_code] dalam result, langsung return
-        if (! str_contains($this->result, '[qr_code]')) {
+        $polaContoh = '/<img\b[^>]*\balt="' . self::ALT_QR_CONTOH . '"[^>]*>/i';
+        $adaTag     = str_contains($this->result, '[qr_code]');
+        $adaContoh  = (bool) preg_match($polaContoh, $this->result);
+        $adaLama    = (bool) preg_match('/<img[^>]+src="((?!data:)[^"]*qrcode[^"]*temp[^"]*)"/i', (string) $this->result, $lama);
+
+        if (! $adaTag && ! $adaContoh && ! $adaLama) {
             return;
         }
 
         // Default: jika qr_code tidak diset, anggap true (null coalescing)
         $qr_code_enabled = $this->request['qr_code'] ?? true;
 
-        // Jika explicitly disabled, hapus tag
+        // Jika QR dimatikan untuk surat ini, hapus tag & QR contoh
         if (! $qr_code_enabled) {
-            $this->result = str_replace('[qr_code]', '', $this->result);
+            $this->result = (string) preg_replace($polaContoh, '', str_replace('[qr_code]', '', $this->result));
 
             return;
         }
 
-        // Generate kode QR (dari surat atau dummy)
-        $cek = $this->surat ? LogSurat::buatQrCode($this->surat->nama_surat, identitas('logo')) : dummyQrCode(identitas('logo'));
+        // Pratinjau (belum ada arsip surat, atau PDF pratinjau yang arsipnya dibuang): QR contoh berpenanda
+        if (! $this->surat || $this->pratinjau) {
+            $cek = dummyQrCode(null);
+            if (! empty($cek['viewqr']) && file_exists($cek['viewqr'])) {
+                $this->result = str_replace('[qr_code]', $this->imgQr($cek['viewqr'], self::ALT_QR_CONTOH), $this->result);
+            }
 
-        // Pastikan gambar kode QR valid sebelum diproses
+            return;
+        }
+
+        // Belum waktunya (TTE menunggu verifikasi kades): kembalikan QR contoh menjadi tag, diproses nanti
+        if (! $this->shouldIncludeQrCode()) {
+            $this->result = (string) preg_replace($polaContoh, '[qr_code]', $this->result);
+
+            return;
+        }
+
+        // QR berisi gambar QR lama berupa jalur berkas sementara yang sudah hilang: buat ulang
+        if ($adaLama && ! file_exists($lama[1]) && ! $adaTag && ! $adaContoh) {
+            $cek = LogSurat::buatQrCode($this->surat->nama_surat, null);
+            if (! empty($cek['viewqr']) && file_exists($cek['viewqr'])) {
+                $this->result = str_replace($lama[1], $this->srcQr($cek['viewqr']), $this->result);
+                $this->surat->update(['isi_surat' => $this->result]);
+                $this->urls_id = $cek['urls_id'] ?? null;
+            }
+
+            return;
+        }
+
+        if (! $adaTag && ! $adaContoh) {
+            return; // QR asli sudah terpasang
+        }
+
+        $cek        = LogSurat::buatQrCode($this->surat->nama_surat, null);
         $qrcodePath = $cek['viewqr'] ?? null;
 
-        // PERBAIKAN UTAMA: Jika file QR tidak ada, JANGAN HAPUS TAG, biarkan untuk diproses nanti
+        // Jika file QR tidak ada, biarkan tag untuk diproses nanti
         if (! $qrcodePath || ! file_exists($qrcodePath)) {
+            $this->result  = (string) preg_replace($polaContoh, '[qr_code]', $this->result);
             $this->urls_id = $cek['urls_id'] ?? null;
 
-            return; // Keluar tanpa menghapus tag [qr_code]
+            return;
         }
 
-        // Generate base64 image
-        $base64   = base64_encode(file_get_contents($qrcodePath));
-        $mimeType = mime_content_type($qrcodePath);
-        $qrcode   = "<img src=\"data:{$mimeType};base64,{$base64}\" width=\"90\" height=\"90\" alt=\"qrcode-surat\" />";
-
-        if ($this->surat) {
-            // Periksa apakah ada kode QR yang sudah ada dalam hasil
-            preg_match('/<img[^>]+src="([^"]*qrcode[^"]*temp[^"]*)"/i', (string) $this->result, $matches);
-
-            if (isset($matches[1]) && ! file_exists($matches[1])) {
-                // Ganti kode QR yang tidak valid dengan yang baru
-                $this->result = str_replace($matches[1], $qrcode, $this->result);
-                $this->surat->update(['isi_surat' => $this->result]);
-            } elseif ($this->shouldIncludeQrCode()) {
-                // Ganti tag dengan QR code
-                $this->result = str_replace('[qr_code]', $qrcode, $this->result);
-            }
-            // PERBAIKAN: Hapus else block yang sebelumnya return tanpa action
-        } else {
-            // Langsung ganti placeholder jika tidak ada surat yang diberikan
-            $this->result = str_replace('[qr_code]', $qrcode, $this->result);
-        }
+        $img          = $this->imgQr($qrcodePath, self::ALT_QR);
+        $this->result = str_replace('[qr_code]', $img, (string) preg_replace($polaContoh, $img, $this->result));
 
         $this->urls_id = $cek['urls_id'] ?? null;
+    }
+
+    private function srcQr(string $path): string
+    {
+        return 'data:' . mime_content_type($path) . ';base64,' . base64_encode((string) file_get_contents($path));
+    }
+
+    private function imgQr(string $path, string $alt): string
+    {
+        return '<img src="' . $this->srcQr($path) . '" width="90" height="90" alt="' . $alt . '" />';
     }
 
     /**

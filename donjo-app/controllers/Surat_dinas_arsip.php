@@ -659,7 +659,7 @@ class Surat_dinas_arsip extends Admin_Controller
             $urls   = Urls::find($id);
             $qrCode = [
                 'isiqr'  => ci_route('v', $urls->alias),
-                'logoqr' => gambar_desa($this->header['desa']['logo'], false, true),
+                'logoqr' => satima_logo_qr(),
                 'sizeqr' => 6,
                 'foreqr' => '#000000',
             ];

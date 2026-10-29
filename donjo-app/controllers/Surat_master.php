@@ -443,6 +443,12 @@ class Surat_master extends Admin_Controller
         $data['alias']           = AliasKodeIsian::get();
         $data['p_luar_map']      = KodeIsianPendudukLuar::getLabels();
 
+        // Satima: pilihan gambar QR surat & contoh QR-nya (dipindai di layar untuk memastikan terbaca)
+        $data['qr_gambar']   = (string) (setting('satima_qr_gambar') ?? '');
+        $data['qr_mode']     = $data['qr_gambar'] === '' ? 'desa' : ($data['qr_gambar'] === '-' ? 'tanpa' : 'sendiri');
+        $data['qr_berkas']   = $data['qr_mode'] === 'sendiri' && is_file(FCPATH . LOKASI_MEDIA . basename($data['qr_gambar'])) ? base_url(LOKASI_MEDIA . basename($data['qr_gambar'])) : null;
+        $data['qr_contoh']   = qrcode_generate(['isiqr' => site_url('v/contoh'), 'logoqr' => satima_logo_qr(), 'sizeqr' => 6, 'foreqr' => '#000000'], true);
+
         return view('admin.pengaturan_surat.pengaturan', $data);
     }
 
@@ -484,6 +490,30 @@ class Surat_master extends Admin_Controller
 
         foreach ($data as $key => $value) {
             SettingAplikasi::where('key', '=', $key)->update(['value' => $value]);
+        }
+
+        // Satima: gambar tengah QR surat
+        if (isset($this->request['satima_qr_mode']) && SettingAplikasi::where('key', 'satima_qr_gambar')->exists()) {
+            $lama  = (string) (setting('satima_qr_gambar') ?? '');
+            $nilai = match ($this->request['satima_qr_mode']) {
+                'tanpa'   => '-',
+                'sendiri' => $lama !== '' && $lama !== '-' ? $lama : null,
+                default   => '',
+            };
+
+            if ($this->request['satima_qr_mode'] === 'sendiri' && ! empty($_FILES['satima_qr_berkas']['name'])) {
+                $berkas = $this->uploadGambar('satima_qr_berkas', LOKASI_MEDIA, null, false);
+                if (! $berkas) {
+                    redirect_with('error', 'Gambar QR gagal diunggah: ' . $this->upload->display_errors(null, null));
+                }
+                $nilai = $berkas;
+            }
+
+            if ($nilai === null) {
+                redirect_with('error', 'Pilih berkas gambar untuk QR code, atau pilih "Logo desa"');
+            }
+
+            SettingAplikasi::where('key', 'satima_qr_gambar')->update(['value' => $nilai]);
         }
 
         // upload gambar visual tte
