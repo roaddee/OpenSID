@@ -28,6 +28,9 @@ final class RtfEngine
     public const FOTO = ['89504e470d0a1a0a0000000d4948445200000080000000800806000000c3', 'afbe45630000000049454e44ae426082'];
     public const QR   = ['89504e470d0a1a0a0000000d4948445200000084000000840802000000de', '04c5cd360000000049454e44ae426082'];
 
+    /** Lebar gambar dari kode teks: 1350 twip ≈ 2,4 cm, setara 90 px gambar di surat TinyMCE. */
+    public const TWIP_GAMBAR = 1350;
+
     /** Sisa kode yang tidak dikenali pada render terakhir (untuk diagnosa/uji). */
     public array $kodeTidakDikenal = [];
 
@@ -76,6 +79,19 @@ final class RtfEngine
         $this->kodeTidakDikenal = array_keys($this->kodeTidakDikenal);
 
         return $buffer;
+    }
+
+    /** Template surat ini punya tempat QR (placeholder gambar QR bawaan 2407 atau kode [qr_code]). */
+    public static function templateButuhQr(FormatSurat $surat): bool
+    {
+        $berkas = $surat->templateRtf();
+        if ($berkas === null) {
+            return false;
+        }
+
+        $isi = (string) file_get_contents($berkas);
+
+        return str_contains($isi, self::QR[1]) || (bool) preg_match('/\[\s*qr_?code\s*\]/i', BersihkanKodeIsian::bersihkan($isi));
     }
 
     private function ambilTemplate(FormatSurat $surat): string
@@ -188,6 +204,11 @@ final class RtfEngine
         $buffer = self::gantiGambar($buffer, self::FOTO, $konteks['foto_path'] ?? null, true);
         $buffer = self::gantiGambar($buffer, self::QR, $konteks['qr_path'] ?? null, true);
 
+        // Kode gambar berupa teks (template desa cukup mengetik [qr_code] / [logo] / [foto_penduduk] di Word)
+        $buffer = $this->gantiKodeMentah($buffer, ['qr_code', 'qrcode'], self::pictRtf($konteks['qr_path'] ?? null, self::TWIP_GAMBAR));
+        $buffer = $this->gantiKodeMentah($buffer, ['logo', 'logo_desa'], self::pictRtf($konteks['logo_path'] ?? null, self::TWIP_GAMBAR));
+        $buffer = $this->gantiKodeMentah($buffer, ['foto_penduduk', 'pas_foto', 'foto'], self::pictRtf($konteks['foto_path'] ?? null, self::TWIP_GAMBAR));
+
         // Kop surat otomatis (bila dipakai)
         if (stripos($buffer, '[kop_surat]') !== false) {
             $kop    = FCPATH . 'storage/app/template/rtf/raw/kop_surat_auto.rtf';
@@ -258,10 +279,46 @@ final class RtfEngine
         return (string) ob_get_clean();
     }
 
-    /** PNG 1x1 transparan. */
+    /** PNG 1x1 transparan penuh (pengganti siluet foto/QR bawaan template). */
     private static function pngKosong(): string
     {
-        return (string) base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', true);
+        static $png = null;
+
+        if ($png === null) {
+            $img = imagecreatetruecolor(1, 1);
+            imagealphablending($img, false);
+            imagesavealpha($img, true);
+            imagefill($img, 0, 0, imagecolorallocatealpha($img, 255, 255, 255, 127));
+            ob_start();
+            imagepng($img);
+            imagedestroy($img);
+            $png = (string) ob_get_clean();
+        }
+
+        return $png;
+    }
+
+
+    /**
+     * Gambar sebagai grup RTF {\\pict\\pngblip ...} dengan lebar tampil $twip (tinggi mengikuti rasio).
+     * String kosong bila berkas tidak ada / bukan gambar.
+     */
+    public static function pictRtf(?string $berkas, int $twip): string
+    {
+        if ($berkas === null || ! is_file($berkas)) {
+            return '';
+        }
+
+        $bytes = self::bytesPng((string) file_get_contents($berkas));
+        $ukuran = $bytes === null ? false : @getimagesizefromstring($bytes);
+        if ($ukuran === false || $ukuran[0] < 1) {
+            return '';
+        }
+
+        [$w, $h] = $ukuran;
+        $tinggi  = (int) round($twip * $h / $w);
+
+        return '{\\pict\\pngblip\\picw' . $w . '\\pich' . $h . '\\picwgoal' . $twip . '\\pichgoal' . $tinggi . ' ' . bin2hex($bytes) . '}';
     }
 
     private function ambilNilai(array $nilai, string $kodeLower): ?string

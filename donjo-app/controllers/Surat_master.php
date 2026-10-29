@@ -45,6 +45,7 @@ use App\Libraries\TinyMCE\KodeIsianPendudukLuar;
 use App\Models\AliasKodeIsian;
 use App\Models\FormatSurat;
 use Illuminate\Support\Facades\Schema;
+use App\Libraries\Surat\Rtf\ValidasiRtf;
 use App\Models\KlasifikasiSurat;
 use App\Models\LogSurat;
 use App\Models\SettingAplikasi;
@@ -731,6 +732,96 @@ class Surat_master extends Admin_Controller
                 redirect_with('error', 'Template surat Tidak Valid', 'surat_master/form/' . $id);
             }
         }
+    }
+
+    /** Satima: lokasi template RTF milik desa (menimpa template sistem). */
+    public const FOLDER_RTF_DESA = 'desa/template-surat/rtf/';
+
+    /** Satima: unduh template RTF yang sedang dipakai surat ini (desa bila ada, selain itu sistem). */
+    public function template_rtf_unduh($id = null)
+    {
+        isCan('b');
+
+        $surat  = FormatSurat::find($id);
+        $berkas = $surat?->templateRtf();
+
+        if ($berkas === null) {
+            return redirect_with('error', 'Template RTF untuk surat ini tidak tersedia', 'surat_master');
+        }
+
+        return $this->output
+            ->set_content_type('application/rtf')
+            ->set_header('Content-Disposition: attachment; filename="' . $surat->url_surat . '.rtf"')
+            ->set_output((string) file_get_contents($berkas));
+    }
+
+    /** Satima: unggah template RTF milik desa untuk surat ini (AJAX, balasan JSON). */
+    public function template_rtf_unggah($id = null)
+    {
+        isCan('u');
+
+        $surat = FormatSurat::find($id);
+        if (! $surat || ! preg_match('/^[a-z0-9_-]+$/i', (string) $surat->url_surat)) {
+            return json(['success' => false, 'message' => 'Surat tidak ditemukan'], 404);
+        }
+
+        $berkas = $_FILES['template_rtf'] ?? null;
+        if (! $berkas || ($berkas['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || ! is_uploaded_file($berkas['tmp_name'])) {
+            return json(['success' => false, 'message' => 'Pilih berkas template .rtf terlebih dahulu'], 422);
+        }
+
+        if (strtolower(pathinfo((string) $berkas['name'], PATHINFO_EXTENSION)) !== 'rtf') {
+            return json(['success' => false, 'message' => 'Berkas harus berekstensi .rtf'], 422);
+        }
+
+        $batas = min(20 * 1024 * 1024, (int) max_upload());
+        if ($berkas['size'] > $batas) {
+            return json(['success' => false, 'message' => 'Ukuran template melebihi ' . round($batas / 1048576, 1) . ' MB. Kecilkan gambar di template.'], 422);
+        }
+
+        $isi    = (string) file_get_contents($berkas['tmp_name']);
+        $alasan = ValidasiRtf::periksa($isi);
+        if ($alasan !== []) {
+            return json(['success' => false, 'message' => 'Template ditolak: ' . implode(' ', $alasan)], 422);
+        }
+
+        folder(self::FOLDER_RTF_DESA, 0755, 'htaccess1');
+        $tujuan    = FCPATH . self::FOLDER_RTF_DESA . $surat->url_surat . '.rtf';
+        $sementara = $tujuan . '.' . bin2hex(random_bytes(4)) . '.tmp';
+
+        if (file_put_contents($sementara, $isi) === false || ! rename($sementara, $tujuan)) {
+            @unlink($sementara);
+
+            return json(['success' => false, 'message' => 'Template gagal disimpan, periksa izin folder ' . self::FOLDER_RTF_DESA], 500);
+        }
+
+        return json(['success' => true, 'message' => 'Template RTF desa tersimpan. Pilih engine RTF lalu simpan bila belum.'], 200);
+    }
+
+    /** Satima: hapus template RTF milik desa; kembali ke template sistem (bila ada). */
+    public function template_rtf_hapus($id = null)
+    {
+        isCan('u');
+
+        $surat = FormatSurat::find($id);
+        if (! $surat || ! preg_match('/^[a-z0-9_-]+$/i', (string) $surat->url_surat)) {
+            return json(['success' => false, 'message' => 'Surat tidak ditemukan'], 404);
+        }
+
+        $berkas = FCPATH . self::FOLDER_RTF_DESA . $surat->url_surat . '.rtf';
+        if (is_file($berkas)) {
+            unlink($berkas);
+        }
+
+        $pesan = 'Template RTF desa dihapus.';
+        if ($surat->engine === FormatSurat::ENGINE_RTF && $surat->templateRtf() === null) {
+            $surat->update(['engine' => FormatSurat::ENGINE_TINYMCE]);
+            $pesan .= ' Tidak ada template sistem, engine surat dikembalikan ke TinyMCE.';
+        } elseif ($surat->templateRtf() !== null) {
+            $pesan .= ' Surat kembali memakai template sistem.';
+        }
+
+        return json(['success' => true, 'message' => $pesan], 200);
     }
 
     /** Satima: engine yang boleh dipakai; null bila RTF diminta tapi template tidak ada. */

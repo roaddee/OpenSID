@@ -373,6 +373,67 @@
                     @endif
                 </div>
             </div>
+            {{-- Satima: template RTF milik desa --}}
+            @if ($suratMaster->id)
+                @php($rtfDesaBerkas = FCPATH . 'desa/template-surat/rtf/' . $suratMaster->url_surat . '.rtf')
+                @php($rtfDesa = is_file($rtfDesaBerkas))
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Template RTF</label>
+                    <div class="col-sm-8">
+                        <p class="form-control-static">
+                            @if ($rtfDesa)
+                                <span class="label label-success">Template desa</span> diunggah {{ date('d-m-Y H:i', filemtime($rtfDesaBerkas)) }}
+                            @elseif ($adaRtf)
+                                <span class="label label-default">Template sistem</span>
+                            @else
+                                <span class="label label-warning">Belum ada template RTF</span>
+                            @endif
+                        </p>
+                        <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+                            @if ($adaRtf)
+                                <a id="template-rtf-unduh" href="{{ ci_route('surat_master.template_rtf_unduh', $suratMaster->id) }}" class="btn btn-social btn-default btn-sm"><i class="fa fa-download"></i> Unduh template</a>
+                            @endif
+                            <input type="file" id="template-rtf-berkas" accept=".rtf" class="input-sm" style="width:auto;max-width:100%">
+                            <button type="button" id="template-rtf-unggah" class="btn btn-social btn-primary btn-sm" data-url="{{ ci_route('surat_master.template_rtf_unggah', $suratMaster->id) }}"><i class="fa fa-upload"></i> Unggah template desa</button>
+                            @if ($rtfDesa)
+                                <button type="button" id="template-rtf-hapus" class="btn btn-social btn-danger btn-sm" data-url="{{ ci_route('surat_master.template_rtf_hapus', $suratMaster->id) }}"><i class="fa fa-trash"></i> Hapus template desa</button>
+                            @endif
+                        </div>
+                        <span id="hasil-template-rtf" class="help-block"></span>
+                        <p class="help-block small">Buat di Word/LibreOffice (bisa mulai dari "Unduh template"), simpan sebagai <b>Rich Text Format (.rtf)</b>.
+                            Kode isian sama dengan surat ini ([nama], [nik], [tgl_surat], …), ditambah [qr_code], [logo], [foto_penduduk], dan [penandatangan].
+                            Objek tertanam (persamaan, lembar Excel) dan field yang mengambil data dari luar dokumen akan ditolak.</p>
+                    </div>
+                </div>
+                @push('scripts')
+                    <script>
+                        $(function() {
+                            const tampil = (pesan, ok) => $('#hasil-template-rtf').text(pesan).css('color', ok ? 'green' : 'red');
+                            $('#template-rtf-unggah').on('click', function() {
+                                const berkas = $('#template-rtf-berkas')[0].files[0];
+                                if (!berkas) { tampil('Pilih berkas .rtf terlebih dahulu', false); return; }
+                                const data = new FormData();
+                                data.append('template_rtf', berkas);
+                                data.append(csrfParam, getCsrfToken());
+                                const $btn = $(this).prop('disabled', true);
+                                $.ajax({ url: $btn.data('url'), method: 'POST', data: data, processData: false, contentType: false })
+                                    .done(r => { tampil(r.message, true); setTimeout(() => location.reload(), 1200); })
+                                    .fail(x => tampil((x.responseJSON && x.responseJSON.message) || 'Gagal mengunggah', false))
+                                    .always(() => $btn.prop('disabled', false));
+                            });
+                            $('#template-rtf-hapus').on('click', function() {
+                                if (!confirm('Hapus template RTF desa untuk surat ini?')) return;
+                                const $btn = $(this).prop('disabled', true);
+                                $.post($btn.data('url'), { [csrfParam]: getCsrfToken() })
+                                    .done(r => { tampil(r.message, true); setTimeout(() => location.reload(), 1200); })
+                                    .fail(x => tampil((x.responseJSON && x.responseJSON.message) || 'Gagal menghapus', false))
+                                    .always(() => $btn.prop('disabled', false));
+                            });
+                        });
+                    </script>
+                @endpush
+            @endif
+
             @if ($viewOnly ?? false)
                 @push('scripts')
                     <script>

@@ -135,6 +135,8 @@
                     .not('#tutup-restore')
                     .not('#preview')
                     .not('#simpan-engine')
+                    .not('#template-rtf-unggah')
+                    .not('#template-rtf-hapus')
                     .prop('disabled', true);
 
                 // If using select2, disable it separately
@@ -146,6 +148,7 @@
                     .not('#tabs a')
                     .not('a[href="{{ ci_route('surat_master') }}"]')
                     .not('#restore_surat_bawaan')
+                    .not('#template-rtf-unduh')
                     .not('#ok-restore')
                     .css({
                         'opacity': '0.5',

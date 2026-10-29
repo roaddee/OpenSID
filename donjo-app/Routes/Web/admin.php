@@ -647,6 +647,10 @@ Route::group('surat_master', static function (): void {
     Route::post('/impor_store', 'Surat_master@impor_store')->name('surat_master.impor_store');
     Route::post('/impor', 'Surat_master@impor')->name('surat_master.impor');
     Route::get('bawaan', 'Surat_master@bawaan')->name('surat_master.bawaan');
+    // Satima: template RTF milik desa
+    Route::get('/template_rtf_unduh/{id}', 'Surat_master@template_rtf_unduh')->name('surat_master.template_rtf_unduh');
+    Route::post('/template_rtf_unggah/{id}', 'Surat_master@template_rtf_unggah')->name('surat_master.template_rtf_unggah');
+    Route::post('/template_rtf_hapus/{id}', 'Surat_master@template_rtf_hapus')->name('surat_master.template_rtf_hapus');
 });
 
 // Layanan Surat > Cetak Surat

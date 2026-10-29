@@ -862,42 +862,35 @@ class Surat extends Admin_Controller
     }
 
     /**
-     * Satima: cetak surat ber-engine RTF. Nilai kode isian diambil dari mesin 2607,
-     * template RTF dirender RtfEngine, berkas disimpan di arsip dan dicatat di log_surat.
+     * Satima: cetak surat ber-engine RTF. Nilai kode isian diambil dari mesin 2607, template RTF
+     * dirender RtfEngine. Urutan: arsip dibuat dulu (QR verifikasi butuh ID arsip) → QR → render →
+     * lampiran (mesin lampiran 2607, disimpan sebagai <nama>_lampiran.pdf seperti 2407) → unduh
+     * (.rtf, atau ZIP .rtf + lampiran bila ada lampiran).
      */
     private function cetakRtf(array $log_surat, $id_pamong)
     {
         $surat = $log_surat['surat'];
         $input = $log_surat['input'];
+        $balik = "surat/form/{$surat->url_surat}";
+
+        // Tanda tangan elektronik (BSrE) menandatangani PDF; surat RTF belum bisa ikut alur TTE
+        if (setting('tte') == StatusEnum::YA) {
+            return redirect_with('error', 'Surat RTF belum mendukung TTE. Ganti engine surat ini ke TinyMCE di Pengaturan Surat.', $balik);
+        }
 
         if (LogSurat::isDuplikat('log_surat', $input['nomor'], $surat->url_surat)) {
-            return redirect_with('error', 'Nomor surat ' . $input['nomor'] . ' sudah digunakan', "surat/form/{$surat->url_surat}");
+            return redirect_with('error', 'Nomor surat ' . $input['nomor'] . ' sudah digunakan', $balik);
         }
 
-        $nilai  = $this->tinymce->getFormatedKodeIsian($log_surat, true);
-        $engine = new RtfEngine();
-        $penduduk = $log_surat['id_pend'] ? Penduduk::select('id', 'nik', 'foto')->find($log_surat['id_pend']) : null;
-        $foto     = $penduduk?->foto ? FCPATH . LOKASI_USER_PICT . $penduduk->foto : null;
-        $rtf      = $engine->render($surat, $nilai, [
-            'input'     => $input,
-            'logo_path' => $surat->logo_garuda ? FCPATH . 'assets/images/garuda.png' : gambar_desa(identitas('logo'), false, true),
-            'foto_path' => $foto,
-            'qr_path'   => null, // QR verifikasi surat RTF menyusul
-        ]);
-
-        if ($rtf === '') {
-            return redirect_with('error', 'Template RTF untuk surat ini tidak ditemukan', "surat/form/{$surat->url_surat}");
+        if ($surat->templateRtf() === null) {
+            return redirect_with('error', 'Template RTF untuk surat ini tidak ditemukan', $balik);
         }
 
-        if ($engine->kodeTidakDikenal !== []) {
-            log_message('notice', "Surat RTF {$surat->url_surat}: kode tidak dikenal " . implode(', ', $engine->kodeTidakDikenal));
-        }
-
+        $penduduk   = $log_surat['id_pend'] ? Penduduk::select('id', 'nik', 'foto')->find($log_surat['id_pend']) : null;
         $nik        = $penduduk?->nik ?? $log_surat['nik_non_warga'];
         $nama_surat = preg_replace('/\.pdf$/', '.rtf', $this->nama_surat_arsip($surat->url_surat, (string) $nik, $input['nomor']));
 
-        file_put_contents(FCPATH . LOKASI_ARSIP . $nama_surat, $rtf);
-
+        // 1. Arsip
         $data = $log_surat;
         unset($data['surat'], $data['isi_surat'], $data['kategori'], $data['pengikut_surat'], $data['pengikut_kis'], $data['pengikut_kartu_kis'], $data['pengikut_pindah'], $data['pengikut_pi'], $data['pengikut_pi_pendidikan_pekerjaan'], $data['pengikut_pi_agama_lainnya'], $data['pengikut_semua_anggota'], $data['pengikut_ubahan_pendidikan_pekerjaan'], $data['pengikut_ubahan_agama_lainnya']);
         $data['input']               = json_encode($input);
@@ -906,7 +899,71 @@ class Surat extends Admin_Controller
         $data['status']              = LogSurat::CETAK;
         $data['verifikasi_operator'] = (setting('verifikasi_sekdes') || setting('verifikasi_kades')) ? LogSurat::PERIKSA : LogSurat::TERIMA;
 
-        LogSurat::create($data);
+        $logSurat = LogSurat::create($data);
+
+        try {
+            // 2. QR verifikasi (bila diaktifkan untuk surat ini)
+            $qrPath = null;
+            if ($surat->qr_code && RtfEngine::templateButuhQr($surat)) {
+                $qr                = LogSurat::buatQrCode($nama_surat, null);
+                $qrPath            = $qr['viewqr'] ?? null;
+                $logSurat->urls_id = $qr['urls_id'] ?? null;
+            }
+
+            // 3. Render
+            $nilai  = $this->tinymce->getFormatedKodeIsian($log_surat, true);
+            $engine = new RtfEngine();
+            $rtf    = $engine->render($surat, $nilai, [
+                'input'     => $input,
+                'logo_path' => $surat->logo_garuda ? FCPATH . 'assets/images/garuda.png' : gambar_desa(identitas('logo'), false, true),
+                'foto_path' => $penduduk?->foto ? FCPATH . LOKASI_USER_PICT . $penduduk->foto : null,
+                'qr_path'   => $qrPath,
+            ]);
+
+            if ($engine->kodeTidakDikenal !== []) {
+                log_message('notice', "Surat RTF {$surat->url_surat}: kode tidak dikenal " . implode(', ', $engine->kodeTidakDikenal));
+            }
+
+            file_put_contents(FCPATH . LOKASI_ARSIP . $nama_surat, $rtf);
+
+            // 4. Lampiran → PDF terpisah
+            $berkasLampiran = null;
+            if (! empty($surat->lampiran)) {
+                try {
+                    $this->tinymce->generateLampiran($log_surat['id_pend'], $log_surat, $input);
+                    $berkasLampiran = FCPATH . $logSurat->lampiranFile();
+                    $this->tinymce->pdfMerge->merge($berkasLampiran, 'F');
+                    $logSurat->lampiran = basename($berkasLampiran); // dipakai unduh lampiran di Arsip
+                } catch (Karriere\PdfMerge\Exceptions\NoFilesDefinedException) {
+                    $berkasLampiran = null; // tidak ada lampiran yang dipilih
+                }
+            }
+
+            $logSurat->save();
+        } catch (Throwable $e) {
+            // Jangan tinggalkan arsip setengah jadi
+            logger()->error($e);
+            $logSurat->delete();
+            @unlink(FCPATH . LOKASI_ARSIP . $nama_surat);
+
+            return redirect_with('error', 'Surat RTF gagal dibuat: ' . $e->getMessage(), $balik);
+        }
+
+        try {
+            $this->notifikasiMobile(['surat' => $surat, 'input' => $input, 'id_pend' => $log_surat['id_pend']], $logSurat->id);
+        } catch (Throwable $e) {
+            log_message('error', 'Notifikasi surat RTF: ' . $e->getMessage());
+        }
+
+        // 5. Unduh
+        if ($berkasLampiran !== null && is_file($berkasLampiran)) {
+            $this->load->library('zip');
+            $this->zip->read_file(FCPATH . LOKASI_ARSIP . $nama_surat);
+            $this->zip->read_file($berkasLampiran);
+            $this->zip->download(pathinfo($nama_surat, PATHINFO_FILENAME) . '.zip');
+
+            return;
+        }
 
         return $this->output
             ->set_content_type('application/rtf')
