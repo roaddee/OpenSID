@@ -168,9 +168,23 @@ Status 43 template sistem (cetak dengan penduduk contoh, isian form umum saja):
   Sporadik, Pindah Penduduk, Kurang Mampu, Kelahiran, Beda Identitas KIS, Nikah, Pas Lintas.
 - Harga Tanah: surat baru 2607, tidak ada template RTF (opsi RTF nonaktif).
 
-Belum: QR verifikasi surat RTF (placeholder diganti gambar kosong), konversi PDF lewat LibreOffice, lampiran surat RTF, unggah
-template RTF desa, alias per surat untuk daftar ketiga di atas.
+Belum: konversi PDF lewat LibreOffice, alias per surat untuk daftar ketiga di atas, engine DOCX.
+(QR, lampiran, dan unggah template RTF desa: lihat bagian berikut.)
 
 Diuji di sandbox (PHP 8.3 + MariaDB 10.11 + LibreOffice): Domisili RTF form → cetak → arsip → unduh ulang identik; render LibreOffice
 sesuai tata letak template dengan logo desa (JPG); cetak TinyMCE tetap normal; daftar arsip menampilkan tombol RTF; UI pilih engine
 diuji di Chromium (Playwright): engine tetap bisa dipilih di mode lihat surat sistem, RTF ditolak untuk surat tanpa template.
+
+## Surat RTF — QR, lampiran, unggah template desa (29 Okt 2026, branch `satima-surat-rtf`)
+
+| Fitur | Berkas | Isi |
+|---|---|---|
+| QR verifikasi | `RtfEngine.php` (`templateButuhQr()`, `pictRtf()`), `Surat.php` (`cetakRtf()`) | Placeholder QR template 2407 **atau** kode teks `[qr_code]`/`[qrcode]` diganti QR asli (tautan `…/v/<alias>`, gambar tengah mengikuti tab QR Code). QR hanya dibuat bila surat ber-QR dan templatenya punya tempat QR. Kode teks `[logo]`/`[logo_desa]` dan `[foto_penduduk]`/`[pas_foto]` juga diganti gambar (±2,4 cm) |
+| Lampiran | `Surat.php` (`cetakRtf()`) | Surat RTF dengan lampiran dipilih → unduhan ZIP berisi `.rtf` + `_lampiran.pdf` (lampiran dirender seperti TinyMCE); nama lampiran tercatat di `log_surat.lampiran` sehingga tombol unduh lampiran di arsip bekerja. Tanpa lampiran → `.rtf` saja |
+| Template desa | `Surat_master.php` (`template_rtf_unduh/unggah/hapus`), `Routes/Web/admin.php`, `pengaturan_surat/umum.blade.php` | Di bawah Engine Surat: status template (desa/sistem/belum ada), **Unduh** template yang berlaku (bahan menyunting), **Unggah** template desa (`desa/template-surat/rtf/<url>.rtf`, menimpa template sistem), **Hapus** (kembali ke template sistem; bila tidak ada lagi, engine kembali TinyMCE). Unggah butuh hak ubah, maks 20 MB/`max_upload`, ditulis atomik |
+| Validasi | `app/Libraries/Surat/Rtf/ValidasiRtf.php`, uji `bin/satima/uji-validasi-rtf.php` | Tolak: bukan `{\rtf`, byte NUL, kurung tak seimbang, objek OLE (`\object`/`\objdata`/…), field DDE/DDEAUTO/LINK/AUTOTEXT/MACROBUTTON, INCLUDETEXT/INCLUDEPICTURE/IMPORT dari http(s)/file:/UNC. 43 template sistem lolos |
+| TTE | `Surat.php` (`cetakRtf()`) | Saat TTE aktif, cetak RTF ditolak dengan pesan (berkas RTF tidak bisa ditandatangani BSrE); pakai TinyMCE |
+
+Diuji di sandbox: QR surat Penduduk RTF dipindai → halaman verifikasi; Permohonan KK + lampiran → ZIP (rtf + PDF 4 halaman),
+unduh lampiran dari arsip; UI unggah (Playwright): template desa dipakai saat cetak, berkas ber-OLE & ekstensi salah ditolak,
+hapus kembali ke template sistem.
