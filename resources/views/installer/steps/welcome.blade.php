@@ -1,40 +1,34 @@
 @extends('installer.install')
 
-@section('step')
-    <p class="pb-2 text-gray-800">
-        Selamat datang di instalasi OpenSID.
-    </p>
-    <p class="pb-3 text-gray-800">
-        Sebelum memulai, kami memerlukan beberapa informasi tentang database.
-        Anda perlu mengetahui hal-hal berikut sebelum melanjutkan.
-    </p>
-    <div class="px-3 pb-3 text-gray-800">
-        <ol class="list-decimal list-inside">
-            <li>Database host</li>
-            <li>Database port</li>
-            <li>Database name</li>
-            <li>Database username</li>
-            <li>Database password</li>
-        </ol>
-    </div>
-    <p class="pb-3 text-gray-800">
-        Kemungkinan besar item ini diberikan kepada Anda oleh Host Web Anda.
-        Jika Anda tidak memiliki informasi ini, Anda harus menghubungi mereka sebelum dapat melanjutkan.
-    </p>
-    <p class="pb-3 text-gray-800">
-        Instalasi akan memasukkan informasi ini ke dalam file konfigurasi sehingga situs Anda dapat berkomunikasi dengan database Anda.
-    </p>
-    <p class="pb-4 text-gray-800">
-        Butuh lebih banyak bantuan?
-        <a class="text-blue-500 hover:underline" href="{{ config('app.panduan.instalasi') }}" target="_blank">Panduan Pemasangan</a>.
-    </p>
-    <div class="flex justify-end">
-        <a href="{{ site_url('install/server') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
-            Langkah berikutnya
-            <svg class="fill-current w-5 h-5 ml-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-            </svg>
-        </a>
+@section('langkah', 'mulai')
 
+@section('step')
+    <div class="sl-card-head">
+        <p class="si-eyebrow">Langkah 1 dari 6</p>
+        <h2 class="sl-card-title">Selamat datang</h2>
+        <p class="sl-card-sub">Installer ini menyiapkan database, data awal, dan akun admin OpenSID untuk situs ini.</p>
+    </div>
+
+    <ul class="si-points">
+        <li><span class="si-num">1</span><div><strong>Periksa server</strong>Versi PHP, ekstensi, dan izin folder dicek otomatis.</div></li>
+        <li><span class="si-num">2</span><div><strong>Sambungkan database</strong>Isi data database yang sudah dibuat di hosting.</div></li>
+        <li><span class="si-num">3</span><div><strong>Pasang data awal</strong>Tabel dan pengaturan dasar OpenSID dibuat.</div></li>
+        <li><span class="si-num">4</span><div><strong>Buat akun admin</strong>Nama pengguna &amp; kata sandi untuk masuk ke /siteman.</div></li>
+    </ul>
+
+    <div class="sl-note">
+        @include('admin.layouts.components.ikon', ['n' => 'database'])
+        <div>
+            <strong>Siapkan data database:</strong> host, port, nama database, pengguna, dan kata sandinya.
+            Biasanya diberikan penyedia hosting. Situs di hosting Satima sudah dipasang otomatis oleh panel.
+        </div>
+    </div>
+
+    <div class="si-foot-actions">
+        <a class="si-link" href="{{ config('app.panduan.instalasi') }}" target="_blank" rel="noopener">Butuh bantuan? Panduan pemasangan</a>
+        <a href="{{ site_url('install/server') }}" class="sl-btn sl-btn-primary">
+            Mulai periksa server
+            @include('admin.layouts.components.ikon', ['n' => 'next'])
+        </a>
     </div>
 @endsection
