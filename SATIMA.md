@@ -12,7 +12,7 @@ ditambah perbaikan & pengerasan dari PT. Satima Putra Informa. Dipasang oleh Pan
 | Controller | `app/Http/Controllers/Controller.php` (kelas kosong + `abort()` → `show_404`) | AssetController/ServeFileController fatal → tema tanpa CSS/JS |
 | endpoint uji | hapus `PlaywrightController`, `Routes/Web/playwright.php`, `make_obfuscate.php`, `umum_obfuscate.php` | artisan/SQL bebas; skrip build bisa dipanggil tanpa login dan menulis ulang berkas inti (ikut ter-clone lewat git, tidak ada di zip rilis) |
 | decrypt | `decrypt()` hanya meng-unserialize skalar/array, `allowed_classes => false` | cegah PHP object injection bila APP_KEY bocor |
-| .htaccess | `htaccess.apache.txt`: tolak skrip di folder data/kode, PHP akar selain index.php, tests/, dotfile, kunci & arsip; `!= on` → `!=on` | berlaku juga di OpenLiteSpeed (RewriteRule, bukan FilesMatch); versi resmi membuat Apache 500 |
+| .htaccess | `htaccess.apache.txt`: tolak skrip di folder data/kode, PHP akar selain index.php, tests/, dotfile, kunci & arsip; `!= on` → `!=on` | berlaku juga di OpenLiteSpeed (RewriteRule, bukan FilesMatch); versi resmi membuat Apache 500; rute akhir `index.php?/$1` (bukan `index.php/$1`) supaya CSS/JS termuat di OLS |
 | tanpa obfuscate | 16 berkas (core_helper, Admin_Controller, Web/AdminModulController, controller Anjungan/BukuTamu/Pelanggan) dikembalikan ke kode asli | kode bisa dibaca, diperbaiki, dan dipindai; dekode statis, isi tidak diubah |
 | login mandiri | `filled('anjungan_uuid')` | field tersembunyi selalu terkirim → semua login warga ditolak "Anjungan tidak ditemukan" |
 | cookie | `assets/js/id_browser.js`: elemen `#pengunjung` opsional | tombol "Terima semua cookie" diam & modal menutupi form login |
@@ -38,6 +38,7 @@ sini (`git checkout satima-umum-perjuangan && git merge satima-umum`) agar kedua
 | Masuk warga | `resources/views/layanan_mandiri/auth/*` | layar terbelah hijau desa, NIK/PIN berikon, e-KTP, lupa PIN, daftar; modal cookie dirapikan |
 | Halaman warga | `resources/views/layanan_mandiri/layouts/index.blade.php`, `beranda/index.blade.php`, `assets/css/satima-mandiri.css`, `donjo-app/controllers/fmandiri/Beranda.php` | bilah atas, menu samping, tab bawah + laci di HP, beranda warga baru (dulu langsung dialihkan); isi halaman lama dirapikan lewat CSS |
 | Font | `assets/fonts/plus-jakarta-sans/`, `assets/css/satima-font.css` | Plus Jakarta Sans (OFL) lokal, tanpa Google Fonts |
+| Installer web | `resources/views/installer/*` (+ `partials/errors`), `assets/css/satima-installer.css`, ikon di `admin/layouts/components/ikon.blade.php`, `Install::finish()` | senada login admin; penanda 6 langkah, ringkasan syarat server/folder (jumlah yang gagal + tombol Periksa ulang), label "Ekstensi curl" (bukan "Curl extention"), form database & akun berikon + lihat sandi, centang syarat sandi langsung, tombol terkunci + putaran saat diproses (cegah kirim ganda), selesai → langsung ke /siteman. **Nama field, token `sidcsrf`, dan kelas galat `alert-danger`/`text-red-500` tetap** — agent Panel Satima `opensid-setup` mengisi installer ini lewat 127.0.0.1 |
 
 Diuji di sandbox (Apache + MariaDB + PHP 8.3, desktop 1366 px & HP 390 px): beranda, artikel, kategori, arsip, pencarian,
 pengaduan, peta, galeri, lapak, pembangunan, SOTK, 404; /siteman (produksi + captcha, salah sandi, tombol lihat sandi);
