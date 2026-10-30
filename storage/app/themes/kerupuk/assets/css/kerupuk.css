@@ -203,7 +203,8 @@ a { text-underline-offset: 3px; }
     content: ''; position: absolute; inset: 0; z-index: -1;
     background: linear-gradient(100deg, var(--kr-nila) 35%, rgb(31 42 107 / .55) 100%);
 }
-.kr-hero-inner { display: grid; gap: 28px; align-items: center; padding-block: 36px 84px; }
+.kr-hero-inner { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; align-items: center; padding-block: 36px 84px; }
+.kr-hero-text { min-width: 0; }
 @media (min-width: 900px) { .kr-hero-inner { grid-template-columns: minmax(0, 1fr) auto; gap: 48px; padding-block: 64px 112px; } }
 
 .kr-hero-text { order: 2; }
