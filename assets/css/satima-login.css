@@ -657,3 +657,39 @@ body.modal-open { overflow: hidden; }
     .sl-mandiri .sl-card-head { margin-bottom: 1rem; }
     .sl-mandiri .sl-note { display: none; }
 }
+
+/* ------------------------------------------------------------------
+ * Login admin mengikuti Pengaturan → Warna Tema Admin (sama dengan satima-admin.css).
+ * Navy Satima (skin-satima) = nilai bawaan :root di atas. Varian "Terang" = warna yang sama.
+ * Kelas tema dipasang di <body> oleh satima_kelas_tema_admin(false); Layanan Mandiri tidak terpengaruh.
+ * ------------------------------------------------------------------ */
+.sl-admin:is(.skin-blue, .skin-blue-light):not(.skin-satima) {
+    --sl-c1: #123e6b; --sl-c2: #1d5f99; --sl-c3: #3a87c8;
+    --sl-glow: rgb(90 160 225 / 0.45); --sl-wave: rgb(159 192 224 / 0.95); --sl-wave-2: rgb(185 220 250 / 0.55);
+    --sl-accent: #b9dcfa; --sl-primary: #1d5f99; --sl-primary-dark: #154874; --sl-focus: rgb(29 95 153 / 0.18);
+}
+.sl-admin:is(.skin-black, .skin-black-light) {
+    --sl-c1: #12161c; --sl-c2: #222a35; --sl-c3: #3a4656;
+    --sl-glow: rgb(140 160 185 / 0.35); --sl-wave: rgb(169 178 189 / 0.9); --sl-wave-2: rgb(197 207 219 / 0.5);
+    --sl-accent: #c5cfdb; --sl-primary: #2c3846; --sl-primary-dark: #1b2129; --sl-focus: rgb(44 56 70 / 0.2);
+}
+.sl-admin:is(.skin-red, .skin-red-light) {
+    --sl-c1: #5a1410; --sl-c2: #8f1e17; --sl-c3: #c2412f;
+    --sl-glow: rgb(240 120 95 / 0.4); --sl-wave: rgb(230 180 172 / 0.92); --sl-wave-2: rgb(255 201 189 / 0.5);
+    --sl-accent: #ffc9bd; --sl-primary: #a3231b; --sl-primary-dark: #7c1a14; --sl-focus: rgb(163 35 27 / 0.18);
+}
+.sl-admin:is(.skin-yellow, .skin-yellow-light) {
+    --sl-c1: #5a3500; --sl-c2: #8a5200; --sl-c3: #c27c0e;
+    --sl-glow: rgb(240 180 60 / 0.4); --sl-wave: rgb(220 196 154 / 0.92); --sl-wave-2: rgb(255 224 163 / 0.5);
+    --sl-accent: #ffe0a3; --sl-primary: #8f5400; --sl-primary-dark: #6b3f00; --sl-focus: rgb(143 84 0 / 0.18);
+}
+.sl-admin:is(.skin-purple, .skin-purple-light) {
+    --sl-c1: #2a1a5e; --sl-c2: #45308f; --sl-c3: #6c52c9;
+    --sl-glow: rgb(150 120 240 / 0.45); --sl-wave: rgb(191 178 234 / 0.95); --sl-wave-2: rgb(214 203 255 / 0.55);
+    --sl-accent: #d6cbff; --sl-primary: #4f35a8; --sl-primary-dark: #3a2680; --sl-focus: rgb(79 53 168 / 0.18);
+}
+.sl-admin:is(.skin-green, .skin-green-light) {
+    --sl-c1: #0b3b25; --sl-c2: #135f3c; --sl-c3: #23915c;
+    --sl-glow: rgb(80 200 140 / 0.4); --sl-wave: rgb(166 211 185 / 0.92); --sl-wave-2: rgb(182 240 207 / 0.5);
+    --sl-accent: #b6f0cf; --sl-primary: #146c43; --sl-primary-dark: #0f4f33; --sl-focus: rgb(20 108 67 / 0.18);
+}
