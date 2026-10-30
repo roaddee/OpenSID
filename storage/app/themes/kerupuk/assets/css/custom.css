@@ -1,0 +1,9 @@
+:root {
+  /* Warna tema Kerupuk: nila (biru tua), jerami tampah, merah muda kerupuk udang */
+  --primary-base-color: #2c3b8f;
+  --primary-darken-color: #1f2a6b;
+  --secondary-base-color: #c99621;
+  --secondary-darken-color: #9c6f12;
+  --accent-base-color: #c9405c;
+  --accent-darken-color: #a3304a;
+}
