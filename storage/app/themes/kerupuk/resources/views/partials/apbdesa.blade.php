@@ -9,8 +9,10 @@
                 }) }}
             </h3>
             <div class="px-5 py-4 text-xs lg:text-sm space-y-3">
+                @php $ada_baris = false; @endphp
                 @foreach ($subdatas as $key => $subdata)
                     @if (is_array($subdata) && $subdata['judul'] != null && $key != 'laporan' && ($subdata['realisasi'] != 0 || $subdata['anggaran'] != 0))
+                        @php $ada_baris = true; @endphp
                         <div class="space-y-1">
                             <span class="text-sm font-bold">
                                 {{ \Illuminate\Support\Str::of($subdata['judul'])->title()->whenEndsWith('Desa', function (\Illuminate\Support\Stringable $string) {
@@ -29,6 +31,9 @@
                         </div>
                     @endif
                 @endforeach
+                @if (! $ada_baris)
+                    <p class="kr-apbdes-kosong">Belum ada anggaran atau realisasi yang dicatat.</p>
+                @endif
             </div>
         </div>
     @endforeach
