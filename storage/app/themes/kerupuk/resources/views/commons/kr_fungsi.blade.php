@@ -21,10 +21,10 @@
         {
             $tema = theme_active();
             if (str_starts_with($tema->path, 'desa/') && is_file(FCPATH . $tema->path . '/assets/' . $file)) {
-                return base_url($tema->path . '/assets/' . $file) . '?v=2610.2.1';
+                return base_url($tema->path . '/assets/' . $file) . '?v=2610.2.2';
             }
 
-            return theme_asset($file, ['themeVersion' => 'v2610.2.1']);
+            return theme_asset($file, ['themeVersion' => 'v2610.2.2']);
         }
     }
 @endphp

@@ -209,14 +209,25 @@ a { text-underline-offset: 3px; }
     color: #fff;
 }
 .kr-hero::before {
-    /* foto latar (Admin Web → Pengaturan → Latar) diredam jadi nuansa nila */
+    /* foto latar (Admin Web → Pengaturan → Latar) tampil berwarna, hanya sedikit diredam */
     content: ''; position: absolute; inset: 0; z-index: -2;
     background: var(--kr-hero-img, none) center / cover no-repeat;
-    filter: grayscale(1) contrast(1.1); opacity: .22; mix-blend-mode: luminosity;
+    filter: saturate(.92);
 }
 .kr-hero::after {
+    /* Bukan sapuan miring ala Esensi: bayangan bundar lembut di belakang teks (kiri) + gelap tipis di bawah
+       untuk pita/gelombang. Sisa foto dibiarkan terang. Tanpa foto → latar nila polos (.kr-hero). */
     content: ''; position: absolute; inset: 0; z-index: -1;
-    background: linear-gradient(100deg, var(--kr-nila) 35%, rgb(var(--kr-nila-rgb) / .55) 100%);
+    background:
+        radial-gradient(90% 85% at 12% 52%, rgb(var(--kr-malam-rgb) / .62) 0%, rgb(var(--kr-malam-rgb) / .34) 48%, transparent 78%),
+        linear-gradient(180deg, rgb(var(--kr-malam-rgb) / .08) 0%, transparent 40%, rgb(var(--kr-malam-rgb) / .55) 100%);
+}
+@media (max-width: 899px) {
+    /* di HP teks memenuhi lebar: bayangan dibuat rata sedikit lebih pekat supaya tetap terbaca */
+    .kr-hero::after {
+        background:
+            linear-gradient(180deg, rgb(var(--kr-malam-rgb) / .30) 0%, rgb(var(--kr-malam-rgb) / .42) 55%, rgb(var(--kr-malam-rgb) / .68) 100%);
+    }
 }
 .kr-hero-inner { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; align-items: center; padding-block: 36px 84px; }
 .kr-hero-text { min-width: 0; }
@@ -225,7 +236,8 @@ a { text-underline-offset: 3px; }
 .kr-hero-text { order: 2; }
 @media (min-width: 900px) { .kr-hero-text { order: 0; } }
 .kr-hero-kicker { margin: 0 0 14px; color: var(--kr-jerami); font-weight: 600; font-size: .9375rem; }
-.kr-hero-title { margin: 0; color: #fff; font-family: var(--kr-font-judul); line-height: .92; }
+.kr-hero-title { margin: 0; color: #fff; font-family: var(--kr-font-judul); line-height: .92; text-shadow: 0 2px 18px rgb(var(--kr-malam-rgb) / .45); }
+.kr-hero-kicker, .kr-hero-region { text-shadow: 0 1px 10px rgb(var(--kr-malam-rgb) / .5); }
 .kr-hero-sebutan { display: block; font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem); font-weight: 500; letter-spacing: 0; color: rgb(255 255 255 / .8); margin-bottom: 6px; }
 .kr-hero-nama { display: block; font-size: clamp(2.75rem, 1.4rem + 6vw, 5.75rem); font-weight: 800; letter-spacing: -0.035em; overflow-wrap: anywhere; }
 .kr-hero-region { margin: 18px 0 0; max-width: 46ch; font-size: 1.0625rem; color: rgb(255 255 255 / .85); }

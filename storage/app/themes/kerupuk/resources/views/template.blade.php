@@ -1,5 +1,5 @@
 @php
-    $themeVersion = 'v2610.2.1';
+    $themeVersion = 'v2610.2.2';
 @endphp
 @include('theme::commons.kr_fungsi')
 <!DOCTYPE html>
