@@ -48,7 +48,7 @@ class Theme extends BaseModel
     use ConfigId;
     use QueryCacheable;
 
-    public const DEFAULT_THEME = 'esensi';
+    public const DEFAULT_THEME = 'kerupuk';
     public const PATH_SISTEM   = 'storage/app/themes/';
     public const PATH_DESA     = 'desa/themes/';
 

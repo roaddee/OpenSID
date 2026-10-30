@@ -167,7 +167,7 @@ class SettingAplikasi extends Seeder
             [
                 'judul'      => 'Web Theme',
                 'key'        => 'web_theme',
-                'value'      => config_item('web_theme') ?: 'esensi',
+                'value'      => config_item('web_theme') ?: 'kerupuk',
                 'keterangan' => 'Tema penampilan modul web',
                 'jenis'      => 'option',
                 'option'     => null,

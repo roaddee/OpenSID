@@ -46,6 +46,17 @@ beranda admin; Layanan Mandiri masuk (salah PIN, benar), beranda, surat (buat �
 pesan, dokumen, bantuan, profil, ganti PIN, laci menu HP, keluar lewat modal penilaian. Bila memperbarui dari rilis
 OpenSID baru: berkas di tabel ini menimpa versi resmi, cek dulu apakah rilis mengubah view yang sama.
 
+## Tema Kerupuk (30 Okt 2026, branch `satima-umum-kerupuk`)
+
+Branch ini = `satima-umum-perjuangan` + tema **Kerupuk** (`storage/app/themes/kerupuk/`, versi 2610.2.0). Perawatan:
+`git checkout satima-umum-kerupuk && git merge satima-umum-perjuangan`.
+
+| Bagian | Berkas | Isi |
+|---|---|---|
+| Tema Kerupuk | `storage/app/themes/kerupuk/` | tampilan baru (nila, jerami, merah muda kerupuk; Bricolage Grotesque + Figtree lokal; motif anyaman tampah). Beranda pita lebar penuh tanpa sidebar: hero + tampah logo, layanan cepat, Kabar, Sorotan, Perangkat desa (satu baris geser), Info desa (widget). Halaman dalam konten + sidebar; HP dok bawah + laci |
+| Kecepatan | `commons/butuh`, `commons/kr_fungsi` | Leaflet/DataTables/Fancybox/Alpine hanya di halaman yang memakainya, jQuery tidak dobel, Highcharts sekali, cek koneksi internet sekali per permintaan, aset tema di `desa/themes` dilayani statis, `style.min.css` dipangkas PurgeCSS |
+| Tema bawaan | `app/Models/Theme.php` (`DEFAULT_THEME`), `SettingSeeder.php`, `DataAwal/SettingAplikasi.php` | instalasi baru memakai **Kerupuk**; situs yang tema aktifnya hilang/rusak jatuh ke Kerupuk. Situs lama tidak diubah — aktifkan dari Admin Web → Tema |
+
 ## Pembaruan vendor keamanan (24 Okt 2026)
 
 `composer audit` pada rilis 2607 menemukan advisory di 14 paket (beberapa HIGH). Diperbarui di dalam versi mayor yang
