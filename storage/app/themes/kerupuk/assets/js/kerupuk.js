@@ -67,19 +67,29 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } else if (t.matches('[data-kr-geser-prev], [data-kr-geser-next]')) {
             var wadah = t.closest('[data-kr-geser]');
-            var jalur = wadah && wadah.querySelector('.kr-sorotan-track, .kr-aparat-track');
-            if (!jalur) return;
-            var maju = t.matches('[data-kr-geser-next]');
-            var ujung = jalur.scrollLeft + jalur.clientWidth >= jalur.scrollWidth - 4;
-            if (maju && ujung) {
-                jalur.scrollTo({ left: 0 });
-            } else if (!maju && jalur.scrollLeft <= 4) {
-                jalur.scrollTo({ left: jalur.scrollWidth });
-            } else {
-                jalur.scrollBy({ left: (maju ? 1 : -1) * jalur.clientWidth });
-            }
+            var jalur = wadah && wadah.querySelector('[data-kr-jalur], .kr-sorotan-track, .kr-aparat-track');
+            if (jalur) geser(jalur, t.matches('[data-kr-geser-next]') ? 1 : -1);
         }
     });
+
+    // Satu langkah = satu kartu untuk jalur berkartu (perangkat), satu layar untuk sorotan foto.
+    function langkah(jalur) {
+        if (jalur.hasAttribute('data-kr-jalur') && jalur.children.length > 1) {
+            return jalur.children[1].offsetLeft - jalur.children[0].offsetLeft;
+        }
+        return jalur.clientWidth;
+    }
+
+    function geser(jalur, arah) {
+        var ujungKanan = jalur.scrollLeft + jalur.clientWidth >= jalur.scrollWidth - 4;
+        if (arah > 0 && ujungKanan) {
+            jalur.scrollTo({ left: 0 });
+        } else if (arah < 0 && jalur.scrollLeft <= 4) {
+            jalur.scrollTo({ left: jalur.scrollWidth });
+        } else {
+            jalur.scrollBy({ left: arah * langkah(jalur) });
+        }
+    }
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
@@ -106,18 +116,18 @@
     }, { passive: true });
     cekGulir();
 
-    // Sorotan foto berganti sendiri tiap 6 detik; berhenti saat disentuh/diarahkan atau bila pengguna memilih gerak minim
+    // Sorotan foto & pita perangkat bergeser sendiri; berhenti saat disentuh/diarahkan, tab tersembunyi,
+    // atau bila pengguna memilih gerak minim (prefers-reduced-motion).
     var hemat = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    document.querySelectorAll('.kr-sorotan').forEach(function (s) {
-        var jalur = s.querySelector('.kr-sorotan-track');
+    document.querySelectorAll('.kr-sorotan, [data-kr-otomatis]').forEach(function (s) {
+        var jalur = s.querySelector('[data-kr-jalur], .kr-sorotan-track');
         if (hemat || !jalur || jalur.children.length < 2) return;
         var jeda = false;
         ['mouseenter', 'focusin', 'touchstart'].forEach(function (ev) { s.addEventListener(ev, function () { jeda = true; }, { passive: true }); });
         ['mouseleave', 'focusout'].forEach(function (ev) { s.addEventListener(ev, function () { jeda = false; }); });
         setInterval(function () {
-            if (jeda || document.hidden) return;
-            var ujung = jalur.scrollLeft + jalur.clientWidth >= jalur.scrollWidth - 4;
-            jalur.scrollTo({ left: ujung ? 0 : jalur.scrollLeft + jalur.clientWidth });
-        }, 6000);
+            if (jeda || document.hidden || jalur.scrollWidth <= jalur.clientWidth + 4) return;
+            geser(jalur, 1);
+        }, parseInt(s.getAttribute('data-kr-otomatis'), 10) || 6000);
     });
 })();

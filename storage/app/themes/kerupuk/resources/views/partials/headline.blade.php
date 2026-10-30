@@ -10,7 +10,7 @@
             </a>
         @endif
         <div class="kr-utama-body">
-            <span class="kr-utama-flag">Berita utama</span>
+            <span class="kr-utama-flag">{{ $label_utama ?? 'Berita utama' }}</span>
             <h2 class="kr-utama-title"><a href="{{ $headline->url_slug }}">{{ $headline['judul'] }}</a></h2>
             <p class="kr-utama-excerpt">{{ $abstrak_headline }}</p>
             <p class="kr-kabar-meta">{{ tgl_indo($headline['tgl_upload']) }}</p>
