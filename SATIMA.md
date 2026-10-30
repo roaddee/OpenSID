@@ -53,7 +53,7 @@ Branch ini = `satima-umum-perjuangan` + tema **Kerupuk** (`storage/app/themes/ke
 
 | Bagian | Berkas | Isi |
 |---|---|---|
-| Tema Kerupuk | `storage/app/themes/kerupuk/` | tampilan baru (nila, jerami, merah muda kerupuk; Bricolage Grotesque + Figtree lokal; motif anyaman tampah). Beranda pita lebar penuh tanpa sidebar: hero + tampah logo, layanan cepat, Kabar, Sorotan, Perangkat desa (satu baris geser), Info desa (widget). Halaman dalam konten + sidebar; HP dok bawah + laci |
+| Tema Kerupuk | `storage/app/themes/kerupuk/` | tampilan baru (palet "Biru Irigasi": biru air + kuning jagung; Bricolage Grotesque + Figtree lokal; motif anyaman tampah). Beranda pita lebar penuh tanpa sidebar: hero + tampah logo, layanan cepat, Kabar, Sorotan, Perangkat desa (satu baris geser), Info desa (widget). Halaman dalam konten + sidebar; HP dok bawah + laci |
 | Kecepatan | `commons/butuh`, `commons/kr_fungsi` | Leaflet/DataTables/Fancybox/Alpine hanya di halaman yang memakainya, jQuery tidak dobel, Highcharts sekali, cek koneksi internet sekali per permintaan, aset tema di `desa/themes` dilayani statis, `style.min.css` dipangkas PurgeCSS |
 | Tema bawaan | `app/Models/Theme.php` (`DEFAULT_THEME`), `SettingSeeder.php`, `DataAwal/SettingAplikasi.php` | instalasi baru memakai **Kerupuk**; situs yang tema aktifnya hilang/rusak jatuh ke Kerupuk. Situs lama tidak diubah — aktifkan dari Admin Web → Tema |
 

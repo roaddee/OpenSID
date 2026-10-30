@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#1f2a6b">
+    <meta name="theme-color" content="#1f4e79">
     @include('theme::commons.meta')
     @include('theme::commons.source_css')
     @include('theme::commons.source_js')
