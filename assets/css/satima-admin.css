@@ -1,0 +1,816 @@
+/*
+ * Satima Admin — lapisan tampilan untuk kerangka AdminLTE 2 / Bootstrap 3 di halaman admin OpenSID.
+ *
+ * - Dimuat SETELAH AdminLTE.min.css, _all-skins.min.css dan admin-style.css.
+ * - Semua aturan dibatasi body.satima-admin, jadi cukup hapus kelas itu untuk kembali ke tampilan lama.
+ * - Senada dengan beranda admin (satima-beranda.css) dan login (satima-login.css): navy #002853,
+ *   biru #1f497d, langit #95b3d7, latar #f3f6fa, sudut membulat, bayangan tipis, Plus Jakarta Sans.
+ * - Tidak mengubah markup/JS; hanya warna, jarak, tipografi dan bentuk komponen.
+ */
+
+.satima-admin {
+    --sa-navy: #002853;
+    --sa-navy-2: #0b3a72;
+    --sa-blue: #1f497d;
+    --sa-blue-2: #2d6cb5;
+    --sa-sky: #95b3d7;
+    --sa-ink: #0f1f33;
+    --sa-text: #33445a;
+    --sa-muted: #66768a;
+    --sa-line: #e1e7ef;
+    --sa-line-2: #d3dce8;
+    --sa-soft: #f5f8fb;
+    --sa-bg: #f3f6fa;
+    --sa-ring: 0 0 0 3px color-mix(in srgb, var(--sa-blue-2) 22%, transparent);
+    --sa-shadow: 0 1px 2px rgb(0 40 83 / 0.04), 0 4px 16px -4px rgb(0 40 83 / 0.08);
+    --sa-radius: 14px;
+    --sa-r-sm: 9px;
+
+    /* warna kerangka — bawaan Navy Satima; diganti per "Warna Tema Admin" di bagian TEMA di bawah */
+    --sa-brand: #002853;
+    --sa-brand-hover: #00224a;
+    --sa-hero-a: #00234a;
+    --sa-hero-b: #0b3a72;
+    --sa-hero-c: #1f5aa0;
+    --sa-hero-tint: #9cc3f0;
+    --sa-side-a: #00244b;
+    --sa-side-b: #002853;
+    --sa-side-c: #062f5e;
+    --sa-side-edge: none;
+    --sa-side-text: #c9d7ea;
+    --sa-side-strong: #fff;
+    --sa-side-sub: #a9bdd8;
+    --sa-side-label: rgb(149 179 215 / 0.7);
+    --sa-side-info: #95b3d7;
+    --sa-side-icon: #8aa6c9;
+    --sa-side-icon-on: #9cc3f0;
+    --sa-side-hover: rgb(255 255 255 / 0.06);
+    --sa-side-active: rgb(255 255 255 / 0.1);
+    --sa-side-sub-on: rgb(149 179 215 / 0.16);
+    --sa-side-line: rgb(149 179 215 / 0.2);
+    --sa-side-card: rgb(255 255 255 / 0.06);
+    --sa-side-card-line: rgb(255 255 255 / 0.07);
+    --sa-side-input: rgb(255 255 255 / 0.07);
+
+    --sa-green: #17804d;
+    --sa-teal: #0e7c86;
+    --sa-red: #c0392b;
+    --sa-amber: #b7791f;
+    --sa-orange: #d9661a;
+    --sa-violet: #5b3fb0;
+    --sa-maroon: #9f1d4a;
+
+    font-family: 'Plus Jakarta Sans', 'Source Sans Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 13.5px;
+    color: var(--sa-text);
+    background: var(--sa-side-b);
+    -webkit-font-smoothing: antialiased;
+}
+/* :where() menjaga spesifisitas rendah, supaya judul berwarna khusus (mis. banner beranda) tidak tertimpa */
+.satima-admin :where(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6) {
+    font-family: inherit;
+    color: var(--sa-ink);
+}
+.satima-admin a { color: var(--sa-blue-2); }
+.satima-admin a:hover, .satima-admin a:focus { color: var(--sa-blue); }
+.satima-admin :focus-visible { outline: 2px solid var(--sa-blue-2); outline-offset: 2px; }
+.satima-admin input[type="checkbox"], .satima-admin input[type="radio"] { accent-color: var(--sa-blue); }
+.satima-admin ::selection { background: color-mix(in srgb, var(--sa-blue-2) 22%, white); }
+
+/* ================================================================ kepala (header) */
+
+.satima-admin .main-header { box-shadow: none; }
+.satima-admin .main-header .logo {
+    height: 54px;
+    line-height: 54px;
+    background: var(--sa-brand);
+    color: #fff;
+    border-bottom: 0;
+    border-right: 1px solid rgb(255 255 255 / 0.06);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+.satima-admin .main-header .logo:hover { background: var(--sa-brand-hover); }
+.satima-admin .main-header .logo b { font-weight: 800; }
+.satima-admin .main-header .logo .logo-lg b::after { content: ''; }
+.satima-admin .main-header .navbar {
+    min-height: 54px;
+    background: #fff;
+    border-bottom: 1px solid var(--sa-line);
+}
+.satima-admin .main-header .sidebar-toggle {
+    height: 54px;
+    padding: 17px 18px;
+    color: var(--sa-muted);
+}
+.satima-admin .main-header .sidebar-toggle:hover { background: var(--sa-soft); color: var(--sa-navy); }
+.satima-admin .main-header .navbar .nav > li > a {
+    height: 54px;
+    padding: 17px 14px;
+    color: var(--sa-muted);
+}
+.satima-admin .main-header .navbar .nav > li > a:hover,
+.satima-admin .main-header .navbar .nav > li > a:focus,
+.satima-admin .main-header .navbar .nav .open > a,
+.satima-admin .main-header .navbar .nav > .active > a { background: var(--sa-soft); color: var(--sa-navy); }
+.satima-admin .main-header .navbar .nav > li.user > a { display: flex; align-items: center; gap: 8px; padding-top: 0; padding-bottom: 0; font-weight: 600; color: var(--sa-ink); }
+.satima-admin .main-header .navbar .nav > li.user > a > .user-image { float: none; margin: 0; }
+.satima-admin .navbar-nav > .user-menu .user-image { width: 30px; height: 30px; margin-top: 0; box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--sa-line-2); }
+.satima-admin .main-header .navbar .nav > li > a > .label {
+    top: 10px;
+    right: 6px;
+    padding: 2px 5px;
+    border-radius: 999px;
+    font-size: 10px;
+    box-shadow: 0 0 0 2px #fff;
+}
+.satima-admin .navbar-nav > .notifications-menu > .dropdown-menu,
+.satima-admin .navbar-nav > .user-menu > .dropdown-menu { border-radius: var(--sa-radius); overflow: hidden; }
+.satima-admin .navbar-nav > .user-menu > .dropdown-menu > li.user-header {
+    height: auto;
+    padding: 18px 12px 16px;
+    background: linear-gradient(120deg, var(--sa-hero-a) 0%, var(--sa-hero-b) 60%, var(--sa-hero-c) 100%);
+}
+.satima-admin .navbar-nav > .user-menu > .dropdown-menu > li.user-header > p { color: #fff; font-weight: 700; }
+.satima-admin .navbar-nav > .user-menu > .dropdown-menu > li.user-header > p small { color: rgb(255 255 255 / 0.75); font-weight: 500; }
+.satima-admin .navbar-nav > .user-menu > .dropdown-menu > .user-footer { background: var(--sa-soft); }
+
+/* ================================================================ sisi (sidebar) */
+
+.satima-admin .main-sidebar,
+.satima-admin .left-side {
+    padding-top: 54px;
+    background: linear-gradient(180deg, var(--sa-side-a) 0%, var(--sa-side-b) 40%, var(--sa-side-c) 100%);
+    box-shadow: var(--sa-side-edge);
+}
+.satima-admin .wrapper { background: var(--sa-side-b); }
+.satima-admin .sidebar { padding-bottom: 16px; }
+
+.satima-admin .user-panel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 12px 6px;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--sa-side-card);
+    border: 1px solid var(--sa-side-card-line);
+}
+.satima-admin .user-panel::before, .satima-admin .user-panel::after { display: none; }
+.satima-admin .user-panel > .image,
+.satima-admin .main-sidebar .pull-left.image { float: none !important; flex: none; padding: 0; }
+.satima-admin .user-panel > .image > img {
+    width: 40px;
+    max-width: 40px;
+    height: 40px;
+    object-fit: contain;
+    padding: 3px;
+    border-radius: 10px;
+    background: #fff;
+}
+.satima-admin .user-panel > .info {
+    position: static;
+    float: none !important;
+    padding: 0;
+    min-width: 0;
+    line-height: 1.35;
+    font-size: 11.5px;
+    color: var(--sa-side-info);
+}
+.satima-admin .user-panel > .info > strong { display: inline-block; margin-bottom: 1px; font-size: 13px; color: var(--sa-side-strong); }
+
+.satima-admin .sidebar-form {
+    margin: 10px 12px 4px;
+    border: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--sa-side-input);
+}
+.satima-admin .sidebar-form input[type="text"],
+.satima-admin .sidebar-form .btn {
+    height: 36px;
+    border: 0;
+    background: transparent;
+    color: var(--sa-side-strong);
+    box-shadow: none;
+}
+.satima-admin .sidebar-form input[type="text"] { padding-left: 12px; border-radius: 0; }
+.satima-admin .sidebar-form input[type="text"]::placeholder { color: var(--sa-side-label); }
+.satima-admin .sidebar-form input[type="text"]:focus { background: var(--sa-side-hover); }
+.satima-admin .sidebar-form .btn { color: var(--sa-side-icon); }
+
+.satima-admin .sidebar-menu > li.header {
+    padding: 16px 22px 6px;
+    background: transparent;
+    color: var(--sa-side-label);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+.satima-admin .sidebar-menu > li { margin: 1px 10px; }
+.satima-admin .sidebar-menu > li > a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-left: 0 !important;
+    border-radius: 10px;
+    color: var(--sa-side-text);
+    font-weight: 600;
+    transition: background-color .15s, color .15s;
+}
+.satima-admin .sidebar-menu > li > a > .fa,
+.satima-admin .sidebar-menu > li > a > .glyphicon,
+.satima-admin .sidebar-menu > li > a > .ion { width: 18px; text-align: center; color: var(--sa-side-icon) !important; }
+.satima-admin .sidebar-menu > li > a > span:not(.pull-right-container) { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.satima-admin .sidebar-menu > li > a > .pull-right-container { position: static; margin-left: auto; transform: none; }
+.satima-admin .sidebar-menu > li > a > .pull-right-container > .fa-angle-left { width: auto; margin: 0; color: var(--sa-side-icon); }
+.satima-admin .sidebar-menu > li:hover > a { background: var(--sa-side-hover); color: var(--sa-side-strong); }
+.satima-admin .sidebar-menu > li.active > a,
+.satima-admin .sidebar-menu > li.menu-open > a { background: var(--sa-side-active); color: var(--sa-side-strong); }
+.satima-admin .sidebar-menu > li.active > a > .fa { color: var(--sa-side-icon-on) !important; }
+
+.satima-admin .sidebar-menu > li > .treeview-menu {
+    margin: 2px 0 6px 21px;
+    padding: 2px 0 2px 10px;
+    background: transparent;
+    border-left: 1px solid var(--sa-side-line);
+}
+.satima-admin .sidebar-menu .treeview-menu > li { margin: 1px 0; }
+.satima-admin .sidebar-menu .treeview-menu > li > a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    color: var(--sa-side-sub);
+    font-size: 13px;
+}
+.satima-admin .sidebar-menu .treeview-menu > li > a > .fa { width: 14px; font-size: 11px; color: var(--sa-side-icon) !important; opacity: .8; }
+.satima-admin .sidebar-menu .treeview-menu > li > a:hover { background: var(--sa-side-hover); color: var(--sa-side-strong); }
+.satima-admin .sidebar-menu .treeview-menu > li.active > a { background: var(--sa-side-sub-on); color: var(--sa-side-strong); font-weight: 700; }
+.satima-admin .sidebar-menu .treeview-menu > li.active > a > .fa { color: var(--sa-side-icon-on) !important; opacity: 1; }
+
+/* sidebar ciut (sidebar-mini) */
+@media (min-width: 768px) {
+    .satima-admin.sidebar-mini.sidebar-collapse .sidebar-menu > li { margin: 1px 6px; }
+    .satima-admin.sidebar-mini.sidebar-collapse .sidebar-menu > li > a { justify-content: center; padding: 10px 0; }
+    .satima-admin.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right-container),
+    .satima-admin.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu {
+        background: var(--sa-side-c);
+        border-left: 0;
+        margin-left: 0;
+        border-radius: 0 10px 10px 0;
+    }
+    .satima-admin.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right-container) { border-radius: 0 10px 0 0; padding: 10px 14px; }
+    .satima-admin.sidebar-mini.sidebar-collapse .user-panel { justify-content: center; margin: 12px 6px; padding: 8px 0; }
+    .satima-admin.sidebar-mini.sidebar-collapse .user-panel > .image > img { width: 32px; height: 32px; }
+}
+
+/* ================================================================ isi */
+
+.satima-admin .content-wrapper,
+.satima-admin .right-side { background: var(--sa-bg); }
+.satima-admin .content { padding: 18px 22px 28px; }
+.satima-admin .content-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px 16px;
+    padding: 22px 22px 0;
+}
+.satima-admin .content-header > h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--sa-ink);
+}
+.satima-admin .content-header > h1 > small { margin-left: 6px; font-size: 13px; font-weight: 500; color: var(--sa-muted); }
+.satima-admin .content-header > .breadcrumb {
+    position: static;
+    float: none !important;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-size: 12.5px;
+}
+.satima-admin .content-header > .breadcrumb > li { color: var(--sa-muted); }
+.satima-admin .content-header > .breadcrumb > li > a { color: var(--sa-muted); }
+.satima-admin .content-header > .breadcrumb > li > a:hover { color: var(--sa-blue-2); }
+.satima-admin .content-header > .breadcrumb > li > a > .fa { margin-right: 5px; }
+.satima-admin .content-header > .breadcrumb > li + li::before { content: '\203A'; padding: 0 8px; color: #a8b5c4; }
+.satima-admin .content-header > .breadcrumb > li.active { color: var(--sa-ink); font-weight: 600; }
+@media (max-width: 991px) {
+    .satima-admin .content-header > .breadcrumb { position: static; background: transparent; padding-left: 0; }
+}
+
+/* ================================================================ box / kartu */
+
+.satima-admin .box {
+    margin-bottom: 20px;
+    border: 0;
+    border-radius: var(--sa-radius);
+    background: #fff;
+    box-shadow: var(--sa-shadow), 0 0 0 1px rgb(0 40 83 / 0.06);
+}
+.satima-admin .box.box-solid { box-shadow: var(--sa-shadow), 0 0 0 1px rgb(0 40 83 / 0.06); }
+/* warna box-* (box-info, box-primary, …) tidak lagi berupa garis atas tebal */
+.satima-admin .box-header { padding: 14px 18px; color: var(--sa-ink); }
+.satima-admin .box-header.with-border { border-bottom: 1px solid var(--sa-line); }
+.satima-admin .box-header .box-title { font-size: 15px; font-weight: 800; letter-spacing: -0.01em; color: var(--sa-ink); }
+.satima-admin .box-header > .fa { color: var(--sa-blue); }
+.satima-admin .box-body { padding: 16px 18px; }
+.satima-admin .box-footer {
+    padding: 12px 18px;
+    border-top: 1px solid var(--sa-line);
+    border-radius: 0 0 var(--sa-radius) var(--sa-radius);
+    background: var(--sa-soft);
+}
+.satima-admin .box-header .box-tools { top: 10px; right: 12px; }
+.satima-admin .box .btn-box-tool { color: var(--sa-muted); }
+.satima-admin .box .btn-box-tool:hover { color: var(--sa-navy); }
+.satima-admin .box.box-solid > .box-header { border-radius: var(--sa-radius) var(--sa-radius) 0 0; }
+.satima-admin .box.box-solid.box-primary > .box-header,
+.satima-admin .box.box-solid.box-info > .box-header { background: var(--sa-brand); }
+
+/* deretan tombol di kepala box */
+.satima-admin .box-header .btn-group,
+.satima-admin .box-header > .btn { margin: 3px 4px 3px 0; }
+.satima-admin hr.batas { margin: 14px -18px; border-top: 1px solid var(--sa-line); }
+
+/* ================================================================ tombol */
+
+.satima-admin .btn {
+    border-radius: var(--sa-r-sm);
+    border-width: 1px;
+    font-weight: 600;
+    box-shadow: none;
+    transition: background-color .15s, border-color .15s, box-shadow .15s, color .15s;
+}
+.satima-admin .btn:focus { box-shadow: var(--sa-ring); }
+.satima-admin .btn-sm { padding: 6px 12px; font-size: 12.5px; }
+.satima-admin .btn-xs { padding: 3px 8px; border-radius: 7px; }
+.satima-admin .btn:active, .satima-admin .btn.active { box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.08); }
+.satima-admin .btn-default {
+    background: #fff;
+    border-color: var(--sa-line-2);
+    color: var(--sa-text);
+}
+.satima-admin .btn-default:hover, .satima-admin .btn-default:focus { background: var(--sa-soft); border-color: #c3cfde; color: var(--sa-ink); }
+
+/* palet tombol: satu tingkat lebih tenang dari AdminLTE, kontras teks tetap ≥ 4.5:1 */
+.satima-admin .btn-primary, .satima-admin .bg-light-blue, .satima-admin .bg-blue { background-color: var(--sa-blue) !important; border-color: var(--sa-blue) !important; color: #fff !important; }
+.satima-admin .btn-info, .satima-admin .bg-aqua { background-color: var(--sa-blue-2) !important; border-color: var(--sa-blue-2) !important; color: #fff !important; }
+.satima-admin .btn-success, .satima-admin .bg-green, .satima-admin .bg-olive { background-color: var(--sa-green) !important; border-color: var(--sa-green) !important; color: #fff !important; }
+.satima-admin .btn-danger, .satima-admin .bg-red { background-color: var(--sa-red) !important; border-color: var(--sa-red) !important; color: #fff !important; }
+.satima-admin .btn-warning, .satima-admin .bg-yellow { background-color: var(--sa-amber) !important; border-color: var(--sa-amber) !important; color: #fff !important; }
+.satima-admin .bg-orange { background-color: var(--sa-orange) !important; border-color: var(--sa-orange) !important; color: #fff !important; }
+.satima-admin .bg-navy { background-color: var(--sa-navy) !important; border-color: var(--sa-navy) !important; color: #fff !important; }
+.satima-admin .bg-purple { background-color: var(--sa-violet) !important; border-color: var(--sa-violet) !important; color: #fff !important; }
+.satima-admin .bg-maroon { background-color: var(--sa-maroon) !important; border-color: var(--sa-maroon) !important; color: #fff !important; }
+.satima-admin .bg-teal { background-color: var(--sa-teal) !important; border-color: var(--sa-teal) !important; color: #fff !important; }
+.satima-admin .btn-primary:hover, .satima-admin .btn-info:hover, .satima-admin .btn-success:hover, .satima-admin .btn-danger:hover,
+.satima-admin .btn-warning:hover, .satima-admin .btn.bg-orange:hover, .satima-admin .btn.bg-navy:hover, .satima-admin .btn.bg-purple:hover,
+.satima-admin .btn.bg-maroon:hover, .satima-admin .btn.bg-olive:hover, .satima-admin .btn.bg-teal:hover, .satima-admin .btn.bg-aqua:hover,
+.satima-admin .btn.bg-green:hover, .satima-admin .btn.bg-red:hover, .satima-admin .btn.bg-yellow:hover, .satima-admin .btn.bg-blue:hover {
+    filter: brightness(0.9);
+}
+.satima-admin .btn.disabled, .satima-admin .btn[disabled] { opacity: .5; filter: none; }
+
+/* btn-social: ikon di kiri dalam kotak, dipertahankan tapi lebih halus */
+.satima-admin .btn-social { padding-left: 40px; }
+.satima-admin .btn-social > :first-child {
+    width: 30px;
+    line-height: 28px;
+    border-right: 1px solid rgb(255 255 255 / 0.22);
+    font-size: 1em;
+}
+.satima-admin .btn-social.btn-sm { padding-left: 40px; }
+.satima-admin .btn-social.btn-sm > :first-child { width: 30px; line-height: 30px; }
+.satima-admin .btn-social.btn-default > :first-child { border-right-color: var(--sa-line); color: var(--sa-blue); }
+
+/* tombol berbentuk dropdown (x-split-button / kolom AKSI) */
+.satima-admin .btn-group-vertical > .btn,
+.satima-admin .btn-group-vertical > .btn:first-child:not(:last-child) { border-radius: var(--sa-r-sm); }
+.satima-admin .btn-group-vertical > .btn.dropdown-toggle::after {
+    content: '\f107';
+    display: inline-block;
+    margin-left: 8px;
+    font-family: FontAwesome;
+    font-weight: 400;
+    opacity: .75;
+}
+
+/* ================================================================ dropdown */
+
+.satima-admin .dropdown-menu {
+    padding: 6px;
+    border: 0;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgb(0 40 83 / 0.08), 0 16px 32px -12px rgb(0 40 83 / 0.28);
+    font-size: 13px;
+}
+.satima-admin .dropdown-menu > li > a,
+.satima-admin .dropdown-menu > li > a.btn {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent !important;
+    color: var(--sa-text) !important;
+    font-weight: 500;
+    text-align: left;
+    white-space: nowrap;
+    filter: none;
+}
+.satima-admin .dropdown-menu > li > a.btn-social > :first-child {
+    position: static;
+    width: 16px;
+    line-height: inherit;
+    border: 0;
+    text-align: center;
+    color: var(--sa-blue);
+}
+.satima-admin .dropdown-menu > li > a:hover,
+.satima-admin .dropdown-menu > li > a:focus { background: var(--sa-soft) !important; color: var(--sa-ink) !important; }
+.satima-admin .dropdown-menu > .divider { margin: 6px 4px; background: var(--sa-line); }
+.satima-admin .open > .dropdown-menu { animation: sa-pop .12s ease-out; }
+@keyframes sa-pop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .satima-admin .open > .dropdown-menu { animation: none; } }
+
+/* ================================================================ formulir */
+
+.satima-admin .form-control,
+.satima-admin .select2-container--default .select2-selection--single,
+.satima-admin .select2-container--default .select2-selection--multiple {
+    border: 1px solid var(--sa-line-2);
+    border-radius: var(--sa-r-sm);
+    background-color: #fff;
+    color: var(--sa-ink);
+    box-shadow: none;
+    transition: border-color .15s, box-shadow .15s;
+}
+.satima-admin .form-control { height: 36px; padding: 6px 12px; font-size: 13.5px; }
+.satima-admin .form-control::placeholder { color: #98a6b7; }
+.satima-admin .input-sm, .satima-admin .form-group-sm .form-control { height: 32px; padding: 5px 10px; font-size: 12.5px; border-radius: 8px; }
+.satima-admin textarea.form-control { height: auto; }
+.satima-admin .form-control:focus,
+.satima-admin .select2-container--default.select2-container--focus .select2-selection--multiple,
+.satima-admin .select2-container--default.select2-container--open .select2-selection--single,
+.satima-admin .select2-container--default .select2-selection--single:focus {
+    border-color: var(--sa-blue-2);
+    box-shadow: var(--sa-ring);
+    outline: 0;
+}
+.satima-admin .form-control[disabled], .satima-admin .form-control[readonly], .satima-admin fieldset[disabled] .form-control { background: var(--sa-soft); color: var(--sa-muted); }
+.satima-admin label, .satima-admin .control-label { font-weight: 600; color: var(--sa-ink); }
+.satima-admin .help-block { color: var(--sa-muted); font-size: 12px; }
+.satima-admin .has-error .form-control { border-color: var(--sa-red); }
+.satima-admin .has-error .help-block, .satima-admin .has-error .control-label { color: var(--sa-red); }
+.satima-admin .input-group .input-group-addon { border-color: var(--sa-line-2); background: var(--sa-soft); color: var(--sa-muted); }
+.satima-admin .input-group > .form-control:first-child,
+.satima-admin .input-group > .input-group-addon:first-child { border-radius: var(--sa-r-sm) 0 0 var(--sa-r-sm); }
+.satima-admin .input-group > .form-control:last-child,
+.satima-admin .input-group > .input-group-addon:last-child,
+.satima-admin .input-group-btn:last-child > .btn { border-radius: 0 var(--sa-r-sm) var(--sa-r-sm) 0; }
+
+/* select2 */
+.satima-admin .select2-container--default .select2-selection--single { height: 32px; }
+.satima-admin .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 30px; padding-left: 10px; padding-right: 26px; color: var(--sa-ink); font-size: 12.5px; }
+.satima-admin .select2-container--default .select2-selection--single .select2-selection__placeholder { color: #8796a8; }
+.satima-admin .select2-container--default .select2-selection--single .select2-selection__arrow { height: 30px; right: 4px; }
+.satima-admin .select2-container--default.select2-container--disabled .select2-selection--single { background: var(--sa-soft); }
+.satima-admin .select2-dropdown {
+    border: 0;
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px rgb(0 40 83 / 0.1), 0 16px 32px -12px rgb(0 40 83 / 0.28);
+    overflow: hidden;
+}
+.satima-admin .select2-search--dropdown .select2-search__field { border: 1px solid var(--sa-line-2); border-radius: 8px; }
+.satima-admin .select2-results__option { padding: 7px 10px; font-size: 13px; }
+.satima-admin .select2-container--default .select2-results__option--highlighted[aria-selected] { background: var(--sa-blue); }
+.satima-admin .select2-container--default .select2-results__option[aria-selected="true"] { background: color-mix(in srgb, var(--sa-blue) 10%, white); color: var(--sa-ink); }
+.satima-admin .select2-container--default .select2-selection--multiple .select2-selection__choice { border: 0; border-radius: 6px; background: color-mix(in srgb, var(--sa-blue) 10%, white); color: var(--sa-blue); }
+
+/* deret filter (.row.mepet) */
+.satima-admin .row.mepet { margin-left: -4px; margin-right: -4px; row-gap: 8px; }
+.satima-admin .row.mepet > div { padding-left: 4px; padding-right: 4px; margin-right: 0; margin-bottom: 8px; }
+
+/* ================================================================ tabel */
+
+.satima-admin .table-responsive { border: 0; }
+/* bingkai membulat di tabel itu sendiri (bukan pembungkusnya, yang juga memuat kontrol DataTables) */
+.satima-admin .table-bordered {
+    border: 1px solid var(--sa-line) !important;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+}
+.satima-admin .table-bordered > thead:first-child > tr:first-child > th:first-child { border-top-left-radius: 11px; }
+.satima-admin .table-bordered > thead:first-child > tr:first-child > th:last-child { border-top-right-radius: 11px; }
+.satima-admin .table-bordered > tbody:last-child > tr:last-child > td:first-child { border-bottom-left-radius: 11px; }
+.satima-admin .table-bordered > tbody:last-child > tr:last-child > td:last-child { border-bottom-right-radius: 11px; }
+.satima-admin .table { margin-bottom: 0; color: var(--sa-text); font-variant-numeric: tabular-nums; }
+.satima-admin .table > thead > tr > th {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--sa-line) !important;
+    background: var(--sa-soft) !important;
+    color: var(--sa-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+}
+.satima-admin .table > tbody > tr > td,
+.satima-admin .table > tbody > tr > th,
+.satima-admin .table > tfoot > tr > td { padding: 9px 12px; border-top: 1px solid var(--sa-line); vertical-align: middle; }
+.satima-admin .table-bordered,
+.satima-admin .table-bordered > thead > tr > th,
+.satima-admin .table-bordered > tbody > tr > td,
+.satima-admin .table-bordered > tbody > tr > th,
+.satima-admin .table-bordered > tfoot > tr > td { border-left: 0; border-right: 0; }
+.satima-admin .table-hover > tbody > tr:hover { background: color-mix(in srgb, var(--sa-blue-2) 4%, white); }
+.satima-admin .table-striped > tbody > tr:nth-of-type(odd) { background: #fafbfd; }
+.satima-admin .table > tbody > tr.selected,
+.satima-admin .table > tbody > tr:has(> td input[type="checkbox"]:checked) { background: color-mix(in srgb, var(--sa-blue-2) 9%, white); }
+.satima-admin .table > tbody > tr > td > a:not(.btn) { font-weight: 600; }
+.satima-admin .table .penduduk_kecil,
+.satima-admin .table td > img.img-circle { width: 34px; height: 34px; object-fit: cover; border-radius: 999px; box-shadow: 0 0 0 1px var(--sa-line); }
+
+/* DataTables */
+.satima-admin .dataTables_wrapper .row:first-child { margin-bottom: 12px; }
+.satima-admin .dataTables_wrapper .row:last-child { margin-top: 12px; }
+.satima-admin div.dataTables_wrapper div.dataTables_length label,
+.satima-admin div.dataTables_wrapper div.dataTables_filter label,
+.satima-admin div.dataTables_wrapper div.dataTables_info { font-weight: 500; color: var(--sa-muted); font-size: 12.5px; }
+.satima-admin div.dataTables_wrapper div.dataTables_info { padding-top: 6px; }
+.satima-admin div.dataTables_wrapper div.dataTables_filter input { width: 220px; margin-left: 8px; }
+.satima-admin div.dataTables_wrapper div.dataTables_length select { width: 72px; margin: 0 6px; }
+.satima-admin div.dataTables_wrapper div.dataTables_processing {
+    border: 0;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--sa-line), var(--sa-shadow);
+    color: var(--sa-blue);
+    font-weight: 600;
+}
+.satima-admin table.dataTable thead .sorting::after,
+.satima-admin table.dataTable thead .sorting_asc::after,
+.satima-admin table.dataTable thead .sorting_desc::after { opacity: .35; }
+.satima-admin table.dataTable thead .sorting_asc::after,
+.satima-admin table.dataTable thead .sorting_desc::after { opacity: .9; color: var(--sa-blue); }
+.satima-admin table.dataTable { margin-top: 0 !important; margin-bottom: 0 !important; }
+
+/* paginasi */
+.satima-admin .pagination { display: inline-flex; gap: 4px; margin: 0; }
+.satima-admin .pagination > li > a,
+.satima-admin .pagination > li > span {
+    min-width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0 10px;
+    border: 1px solid var(--sa-line-2);
+    border-radius: 8px !important;
+    background: #fff;
+    color: var(--sa-text);
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 30px;
+    text-align: center;
+}
+.satima-admin .pagination > li > a:hover { background: var(--sa-soft); color: var(--sa-ink); border-color: #c3cfde; }
+.satima-admin .pagination > .active > a,
+.satima-admin .pagination > .active > a:hover,
+.satima-admin .pagination > .active > span { background: var(--sa-brand); border-color: var(--sa-brand); color: #fff; }
+.satima-admin .pagination > .disabled > a,
+.satima-admin .pagination > .disabled > span { background: #fff; color: #b3bfcd; border-color: var(--sa-line); }
+
+/* ================================================================ label, badge, callout, alert */
+
+.satima-admin .label {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+/* label di dalam isi halaman memakai warna lembut; label di navbar/sidebar tetap padat */
+.satima-admin .content .label-success, .satima-admin .content .label.bg-green { background: #e3f6ec !important; color: #17693f !important; }
+.satima-admin .content .label-danger, .satima-admin .content .label.bg-red { background: #fdeaea !important; color: #a32727 !important; }
+.satima-admin .content .label-warning, .satima-admin .content .label.bg-yellow, .satima-admin .content .label.bg-orange { background: #fff4dc !important; color: #92400e !important; }
+.satima-admin .content .label-info, .satima-admin .content .label.bg-aqua, .satima-admin .content .label-primary, .satima-admin .content .label.bg-blue { background: #e4efff !important; color: #1d4f91 !important; }
+.satima-admin .content .label-default, .satima-admin .content .label.bg-gray { background: #eef1f5 !important; color: #566476 !important; }
+.satima-admin .content .label.bg-purple { background: #efeafd !important; color: #5b3fb0 !important; }
+.satima-admin .content .label.bg-navy { background: #e1e9f4 !important; color: var(--sa-navy) !important; }
+.satima-admin .badge { border-radius: 999px; font-weight: 700; }
+
+.satima-admin .callout {
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border: 0;
+    border-left: 4px solid;
+    border-radius: 12px;
+}
+.satima-admin .callout h4 { color: inherit; font-size: 14px; font-weight: 700; }
+.satima-admin .callout.callout-info { background: #e9f2fd !important; border-color: var(--sa-blue-2); color: #183f6e !important; }
+.satima-admin .callout.callout-success { background: #e6f6ee !important; border-color: var(--sa-green); color: #145a37 !important; }
+.satima-admin .callout.callout-warning { background: #fff6e2 !important; border-color: var(--sa-amber); color: #7a4a0c !important; }
+.satima-admin .callout.callout-danger { background: #fdecec !important; border-color: var(--sa-red); color: #8a2020 !important; }
+.satima-admin .callout a { color: inherit; text-decoration: underline; }
+
+.satima-admin .alert { border: 0; border-radius: 12px; padding: 12px 16px; }
+.satima-admin .alert-success { background: #e6f6ee !important; color: #145a37 !important; }
+.satima-admin .alert-info { background: #e9f2fd !important; color: #183f6e !important; }
+.satima-admin .alert-warning { background: #fff6e2 !important; color: #7a4a0c !important; }
+.satima-admin .alert-danger { background: #fdecec !important; color: #8a2020 !important; }
+.satima-admin .alert .close { color: inherit; opacity: .5; text-shadow: none; }
+.satima-admin .alert .icon, .satima-admin .alert h4 { color: inherit; }
+
+/* ================================================================ tab, modal, small-box, info-box */
+
+.satima-admin .nav-tabs-custom { border-radius: var(--sa-radius); box-shadow: var(--sa-shadow), 0 0 0 1px rgb(0 40 83 / 0.06); overflow: hidden; }
+.satima-admin .nav-tabs-custom > .nav-tabs { border-bottom-color: var(--sa-line); background: var(--sa-soft); }
+.satima-admin .nav-tabs-custom > .nav-tabs > li { margin-right: 0; border-top: 0; }
+.satima-admin .nav-tabs-custom > .nav-tabs > li > a { color: var(--sa-muted); font-weight: 600; border-radius: 0; }
+.satima-admin .nav-tabs-custom > .nav-tabs > li.active { border-top-color: transparent; }
+.satima-admin .nav-tabs-custom > .nav-tabs > li.active > a { color: var(--sa-ink); box-shadow: inset 0 -2px 0 var(--sa-blue); background: #fff; }
+
+.satima-admin .modal-content { border: 0; border-radius: 16px; box-shadow: 0 30px 60px -20px rgb(0 40 83 / 0.45); overflow: hidden; }
+.satima-admin .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--sa-line); }
+.satima-admin .modal-title { font-weight: 800; font-size: 16px; color: var(--sa-ink); }
+.satima-admin .modal-body { padding: 18px 20px; }
+.satima-admin .modal-footer { padding: 12px 20px; border-top: 1px solid var(--sa-line); background: var(--sa-soft); }
+.satima-admin .modal-backdrop.in { opacity: .45; background: #001a36; }
+
+.satima-admin .small-box, .satima-admin .info-box { border-radius: var(--sa-radius); box-shadow: var(--sa-shadow); overflow: hidden; }
+.satima-admin .info-box-icon { border-radius: 12px; margin: 8px; height: 74px; width: 74px; line-height: 74px; }
+.satima-admin .small-box > .small-box-footer { background: rgb(0 0 0 / 0.08); }
+
+/* ================================================================ kaki (footer) & panel kanan */
+
+.satima-admin .main-footer {
+    padding: 12px 22px;
+    border-top: 1px solid var(--sa-line);
+    background: #fff;
+    color: var(--sa-muted);
+    font-size: 12px;
+}
+.satima-admin .main-footer a { font-weight: 600; }
+.satima-admin .control-sidebar-dark,
+.satima-admin .control-sidebar-dark + .control-sidebar-bg { background: var(--sa-side-c); }
+
+
+/* ================================================================ judul bagian di form & tabel rincian (.subtitle_head) */
+
+.satima-admin .subtitle_head {
+    margin: 22px 0 12px;
+    padding: 9px 14px;
+    border: 0;
+    border-left: 3px solid var(--sa-blue);
+    border-radius: 0 10px 10px 0;
+    background: color-mix(in srgb, var(--sa-blue) 7%, white);
+    color: var(--sa-ink);
+}
+.satima-admin .subtitle_head label,
+.satima-admin .subtitle_head strong {
+    margin: 0;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: color-mix(in srgb, var(--sa-blue) 75%, var(--sa-ink));
+}
+.satima-admin th.subtitle_head,
+.satima-admin td.subtitle_head { padding: 9px 12px !important; border-radius: 0; }
+
+/* petunjuk kecil di label, mis. "(Isi dengan angka)", "(Wajib diisi …)" */
+.satima-admin label code,
+.satima-admin .control-label code,
+.satima-admin .help-block code {
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: #fff4dc;
+    color: #92400e;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: normal;
+}
+.satima-admin .content code { border-radius: 5px; }
+
+/* ================================================================ beranda admin (.sb) ikut warna tema */
+
+.satima-admin .sb-hero {
+    background-color: var(--sa-brand);
+    background-image:
+        radial-gradient(38rem 22rem at 100% 0%, color-mix(in srgb, var(--sa-hero-c) 60%, transparent), transparent 60%),
+        linear-gradient(120deg, var(--sa-hero-a) 0%, var(--sa-hero-b) 55%, var(--sa-hero-c) 100%);
+    box-shadow: 0 12px 30px -14px color-mix(in srgb, var(--sa-brand) 60%, transparent);
+}
+.satima-admin .sb-hero-title span,
+.satima-admin .sb-hero-btn .fa { color: var(--sa-hero-tint); }
+.satima-admin .sb-hero-chip { color: var(--sa-hero-tint); border-color: color-mix(in srgb, var(--sa-hero-tint) 50%, transparent); }
+.satima-admin .sb-hero::before { background: linear-gradient(90deg, color-mix(in srgb, var(--sa-hero-tint) 95%, transparent), color-mix(in srgb, var(--sa-hero-tint) 55%, transparent)); }
+.satima-admin .sb { --sb-blue: var(--sa-blue); }
+
+/* ================================================================ TEMA — mengikuti Pengaturan → Warna Tema Admin
+ * skin-satima (Navy Satima) = nilai bawaan di :root .satima-admin di atas.
+ * Varian gelap: sidebar berwarna tua. Varian "Terang": sidebar putih, logo berwarna.
+ * Tiap tema mengatur: logo/merek, gradasi banner beranda, sidebar, dan aksen (tombol primer, tautan, fokus).
+ */
+
+/* Biru */
+.satima-admin:is(.skin-blue, .skin-blue-light):not(.skin-satima) {
+    --sa-brand: #1d5f99; --sa-brand-hover: #18538a;
+    --sa-hero-a: #123e6b; --sa-hero-b: #1d5f99; --sa-hero-c: #3a87c8; --sa-hero-tint: #b9dcfa;
+    --sa-blue: #1d5f99; --sa-blue-2: #2a77bd;
+    --sa-side-a: #0d2c4a; --sa-side-b: #10345a; --sa-side-c: #143f6b;
+    --sa-side-text: #cddcec; --sa-side-sub: #a8bfd8; --sa-side-icon: #86a8cc; --sa-side-icon-on: #b9dcfa;
+    --sa-side-info: #9fc0e0; --sa-side-label: rgb(159 192 224 / 0.7); --sa-side-line: rgb(159 192 224 / 0.22); --sa-side-sub-on: rgb(159 192 224 / 0.18);
+}
+/* Hitam */
+.satima-admin:is(.skin-black, .skin-black-light) {
+    --sa-brand: #1b2129; --sa-brand-hover: #12171d;
+    --sa-hero-a: #12161c; --sa-hero-b: #222a35; --sa-hero-c: #3a4656; --sa-hero-tint: #c5cfdb;
+    --sa-blue: #2c3846; --sa-blue-2: #3f6390;
+    --sa-side-a: #14181e; --sa-side-b: #1a1f26; --sa-side-c: #20262e;
+    --sa-side-text: #cfd5dc; --sa-side-sub: #a9b2bd; --sa-side-icon: #8c96a3; --sa-side-icon-on: #e3e8ee;
+    --sa-side-info: #a9b2bd; --sa-side-label: rgb(169 178 189 / 0.7); --sa-side-line: rgb(169 178 189 / 0.2); --sa-side-sub-on: rgb(169 178 189 / 0.16);
+}
+/* Merah */
+.satima-admin:is(.skin-red, .skin-red-light) {
+    --sa-brand: #a3231b; --sa-brand-hover: #8f1e17;
+    --sa-hero-a: #5a1410; --sa-hero-b: #8f1e17; --sa-hero-c: #c2412f; --sa-hero-tint: #ffc9bd;
+    --sa-blue: #a3231b; --sa-blue-2: #c0392b;
+    --sa-side-a: #3a0e0b; --sa-side-b: #44110d; --sa-side-c: #521510;
+    --sa-side-text: #f0d3cf; --sa-side-sub: #ddb1aa; --sa-side-icon: #cf9890; --sa-side-icon-on: #ffc9bd;
+    --sa-side-info: #e6b4ac; --sa-side-label: rgb(230 180 172 / 0.7); --sa-side-line: rgb(230 180 172 / 0.22); --sa-side-sub-on: rgb(230 180 172 / 0.16);
+}
+/* Kuning (teks putih tetap terbaca: kuning tua kecokelatan) */
+.satima-admin:is(.skin-yellow, .skin-yellow-light) {
+    --sa-brand: #9a5b00; --sa-brand-hover: #864f00;
+    --sa-hero-a: #5a3500; --sa-hero-b: #8a5200; --sa-hero-c: #c27c0e; --sa-hero-tint: #ffe0a3;
+    --sa-blue: #8f5400; --sa-blue-2: #a8650a;
+    --sa-side-a: #2e1d04; --sa-side-b: #362305; --sa-side-c: #422b07;
+    --sa-side-text: #efdfc2; --sa-side-sub: #d8c39d; --sa-side-icon: #c8ab78; --sa-side-icon-on: #ffe0a3;
+    --sa-side-info: #dcc49a; --sa-side-label: rgb(220 196 154 / 0.7); --sa-side-line: rgb(220 196 154 / 0.22); --sa-side-sub-on: rgb(220 196 154 / 0.16);
+}
+/* Ungu */
+.satima-admin:is(.skin-purple, .skin-purple-light) {
+    --sa-brand: #4a2f9a; --sa-brand-hover: #3f2785;
+    --sa-hero-a: #2a1a5e; --sa-hero-b: #45308f; --sa-hero-c: #6c52c9; --sa-hero-tint: #d6cbff;
+    --sa-blue: #4f35a8; --sa-blue-2: #6247c4;
+    --sa-side-a: #1f1546; --sa-side-b: #251a52; --sa-side-c: #2d2063;
+    --sa-side-text: #ddd5f5; --sa-side-sub: #bdb1e3; --sa-side-icon: #a597d6; --sa-side-icon-on: #d6cbff;
+    --sa-side-info: #bfb2ea; --sa-side-label: rgb(191 178 234 / 0.7); --sa-side-line: rgb(191 178 234 / 0.22); --sa-side-sub-on: rgb(191 178 234 / 0.16);
+}
+/* Hijau */
+.satima-admin:is(.skin-green, .skin-green-light) {
+    --sa-brand: #146c43; --sa-brand-hover: #105d39;
+    --sa-hero-a: #0b3b25; --sa-hero-b: #135f3c; --sa-hero-c: #23915c; --sa-hero-tint: #b6f0cf;
+    --sa-blue: #146c43; --sa-blue-2: #17804d;
+    --sa-side-a: #0a2a1b; --sa-side-b: #0c3221; --sa-side-c: #0f3d28;
+    --sa-side-text: #cfe8da; --sa-side-sub: #a8ccb8; --sa-side-icon: #8dbba1; --sa-side-icon-on: #b6f0cf;
+    --sa-side-info: #a6d3b9; --sa-side-label: rgb(166 211 185 / 0.7); --sa-side-line: rgb(166 211 185 / 0.22); --sa-side-sub-on: rgb(166 211 185 / 0.16);
+}
+
+/* Varian "Terang": sidebar putih, aksen tetap warna temanya */
+.satima-admin:is(.skin-blue-light, .skin-black-light, .skin-red-light, .skin-yellow-light, .skin-purple-light, .skin-green-light) {
+    --sa-side-a: #fff; --sa-side-b: #fff; --sa-side-c: #fbfcfe;
+    --sa-side-edge: inset -1px 0 0 #e1e7ef;
+    --sa-side-text: #33445a; --sa-side-strong: #0f1f33; --sa-side-sub: #4b5b70;
+    --sa-side-label: #8796a8; --sa-side-info: #66768a;
+    --sa-side-icon: #8796a8; --sa-side-icon-on: var(--sa-blue);
+    --sa-side-hover: #f3f6fa;
+    --sa-side-active: color-mix(in srgb, var(--sa-blue) 9%, white);
+    --sa-side-sub-on: color-mix(in srgb, var(--sa-blue) 9%, white);
+    --sa-side-line: #e1e7ef;
+    --sa-side-card: #f5f8fb; --sa-side-card-line: #e1e7ef;
+    --sa-side-input: #f3f6fa;
+}
+.satima-admin:is(.skin-blue-light, .skin-black-light, .skin-red-light, .skin-yellow-light, .skin-purple-light, .skin-green-light) .sidebar-menu > li.active > a,
+.satima-admin:is(.skin-blue-light, .skin-black-light, .skin-red-light, .skin-yellow-light, .skin-purple-light, .skin-green-light) .sidebar-menu .treeview-menu > li.active > a { color: var(--sa-blue); }
+.satima-admin:is(.skin-blue-light, .skin-black-light, .skin-red-light, .skin-yellow-light, .skin-purple-light, .skin-green-light) .user-panel > .image > img { box-shadow: 0 0 0 1px #e1e7ef; }
+
+/* ================================================================ layar kecil */
+
+@media (max-width: 767px) {
+    .satima-admin .main-header .logo { height: 50px; line-height: 50px; }
+    .satima-admin .main-sidebar { padding-top: 104px; }
+    .satima-admin .content { padding: 14px 12px 24px; }
+    .satima-admin .content-header { padding: 16px 12px 0; }
+    .satima-admin .content-header > h1 { font-size: 19px; }
+    .satima-admin .box-header, .satima-admin .box-body { padding: 12px 14px; }
+    .satima-admin hr.batas { margin: 12px -14px; }
+    .satima-admin .box-header .btn-group, .satima-admin .box-header > .btn { margin-right: 2px; }
+    .satima-admin div.dataTables_wrapper div.dataTables_filter input { width: 100%; margin: 6px 0 0; }
+}

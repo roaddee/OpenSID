@@ -46,6 +46,9 @@
         <link rel="stylesheet" href="<?= asset('bootstrap/css/bootstrap-tokenfield.min.css') ?>">
     <?php endif ?>
     <link rel="stylesheet" href="<?= asset('css/admin-style.css') ?>">
+    <!-- Satima: tampilan admin (mengikuti Warna Tema Admin) -->
+    <link rel="stylesheet" href="<?= asset('css/satima-font.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/satima-admin.css') ?>">
     <!-- OpenStreetMap Css -->
     <link rel="stylesheet" href="<?= asset('css/leaflet.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/leaflet-geoman.css') ?>">
@@ -123,7 +126,7 @@
 
 </head>
 
-<body id="sidebar_collapse" class="<?= setting('warna_tema_admin') ?> sidebar-mini fixed">
+<body id="sidebar_collapse" class="<?= satima_kelas_tema_admin() ?> sidebar-mini fixed">
     <div class="wrapper">
         <?= view('admin.layouts.partials.header') ?>
         <!-- Untuk menampilkan modal bootstrap umum -->
