@@ -29,7 +29,7 @@
     $tanggal = \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y');
 @endphp
 
-<body class="sl-body sl-admin">
+<body class="sl-body sl-admin {{ satima_kelas_tema_admin(false) }}">
     <div class="sl-backdrop" aria-hidden="true" @if ($latar_login) style="--sl-latar: url('{{ $latar_login }}')" @endif>
         <img class="sl-mark" src="{{ gambar_desa($header['logo']) }}" alt="">
     </div>

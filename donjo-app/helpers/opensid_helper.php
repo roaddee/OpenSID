@@ -96,7 +96,7 @@ define('VERSION', '2607.0.1');
  */
 // Satima: dinaikkan ke migrasi Satima terakhir (akhiran 81) agar migrasi Satima dijalankan
 // di situs yang sudah terpasang. Versi resmi 2607: '2026070151'.
-define('VERSI_DATABASE', '2026102981');
+define('VERSI_DATABASE', '2026103081');
 
 // Kode laporan statistik
 define('JUMLAH', 666);
@@ -2905,6 +2905,23 @@ function satima_logo_qr(): ?string
     }
 
     return gambar_desa(identitas('logo'), false, true);
+}
+
+/**
+ * Satima: kelas <body> halaman admin untuk Pengaturan → Warna Tema Admin.
+ * 'skin-satima' (Navy Satima) tidak dikenal AdminLTE, jadi diberi 'skin-blue' sebagai dasar;
+ * lapisan satima-admin.css yang mewarnainya navy. Nilai kosong/tidak dikenal → Navy Satima.
+ * $admin = false untuk halaman masuk (/siteman): hanya kelas tema, tanpa 'satima-admin'.
+ */
+function satima_kelas_tema_admin(bool $admin = true): string
+{
+    $skin = (string) (setting('warna_tema_admin') ?? '');
+
+    if (! preg_match('/^skin-(satima|blue|black|red|yellow|purple|green)(-light)?$/', $skin) || $skin === 'skin-satima-light') {
+        $skin = 'skin-satima';
+    }
+
+    return ($skin === 'skin-satima' ? 'skin-blue skin-satima' : $skin) . ($admin ? ' satima-admin' : '');
 }
 
 function dummyQrCode($logo)

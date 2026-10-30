@@ -25,6 +25,9 @@
     <link rel="stylesheet" href="{{ asset('js/sweetalert2/sweetalert2.min.css') }}">
     <!-- Modifikasi -->
     <link rel="stylesheet" href="{{ asset('css/admin-style.css') }}" />
+    <!-- Satima: tampilan admin (mengikuti Warna Tema Admin) -->
+    <link rel="stylesheet" href="{{ asset('css/satima-font.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/satima-admin.css') }}" />
     <!-- Loading Lazy -->
     <link rel="stylesheet" href="<?= asset('js/progressive-image/progressive-image.css') ?>">
     @stack('css')
@@ -45,7 +48,7 @@
     </style>
 </head>
 
-<body id="sidebar_collapse" class="{{ setting('warna_tema_admin') }} fixed sidebar-mini">
+<body id="sidebar_collapse" class="{{ satima_kelas_tema_admin() }} fixed sidebar-mini">
     <div class="wrapper">
 
         @include('admin.layouts.partials.header')

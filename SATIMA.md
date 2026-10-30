@@ -38,12 +38,16 @@ sini (`git checkout satima-umum-perjuangan && git merge satima-umum`) agar kedua
 | Masuk warga | `resources/views/layanan_mandiri/auth/*` | layar terbelah hijau desa, NIK/PIN berikon, e-KTP, lupa PIN, daftar; modal cookie dirapikan |
 | Halaman warga | `resources/views/layanan_mandiri/layouts/index.blade.php`, `beranda/index.blade.php`, `assets/css/satima-mandiri.css`, `donjo-app/controllers/fmandiri/Beranda.php` | bilah atas, menu samping, tab bawah + laci di HP, beranda warga baru (dulu langsung dialihkan); isi halaman lama dirapikan lewat CSS |
 | Font | `assets/fonts/plus-jakarta-sans/`, `assets/css/satima-font.css` | Plus Jakarta Sans (OFL) lokal, tanpa Google Fonts |
+| Halaman admin (AdminLTE) | `assets/css/satima-admin.css`, `resources/views/admin/layouts/index.blade.php`, `donjo-app/views/header.php` (halaman lama), `satima_kelas_tema_admin()` di `opensid_helper.php` | lapisan CSS di atas AdminLTE/Bootstrap 3, markup & JS tidak diubah: sidebar & kepala baru, box jadi kartu, tombol/dropdown/form/Select2/tabel/DataTables/paginasi/label/modal dirapikan, judul bagian form (`.subtitle_head`) jadi pita lembut, Plus Jakarta Sans. Dibatasi `body.satima-admin` (hapus kelas itu → tampilan lama) |
+| Warna Tema Admin (30 Okt 2026) | `satima-admin.css` (bagian TEMA), `satima-login.css` (akhir berkas), seeder `SettingAplikasi.php`, `Migrasi_2026103081` | pilihan baru **Navy Satima** (`skin-satima`) jadi bawaan; ke-12 warna AdminLTE tetap bisa dipilih dan mewarnai logo, sidebar, banner beranda, tombol utama, tautan, fokus — serta **halaman masuk admin**. Varian "Terang" = sidebar putih. Migrasi: situs yang masih Ungu (bawaan lama) / kosong → Navy Satima, opsi diperbarui untuk semua desa. `VERSI_DATABASE` = `2026103081` |
 | Installer web | `resources/views/installer/*` (+ `partials/errors`), `assets/css/satima-installer.css`, ikon di `admin/layouts/components/ikon.blade.php`, `Install::finish()` | senada login admin; penanda 6 langkah, ringkasan syarat server/folder (jumlah yang gagal + tombol Periksa ulang), label "Ekstensi curl" (bukan "Curl extention"), form database & akun berikon + lihat sandi, centang syarat sandi langsung, tombol terkunci + putaran saat diproses (cegah kirim ganda), selesai → langsung ke /siteman. **Nama field, token `sidcsrf`, dan kelas galat `alert-danger`/`text-red-500` tetap** — agent Panel Satima `opensid-setup` mengisi installer ini lewat 127.0.0.1 |
 
 Diuji di sandbox (Apache + MariaDB + PHP 8.3, desktop 1366 px & HP 390 px): beranda, artikel, kategori, arsip, pencarian,
 pengaduan, peta, galeri, lapak, pembangunan, SOTK, 404; /siteman (produksi + captcha, salah sandi, tombol lihat sandi);
 beranda admin; Layanan Mandiri masuk (salah PIN, benar), beranda, surat (buat → isi form → kirim → tampil di beranda),
-pesan, dokumen, bantuan, profil, ganti PIN, laci menu HP, keluar lewat modal penilaian. Bila memperbarui dari rilis
+pesan, dokumen, bantuan, profil, ganti PIN, laci menu HP, keluar lewat modal penilaian. Halaman admin (30 Okt, PHP 8.3 +
+MariaDB, server bawaan PHP): Data Penduduk, Biodata Penduduk (form panjang), Identitas Desa, Pengaturan Aplikasi, beranda,
+/siteman; tema Navy Satima, Ungu, Ungu Terang, Hijau, Merah Terang; migrasi Ungu → Navy diuji. Bila memperbarui dari rilis
 OpenSID baru: berkas di tabel ini menimpa versi resmi, cek dulu apakah rilis mengubah view yang sama.
 
 ## Tema Kerupuk (30 Okt 2026, branch `satima-umum-kerupuk`)

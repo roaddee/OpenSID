@@ -309,10 +309,11 @@ class SettingAplikasi extends Seeder
             [
                 'judul'      => 'Warna Tema Admin',
                 'key'        => 'warna_tema_admin',
-                'value'      => 'skin-purple',
+                'value'      => 'skin-satima',
                 'keterangan' => 'Warna dasar tema komponen Admin',
                 'jenis'      => 'option',
                 'option'     => json_encode([
+                    'skin-satima'       => 'Navy Satima',
                     'skin-blue'         => 'Biru',
                     'skin-blue-light'   => 'Biru Terang',
                     'skin-black'        => 'Hitam',
