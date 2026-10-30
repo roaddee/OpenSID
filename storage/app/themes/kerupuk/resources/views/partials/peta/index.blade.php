@@ -1,4 +1,5 @@
 @extends('theme::template')
+@include('theme::commons.butuh', ['pustaka' => ['galeri', 'peta']])
 @include('theme::commons.asset_peta')
 
 @push('styles')

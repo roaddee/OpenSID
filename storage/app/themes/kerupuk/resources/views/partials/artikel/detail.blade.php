@@ -1,9 +1,13 @@
 @extends('theme::layouts.' . $layout)
+@include('theme::commons.butuh', ['pustaka' => ['galeri']])
 @php
     $post = $single_artikel;
     $alt_slug = PREMIUM ? 'artikel' : 'first';
 @endphp
-@include('theme::commons.asset_highcharts')
+{{-- Grafik hanya bila isi artikel memuat sematan grafik (shortcode statistik) --}}
+@if (str_contains((string) ($single_artikel['isi'] ?? ''), 'Highcharts'))
+    @include('theme::commons.asset_highcharts')
+@endif
 @section('content')
     @if ($post)
         <nav role="navigation" aria-label="navigation" class="breadcrumb">

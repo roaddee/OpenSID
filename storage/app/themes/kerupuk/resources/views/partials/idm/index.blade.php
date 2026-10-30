@@ -1,4 +1,5 @@
 @extends('theme::layouts.full-content')
+@include('theme::commons.butuh', ['pustaka' => ['tabel']])
 @include('theme::commons.asset_highcharts')
 @push('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.0/css/ionicons.min.css">

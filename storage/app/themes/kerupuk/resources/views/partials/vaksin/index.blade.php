@@ -1,4 +1,5 @@
 @extends('theme::template')
+@include('theme::commons.butuh', ['pustaka' => ['tabel']])
 @include('core::admin.layouts.components.asset_numeral')
 
 @section('layout')

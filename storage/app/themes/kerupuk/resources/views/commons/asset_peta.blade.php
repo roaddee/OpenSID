@@ -1,5 +1,6 @@
+@include('theme::commons.butuh', ['pustaka' => ['peta']])
 @push('scripts')
-    @if (cek_koneksi_internet())
+    @if (kr_online())
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.1.0/leaflet.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-providers/1.6.0/leaflet-providers.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/1.11.1/mapbox-gl.js"></script>

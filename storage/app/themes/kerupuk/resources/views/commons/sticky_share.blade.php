@@ -1,3 +1,4 @@
+@include('theme::commons.butuh', ['pustaka' => ['alpine']])
 @php
     $social_media = [
         'facebook' => [

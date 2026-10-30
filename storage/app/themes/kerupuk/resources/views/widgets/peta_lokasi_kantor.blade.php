@@ -1,3 +1,4 @@
+@include('theme::commons.butuh', ['pustaka' => ['peta']])
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 
 <div class="box box-primary box-solid">

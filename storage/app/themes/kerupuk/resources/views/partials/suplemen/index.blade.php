@@ -1,4 +1,5 @@
 @extends('theme::layouts.right-sidebar')
+@include('theme::commons.butuh', ['pustaka' => ['tabel']])
 @include('theme::commons.asset_sweetalert')
 
 @section('content')

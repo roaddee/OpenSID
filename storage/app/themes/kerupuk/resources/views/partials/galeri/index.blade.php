@@ -1,4 +1,5 @@
 @extends('theme::layouts.full-content')
+@include('theme::commons.butuh', ['pustaka' => ['galeri']])
 
 @section('content')
     <nav role="navigation" aria-label="navigation" class="breadcrumb">

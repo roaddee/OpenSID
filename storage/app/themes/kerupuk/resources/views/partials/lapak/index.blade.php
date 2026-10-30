@@ -1,4 +1,5 @@
 @extends('theme::layouts.full-content')
+@include('theme::commons.butuh', ['pustaka' => ['peta']])
 @include('theme::commons.asset_peta')
 {{-- Kerupuk: OwlCarousel hanya dimuat di halaman lapak (foto produk), tidak di semua halaman --}}
 @push('styles')

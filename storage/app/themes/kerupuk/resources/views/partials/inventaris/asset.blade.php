@@ -1,4 +1,5 @@
 @extends('theme::layouts.right-sidebar')
+@include('theme::commons.butuh', ['pustaka' => ['tabel']])
 @include('core::admin.layouts.components.asset_numeral')
 
 @section('content')

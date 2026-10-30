@@ -1,3 +1,4 @@
+@include('theme::commons.butuh', ['pustaka' => ['alpine']])
 @if (!empty($widget_keuangan['tahun']) && !is_null($widget_keuangan['tahun']))
     @include('theme::commons.asset_highcharts')
     <!-- widget Statistik -->

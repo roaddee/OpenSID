@@ -1,3 +1,4 @@
+@include('theme::commons.butuh', ['pustaka' => ['galeri']])
 @php
     $post = $single_artikel;
     $alt_slug = PREMIUM ? 'artikel' : 'first';

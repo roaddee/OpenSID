@@ -1,3 +1,4 @@
+@include('theme::commons.butuh', ['pustaka' => ['tabel']])
 <div class="breadcrumb">
     <ol>
         <li><a href="{{ ci_route('') }}">Beranda</a></li>

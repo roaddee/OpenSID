@@ -1,3 +1,5 @@
+{{-- Highcharts (±400 KB) cukup dimuat sekali per halaman walau beberapa widget/bagian memintanya --}}
+@once
 @push('scripts')
     <script src="{{ asset('js/highcharts/highcharts.js') }}"></script>
     <script src="{{ asset('js/highcharts/highcharts-3d.js') }}"></script>
@@ -14,3 +16,4 @@
         })
     </script>
 @endpush
+@endonce

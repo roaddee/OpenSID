@@ -1,4 +1,5 @@
 @extends('theme::layouts.right-sidebar')
+@include('theme::commons.butuh', ['pustaka' => ['tabel']])
 
 @section('content')
     <div class="content py-1">

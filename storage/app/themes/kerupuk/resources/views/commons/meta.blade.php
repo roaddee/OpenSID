@@ -69,7 +69,7 @@
 <meta property='og:url' content="{{ current_url() }}" />
 <link rel="shortcut icon" href="{{ favico_desa() }}" />
 <noscript>You must have JavaScript enabled in order to use this theme. Please enable JavaScript and then reload this page in order to continue.</noscript>
-@if (cek_koneksi_internet())
+@if (kr_online())
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 @endif
 <script>

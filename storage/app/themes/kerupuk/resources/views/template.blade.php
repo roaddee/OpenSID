@@ -1,22 +1,7 @@
 @php
-    $themeVersion = 'v2610.1.0';
-    if (! function_exists('kr_asset')) {
-        /**
-         * URL aset tema Kerupuk. Tema di desa/themes dilayani langsung oleh server web (berkas statis, bisa di-cache browser),
-         * jauh lebih cepat daripada lewat theme_asset() yang menyalakan PHP untuk setiap berkas. Tema di lokasi lain
-         * (mis. storage/app/themes) tetap lewat theme_asset().
-         */
-        function kr_asset(string $file): string
-        {
-            $tema = theme_active();
-            if (str_starts_with($tema->path, 'desa/') && is_file(FCPATH . $tema->path . '/assets/' . $file)) {
-                return base_url($tema->path . '/assets/' . $file) . '?v=2610.1.0';
-            }
-
-            return theme_asset($file, ['themeVersion' => 'v2610.1.0']);
-        }
-    }
+    $themeVersion = 'v2610.2.0';
 @endphp
+@include('theme::commons.kr_fungsi')
 <!DOCTYPE html>
 <html lang="id">
 
@@ -39,7 +24,7 @@
 
     @include('theme::commons.footer')
 
-    <script src="{{ kr_asset('js/script.min.js') }}"></script>
+    <script src="{{ kr_asset('js/script.min.js') }}" defer></script>
     <script src="{{ kr_asset('js/kerupuk.js') }}" defer></script>
     <script type="text/javascript">
         function formatRupiah(angka, prefix = 'Rp ') {

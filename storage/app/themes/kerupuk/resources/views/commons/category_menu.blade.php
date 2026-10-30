@@ -1,3 +1,4 @@
+@include('theme::commons.butuh', ['pustaka' => ['alpine']])
 @php
     $alt_slug = PREMIUM ? 'artikel' : 'first';
 @endphp

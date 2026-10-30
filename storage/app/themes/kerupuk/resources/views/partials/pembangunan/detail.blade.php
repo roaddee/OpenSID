@@ -1,4 +1,5 @@
 @extends('theme::layouts.full-content')
+@include('theme::commons.butuh', ['pustaka' => ['peta']])
 @include('theme::commons.asset_peta')
 
 @section('content')
