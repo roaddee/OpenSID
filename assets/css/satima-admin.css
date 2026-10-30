@@ -135,6 +135,15 @@
 .satima-admin .navbar-nav > .user-menu > .dropdown-menu > li.user-header > p small { color: rgb(255 255 255 / 0.75); font-weight: 500; }
 .satima-admin .navbar-nav > .user-menu > .dropdown-menu > .user-footer { background: var(--sa-soft); }
 
+/* Skin AdminLTE memberi tombol menu (☰) & isi dropdown HP warna putih dengan spesifisitas 0,4,x;
+   selektor di bawah menyamainya (dan dimuat lebih akhir) supaya tetap terlihat di kepala putih. */
+.satima-admin .main-header .navbar .sidebar-toggle { color: var(--sa-ink); }
+.satima-admin .main-header .navbar .sidebar-toggle:hover,
+.satima-admin .main-header .navbar .sidebar-toggle:focus { background: var(--sa-soft); color: var(--sa-blue); }
+.satima-admin .main-header .navbar .dropdown-menu li a { color: var(--sa-text); }
+.satima-admin .main-header .navbar .dropdown-menu li a:hover { background: var(--sa-soft); color: var(--sa-ink); }
+.satima-admin .main-header .navbar .dropdown-menu li.divider { background: var(--sa-line); }
+
 /* ================================================================ sisi (sidebar) */
 
 .satima-admin .main-sidebar,
@@ -805,7 +814,19 @@
 
 @media (max-width: 767px) {
     .satima-admin .main-header .logo { height: 50px; line-height: 50px; }
-    .satima-admin .main-sidebar { padding-top: 104px; }
+    /* kepala HP: tombol menu di kiri, ikon di kanan, selalu satu baris (label teks ikon disembunyikan; judul tetap di title) */
+    .satima-admin .main-header .navbar { display: flex; align-items: center; min-height: 52px; }
+    .satima-admin .main-header .navbar::before,
+    .satima-admin .main-header .navbar::after { display: none; }
+    .satima-admin .main-header .navbar .sidebar-toggle { flex: none; height: 52px; padding: 15px 16px; font-size: 18px; }
+    .satima-admin .main-header .navbar-custom-menu { flex: 1; min-width: 0; float: none; }
+    .satima-admin .main-header .navbar-custom-menu > .navbar-nav { display: flex; flex-wrap: nowrap; justify-content: flex-end; float: none; margin: 0; }
+    .satima-admin .main-header .navbar-custom-menu > .navbar-nav > li { float: none; flex: none; }
+    .satima-admin .main-header .navbar .nav > li > a { height: 52px; padding: 15px 10px; }
+    .satima-admin .main-header .navbar .nav > li.user > a { padding-left: 6px; padding-right: 6px; }
+    .satima-admin .main-header .navbar-custom-menu > .navbar-nav > li > a > span:not(.label):not(.badge):not(.sr-only) { display: none; }
+    .satima-admin .main-header .navbar-custom-menu > .navbar-nav > li > a > .label { top: 8px; right: 2px; }
+    .satima-admin .main-sidebar { padding-top: 102px; }
     .satima-admin .content { padding: 14px 12px 24px; }
     .satima-admin .content-header { padding: 16px 12px 0; }
     .satima-admin .content-header > h1 { font-size: 19px; }
