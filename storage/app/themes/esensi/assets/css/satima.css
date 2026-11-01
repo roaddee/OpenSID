@@ -629,3 +629,19 @@ a { text-underline-offset: 3px; }
 /* menu paling kanan: dropdown dibuka ke kiri agar tidak keluar layar */
 .es-menu-list > .es-menu-item:last-child > .es-dropdown { left: auto; right: 0; }
 .es-menu-list > .es-menu-item:nth-last-child(-n+2) .es-dropdown-side { left: auto; right: calc(100% + 6px); }
+
+/* ------------------------------------------------------------------ widget aparatur desa */
+/* Owl Carousel memberi semua slide tinggi yang sama dengan slide tertinggi; foto yang sangat
+   panjang membuat ruang kosong di bawah perangkat lain. Bingkai tetap 3:4, foto dipotong rapi. */
+.es-aparatur-foto {
+    width: 70%;
+    max-width: 220px;
+    margin-inline: auto;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: var(--es-radius);
+    background: var(--es-green-tint);
+}
+.es-aparatur-foto img { width: 100% !important; height: 100%; object-fit: cover; object-position: center top; }
+.es-aparatur .owl-item > div { padding-bottom: 4px; }
+.es-aparatur .owl-dots { margin-top: 10px !important; }
