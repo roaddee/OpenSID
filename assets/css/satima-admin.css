@@ -647,14 +647,20 @@
 
 /* ================================================================ tab, modal, small-box, info-box */
 
-.satima-admin .nav-tabs-custom { border-radius: var(--sa-radius); box-shadow: var(--sa-shadow), 0 0 0 1px rgb(0 40 83 / 0.06); overflow: hidden; }
-.satima-admin .nav-tabs-custom > .nav-tabs { border-bottom-color: var(--sa-line); background: var(--sa-soft); }
+/* Tanpa overflow:hidden — dropdown di dalam kartu bertab (mis. Migrasi Database) harus bisa keluar dari kartu.
+   Sudut membulat diberikan ke bilah tab sendiri. */
+.satima-admin .nav-tabs-custom { border-radius: var(--sa-radius); box-shadow: var(--sa-shadow), 0 0 0 1px rgb(0 40 83 / 0.06); }
+.satima-admin .nav-tabs-custom > .nav-tabs { border-bottom-color: var(--sa-line); background: var(--sa-soft); border-radius: var(--sa-radius) var(--sa-radius) 0 0; }
+.satima-admin .nav-tabs-custom > .nav-tabs > li:first-of-type > a { border-top-left-radius: var(--sa-radius); }
+.satima-admin .nav-tabs-custom > .tab-content { border-radius: 0 0 var(--sa-radius) var(--sa-radius); }
 .satima-admin .nav-tabs-custom > .nav-tabs > li { margin-right: 0; border-top: 0; }
 .satima-admin .nav-tabs-custom > .nav-tabs > li > a { color: var(--sa-muted); font-weight: 600; border-radius: 0; }
 .satima-admin .nav-tabs-custom > .nav-tabs > li.active { border-top-color: transparent; }
 .satima-admin .nav-tabs-custom > .nav-tabs > li.active > a { color: var(--sa-ink); box-shadow: inset 0 -2px 0 var(--sa-blue); background: #fff; }
 
-.satima-admin .modal-content { border: 0; border-radius: 16px; box-shadow: 0 30px 60px -20px rgb(0 40 83 / 0.45); overflow: hidden; }
+.satima-admin .modal-content { border: 0; border-radius: 16px; box-shadow: 0 30px 60px -20px rgb(0 40 83 / 0.45); }
+.satima-admin .modal-content > :first-child { border-top-left-radius: 16px; border-top-right-radius: 16px; }
+.satima-admin .modal-content > :last-child { border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; }
 .satima-admin .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--sa-line); }
 .satima-admin .modal-title { font-weight: 800; font-size: 16px; color: var(--sa-ink); }
 .satima-admin .modal-body { padding: 18px 20px; }
