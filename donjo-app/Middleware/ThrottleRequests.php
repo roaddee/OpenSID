@@ -58,14 +58,38 @@ class ThrottleRequests implements MiddlewareInterface
     }
 
     /**
+     * Satima: rute yang tidak pernah dibatasi (polling bawaan anjungan & Layanan Mandiri).
+     *
+     * @var list<string>
+     */
+    protected static $rutePolling = ['notif_web', 'anjungan-mandiri'];
+
+    /**
      * {@inheritDoc}
+     *
+     * Satima: pembatas 429 hanya untuk pengunjung tamu (bot / perayap / tebak sandi).
+     * - Pengguna yang sudah masuk (admin, perangkat, Layanan Mandiri) tidak dibatasi:
+     *   sesi mereka sudah lewat login + captcha, jadi 429 di sini hanya mengganggu kerja.
+     * - Rute polling bawaan (notif_web, anjungan-mandiri) tidak dihitung.
+     * - Permintaan AJAX tamu (widget, statistik, datatables) punya jatah sendiri yang jauh
+     *   lebih longgar, supaya membuka satu halaman tidak menghabiskan jatah halaman.
      */
     public function run($args)
     {
-        $request      = request();
-        $key          = $this->resolveRequestSignature($request);
-        $maxAttempts  = 60;
+        $request = request();
+
+        if ($this->sudahMasuk() || $this->rutePolling($request)) {
+            return;
+        }
+
+        $maxAttempts  = 300;
         $decaySeconds = 60;
+        $key          = $this->resolveRequestSignature($request);
+
+        if ($request->ajax() && $request->isMethod('GET')) {
+            $key .= ':ajax';
+            $maxAttempts *= 5;
+        }
 
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             $retryAfter = RateLimiter::availableIn($key);
@@ -76,6 +100,34 @@ class ThrottleRequests implements MiddlewareInterface
         }
 
         RateLimiter::hit($key, $decaySeconds);
+    }
+
+    /**
+     * Satima: ada sesi login (guard mana pun milik OpenSID)?
+     */
+    protected function sudahMasuk(): bool
+    {
+        foreach (['admin', 'perangkat', 'penduduk'] as $guard) {
+            try {
+                if (auth($guard)->check()) {
+                    return true;
+                }
+            } catch (Throwable) {
+                // guard belum siap (mis. saat instalasi): perlakukan sebagai tamu
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Satima: rute polling yang dikecualikan.
+     */
+    protected function rutePolling(Request $request): bool
+    {
+        $segmen = strtolower((string) strtok(trim($request->path(), '/'), '/'));
+
+        return in_array($segmen, self::$rutePolling, true);
     }
 
     /**
