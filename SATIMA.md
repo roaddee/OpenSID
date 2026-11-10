@@ -1,6 +1,6 @@
 # OpenSID umum — edisi Satima
 
-Branch `satima-umum` = rilis resmi OpenSID umum **Rilis-v2607.0.2** (VERSION edisi Satima `2610.0.1`; resmi `2607.0.1`)
+Branch `satima-umum` = rilis resmi OpenSID umum **Rilis-v2607.0.2** (VERSION tetap `2607.0.1`)
 ditambah perbaikan & pengerasan dari PT. Satima Putra Informa. Dipasang oleh Panel Satima bila situs memilih
 "repo Satima"; repo resmi `OpenSID/OpenSID` tetap bisa dipilih.
 
