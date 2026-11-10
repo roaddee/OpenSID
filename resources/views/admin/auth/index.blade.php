@@ -52,7 +52,7 @@
 
         <footer class="sl-foot sl-foot-side">
             <a href="{{ site_url() }}">@include('admin.layouts.components.ikon', ['n' => 'back']) Kembali ke website</a>
-            <span><a href="https://github.com/OpenSID/OpenSID" target="_blank" rel="noopener">OpenSID</a> v{{ AmbilVersi() }}-perjuangan</span>
+            <span><a href="https://github.com/OpenSID/OpenSID" target="_blank" rel="noopener">OpenSID</a> v{{ AmbilVersi() }}</span>
         </footer>
         </div>
 
@@ -92,7 +92,7 @@
 
         <footer class="sl-foot sl-foot-bottom">
             <a href="{{ site_url() }}">@include('admin.layouts.components.ikon', ['n' => 'back']) Kembali ke website</a>
-            <span><a href="https://github.com/OpenSID/OpenSID" target="_blank" rel="noopener">OpenSID</a> v{{ AmbilVersi() }}-perjuangan</span>
+            <span><a href="https://github.com/OpenSID/OpenSID" target="_blank" rel="noopener">OpenSID</a> v{{ AmbilVersi() }}</span>
         </footer>
     </div>
 
