@@ -74,6 +74,16 @@ class AnjunganController extends AdminModulController
             redirect_with('error', 'ID Pengunjung telah digunakan');
         }
 
+        // Satima: UUID perangkat (dibuat di browser anjungan) disimpan saat tambah, atau saat ubah bila belum ada.
+        // UUID yang sudah tersimpan tidak bisa diganti dari form (hapus lewat "Hapus Device terpasang").
+        $uuid = static::bersihkanUuid($request['uuid'] ?? null);
+        if ($uuid && $anjungan?->uuid) {
+            $uuid = null;
+        }
+        if ($uuid && AnjunganModel::withoutGlobalScopes()->where('uuid', $uuid)->exists()) {
+            redirect_with('error', 'UUID perangkat ini sudah dipakai anjungan lain. Hapus device terpasang di anjungan tersebut terlebih dahulu.');
+        }
+
         $tipe = [];
         if (! empty($request['rekam_kehadiran'])) {
             $tipe = [AnjunganModel::ANJUNGAN, AnjunganModel::KEHADIRAN];
@@ -94,14 +104,71 @@ class AnjunganController extends AdminModulController
             'tipe'                        => $tipe,
         ];
 
+        if ($uuid) {
+            $validated['uuid']       = $uuid;
+            $validated['user_agent'] = mb_substr(strip_tags((string) ($request['user_agent'] ?? '')), 0, 1000) ?: null;
+        }
+
         $validated['created_by'] = $id ? $validated['updated_by'] = ci_auth()->id : ci_auth()->id;
 
         return $validated;
     }
 
+    /**
+     * Satima: UUID perangkat hanya berisi heksadesimal dan tanda hubung.
+     */
+    public static function bersihkanUuid(?string $uuid): ?string
+    {
+        $uuid = strtolower(trim((string) $uuid));
+
+        return preg_match('/^[0-9a-f-]{16,64}$/', $uuid) ? $uuid : null;
+    }
+
+    /**
+     * Satima: tandai browser ini sebagai perangkat anjungan (cookie dibaca MY_Controller::cekAnjungan()).
+     */
+    protected static function pasangCookieUuid(?string $uuid): void
+    {
+        $opsi = [
+            'expires'  => $uuid ? time() + 10 * 365 * 24 * 3600 : time() - 3600,
+            'path'     => '/',
+            'secure'   => is_https(),
+            'httponly' => false,
+            'samesite' => 'Lax',
+        ];
+
+        setcookie('anjungan_uuid', (string) $uuid, $opsi);
+    }
+
     public function index()
     {
         return view('anjungan::backend.anjungan.index');
+    }
+
+    /**
+     * Satima: cek apakah UUID di browser ini terdaftar (rute sudah ada, method belum).
+     */
+    public function verify()
+    {
+        $uuid = static::bersihkanUuid(request('uuid'));
+
+        return json(['status' => $uuid && AnjunganModel::where('uuid', $uuid)->exists() ? 'valid' : 'invalid']);
+    }
+
+    /**
+     * Satima: lepas perangkat (UUID) dari anjungan, data anjungan tetap ada.
+     */
+    public function delete_device($uuid = null): void
+    {
+        isCan('u');
+
+        $uuid = static::bersihkanUuid($uuid);
+        if ($uuid) {
+            AnjunganModel::where('uuid', $uuid)->update(['uuid' => null, 'user_agent' => null]);
+        }
+        static::pasangCookieUuid(null);
+
+        redirect_with('success', 'Device anjungan berhasil dilepas dari browser ini');
     }
 
     public function datatables()
@@ -134,7 +201,7 @@ class AnjunganController extends AdminModulController
                     }
 
                     if (can('h')) {
-                        $aksi .= '<a href="#" data-href="' . ci_route('anjungan.delete', $row->id) . '" class="btn bg-maroon btn-sm"  title="Hapus Data" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-trash"></i></a> ';
+                        $aksi .= '<a href="#" data-href="' . ci_route('anjungan.delete', $row->id) . '" data-uuid="' . e((string) $row->uuid) . '" class="btn bg-maroon btn-sm"  title="Hapus Data" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-trash"></i></a> ';
                     }
 
                     return $aksi;
@@ -171,7 +238,12 @@ class AnjunganController extends AdminModulController
     {
         isCan('u');
 
-        if (AnjunganModel::create(static::validate($this->request))) {
+        $data = static::validate($this->request);
+
+        if (AnjunganModel::create($data)) {
+            if (! empty($data['uuid'])) {
+                static::pasangCookieUuid($data['uuid']);
+            }
             redirect_with('success', 'Berhasil Tambah Data');
         }
         redirect_with('error', 'Gagal Tambah Data');
@@ -183,7 +255,12 @@ class AnjunganController extends AdminModulController
 
         $data = AnjunganModel::findOrFail($id);
 
-        if ($data->update(static::validate($this->request, $id))) {
+        $validated = static::validate($this->request, $id);
+
+        if ($data->update($validated)) {
+            if (! empty($validated['uuid'])) {
+                static::pasangCookieUuid($validated['uuid']);
+            }
             redirect_with('success', 'Berhasil Ubah Data');
         }
         redirect_with('error', 'Gagal Ubah Data');
