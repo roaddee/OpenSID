@@ -92,9 +92,21 @@ if (! function_exists('menu_anjungan')) {
  */
 function icon_menu_anjungan(?string $nama_file): string
 {
-    if (is_file(FCPATH . LOKASI_ICON_MENU_ANJUNGAN . $nama_file)) {
+    if ($nama_file && is_file(FCPATH . LOKASI_ICON_MENU_ANJUNGAN . $nama_file)) {
         return base_url(LOKASI_ICON_MENU_ANJUNGAN . $nama_file);
     }
 
-    return base_url(LOKASI_ICON_MENU_ANJUNGAN_DEFAULT . 'menu.png');
+    // Satima: edisi umum tidak membawa assets/modules/anjungan/images (ikon contoh & menu.png),
+    // jadi ikon menu bawaan diambil dari aset modul Anjungan.
+    $bawaan = [
+        'peta.svg'      => 'icon/peta.png',
+        'protected.svg' => 'icon/infopublik.png',
+        'statistik.svg' => 'icon/statistik.png',
+        'mandiri.svg'   => 'icon/mandiri.png',
+        'lapak.svg'     => 'menu/lapak.svg',
+        'keuangan.svg'  => 'menu/keuangan.svg',
+        'idm.svg'       => 'menu/idm.svg',
+    ];
+
+    return module_asset('anjungan', 'images/' . ($bawaan[basename((string) $nama_file)] ?? 'menu.png'));
 }
