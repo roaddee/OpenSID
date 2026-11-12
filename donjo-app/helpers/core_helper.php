@@ -78,11 +78,16 @@ if (! function_exists('cek_anjungan')) {
     /**
      * Cek status anjungan.
      *
-     * Satima: pengecekan langganan anjungan ke layanan.opendesa.id dilewati — anjungan selalu aktif.
+     * Satima: tanpa pengecekan langganan ke layanan.opendesa.id. Anjungan aktif bila ada berkas penanda
+     * `desa/config/anjungan_aktif`, yang dibuat/dihapus oleh Panel Satima (switch "Anjungan" per situs).
+     * Folder desa/ tidak ikut git, jadi penanda tetap ada setelah update, pindah server, atau pulihkan arsip.
+     * Tanpa penanda: /anjungan-mandiri dialihkan ke Layanan Mandiri dan anjungan tidak bisa diaktifkan di admin.
      */
     function cek_anjungan(): bool
     {
-        return true;
+        static $aktif = null;
+
+        return $aktif ??= is_file(FCPATH . LOKASI_CONFIG_DESA . 'anjungan_aktif');
     }
 }
 
