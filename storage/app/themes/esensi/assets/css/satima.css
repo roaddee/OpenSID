@@ -629,3 +629,74 @@ a { text-underline-offset: 3px; }
 /* menu paling kanan: dropdown dibuka ke kiri agar tidak keluar layar */
 .es-menu-list > .es-menu-item:last-child > .es-dropdown { left: auto; right: 0; }
 .es-menu-list > .es-menu-item:nth-last-child(-n+2) .es-dropdown-side { left: auto; right: calc(100% + 6px); }
+
+/* ------------------------------------------------------------------ widget aparatur desa */
+/* Owl Carousel memberi semua slide tinggi yang sama dengan slide tertinggi; foto yang sangat
+   panjang membuat ruang kosong di bawah perangkat lain. Bingkai tetap 3:4, foto dipotong rapi. */
+.es-aparatur-foto {
+    width: 70%;
+    max-width: 220px;
+    margin-inline: auto;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: var(--es-radius);
+    background: var(--es-green-tint);
+}
+.es-aparatur-foto img { width: 100% !important; height: 100%; object-fit: cover; object-position: center top; }
+.es-aparatur .owl-item > div { padding-bottom: 4px; }
+.es-aparatur .owl-dots { margin-top: 10px !important; }
+
+/* ------------------------------------------------------------------ widget sinergi program */
+/* Kartu logo seragam: semua bentuk gambar (lebar, persegi, tinggi) masuk bingkai 16:10 tanpa terpotong. */
+.es-sinergi { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.es-sinergi-item {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid var(--es-line);
+    border-radius: var(--es-radius-sm);
+    background: #fff;
+    text-decoration: none !important;
+    transition: border-color .15s, box-shadow .15s;
+}
+.es-sinergi-item:hover { border-color: var(--es-green); box-shadow: var(--es-shadow); }
+.es-sinergi-logo { position: relative; display: block; aspect-ratio: 16 / 10; background: #fafbfa; border-bottom: 1px solid var(--es-line-soft); }
+.es-sinergi-logo img { position: absolute; inset: 8px; width: calc(100% - 16px) !important; height: calc(100% - 16px) !important; max-width: none; object-fit: contain; }
+.es-sinergi-nama {
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    padding: 7px 8px 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--es-ink);
+    text-align: center;
+}
+.es-sinergi-item:hover .es-sinergi-nama { color: var(--es-green-dark); }
+.es-sinergi-lain { margin-top: 10px; }
+.es-sinergi-lain > summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 999px;
+    background: var(--es-green-tint);
+    color: var(--es-green-dark);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+}
+.es-sinergi-lain > summary::-webkit-details-marker { display: none; }
+.es-sinergi-lain > summary:hover { background: color-mix(in srgb, var(--es-green) 18%, white); }
+.es-sinergi-lain > summary i { font-size: 0.7rem; transition: transform .2s; }
+.es-sinergi-lain[open] > summary i { transform: rotate(180deg); }
+.es-sinergi-tutup, .es-sinergi-lain[open] .es-sinergi-buka { display: none; }
+.es-sinergi-lain[open] .es-sinergi-tutup { display: inline; }
+.es-sinergi-lain[open] > .es-sinergi { margin-top: 10px; }
+.es-sinergi-kosong { margin: 0; color: var(--es-muted); }

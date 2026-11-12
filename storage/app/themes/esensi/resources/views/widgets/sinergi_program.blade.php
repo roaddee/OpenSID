@@ -1,66 +1,43 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 
-<style>
-    #sinergi_program {
-        text-align: center;
-    }
+@php
+    // Edisi Satima: kartu logo seragam 2 kolom + nama program; bila banyak, sisanya dilipat
+    // (tanpa JavaScript, <details>) supaya kotak samping tidak memanjang ke bawah.
+    // Pengaturan "gambar per baris" tidak dipakai: kolom samping terlalu sempit untuk 3 logo bernama.
+    $sinergi_program = collect(sinergi_program() ?: [])->filter(static fn ($s) => ! empty($s['gambar_url']))->values();
+    $tampil_awal = 6;
+    $sinergi_awal = $sinergi_program->take($tampil_awal);
+    $sinergi_lain = $sinergi_program->slice($tampil_awal);
+@endphp
 
-    #sinergi_program table {
-        margin: auto;
-    }
-
-    #sinergi_program img {
-        max-width: 100%;
-        max-height: 100%;
-        transition: all 0.5s;
-        -o-transition: all 0.5s;
-        -moz-transition: all 0.5s;
-        -webkit-transition: all 0.5s;
-    }
-
-    #sinergi_program img:hover {
-        transition: all 0.3s;
-        -o-transition: all 0.3s;
-        -moz-transition: all 0.3s;
-        -webkit-transition: all 0.3s;
-        transform: scale(1.5);
-        -moz-transform: scale(1.5);
-        -o-transform: scale(1.5);
-        -webkit-transform: scale(1.5);
-        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
-    }
-</style>
 <div class="box box-primary box-solid">
     <div class="box-header">
         <h3 class="box-title"><i class="fas fa-external-link-alt mr-1"></i>{{ $judul_widget }}</h3>
     </div>
     <div id="sinergi_program" class="box-body">
-        <table class="w-full text-sm">
-            @php
-                $sinergi_program = sinergi_program();
-                $perbaris = (int) (setting('gambar_sinergi_program_perbaris') ?: 3);
-                $totalIterations = count($sinergi_program) + (($perbaris - (count($sinergi_program) % $perbaris)) % $perbaris);
-            @endphp
+        @if ($sinergi_program->isEmpty())
+            <p class="es-sinergi-kosong">Belum ada tautan program.</p>
+        @else
+            <ul class="es-sinergi">
+                @foreach ($sinergi_awal as $item)
+                    @include('theme::widgets.sinergi_program_item', ['item' => $item])
+                @endforeach
+            </ul>
 
-            @for ($key = 0; $key < $totalIterations; $key++)
-                @if ($key % $perbaris === 0)
-                    <tr>
-                @endif
-
-                @if ($key < count($sinergi_program))
-                    <td>
-                        <center>
-                            <a href="{{ $sinergi_program[$key]['tautan'] }}" target="_blank">
-                                <img style="padding: 3px;" src="{{ $sinergi_program[$key]['gambar_url'] }}" alt="Gambar {{ $sinergi_program[$key]['judul'] }}">
-                            </a>
-                        </center>
-                    </td>
-                @endif
-
-                @if ($key % $perbaris === $perbaris - 1 || $key === $totalIterations - 1)
-                    </tr>
-                @endif
-            @endfor
-        </table>
+            @if ($sinergi_lain->isNotEmpty())
+                <details class="es-sinergi-lain">
+                    <summary>
+                        <span class="es-sinergi-buka">Lihat {{ $sinergi_lain->count() }} program lainnya</span>
+                        <span class="es-sinergi-tutup">Sembunyikan</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </summary>
+                    <ul class="es-sinergi">
+                        @foreach ($sinergi_lain as $item)
+                            @include('theme::widgets.sinergi_program_item', ['item' => $item])
+                        @endforeach
+                    </ul>
+                </details>
+            @endif
+        @endif
     </div>
 </div>

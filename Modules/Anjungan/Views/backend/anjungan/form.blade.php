@@ -38,8 +38,12 @@
                             onkeyup="wajib()"
                             name="uuid"
                             value="{{ $anjungan->uuid ?? null }}"
+                            data-aksi="{{ $action }}"
                             readonly
                         >
+                        @if (empty($anjungan->uuid))
+                            <p class="help-block">UUID dibuat otomatis untuk browser ini. Simpan dari perangkat anjungan itu sendiri agar perangkat dikenali tanpa IP/MAC.</p>
+                        @endif
                     </div>
                 </div>
                 <div class="form-group">
@@ -149,7 +153,7 @@
     </div>
 @endsection
 @push('scripts')
-    @if($action == 'Tambah')
+    @if ($action == 'Tambah' || empty($anjungan->uuid))
         <script src="{{ asset('front/js/anjungan-client.js') }}"></script>
     @endif
     <script>
@@ -178,7 +182,10 @@
             // Event handler untuk modal konfirmasi hapus
             $('#confirm-delete').on('show.bs.modal', function(e) {
                 $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
-                localStorage.removeItem('anjungan_uuid');
+                if ($(e.relatedTarget).is('#hapus-device-anjungan')) {
+                    localStorage.removeItem('anjungan_uuid');
+                    document.cookie = 'anjungan_uuid=; path=/; max-age=0';
+                }
             });
 
             wajib();
@@ -266,21 +273,15 @@
             }
         };
 
+        // Satima: cukup salah satu dari UUID perangkat, IP, atau MAC. #id_pengunjung tidak ada di form ini,
+        // dulu .val().length membuat skrip error bila IP & MAC kosong.
         function wajib() {
-            if ($("#ip_address").val().length > 0) {
-                // $("#ip_address").addClass('required');
-                $("#mac_address").removeClass('required');
-                $("#id_pengunjung").removeClass('required');
-            } else if ($("#mac_address").val().length > 0) {
-                // $("#mac_address").addClass('required');
-                $("#ip_address").removeClass('required');
-                $("#id_pengunjung").removeClass('required');
-            } else if ($("#id_pengunjung").val().length > 0) {
-                // $("#id_pengunjung").addClass('required');
-                $("#ip_address").removeClass('required');
-                $("#mac_address").removeClass('required');
+            const isi = id => ($('#' + id).val() || '').trim().length > 0;
+
+            if (isi('anjungan_id') || isi('ip_address') || isi('mac_address')) {
+                $('#ip_address, #mac_address').removeClass('required');
             } else {
-                $("#ip_address").addClass('required');
+                $('#ip_address').addClass('required');
             }
         }
 

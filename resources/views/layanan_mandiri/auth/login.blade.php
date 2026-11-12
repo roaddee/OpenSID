@@ -71,6 +71,10 @@
             const anjungan_uuid = localStorage.getItem('anjungan_uuid');
             if (anjungan_uuid) {
                 $('#anjungan_uuid').val(anjungan_uuid);
+                // Satima: pulihkan cookie perangkat bila terhapus (dibaca server untuk mengenali anjungan)
+                if (document.cookie.indexOf('anjungan_uuid=') === -1) {
+                    document.cookie = 'anjungan_uuid=' + encodeURIComponent(anjungan_uuid) + '; path=/; max-age=315360000; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+                }
             }
         });
     </script>

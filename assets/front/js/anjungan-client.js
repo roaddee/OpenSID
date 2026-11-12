@@ -1,32 +1,57 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    let anjungan_uuid = localStorage.getItem('anjungan_uuid');
+// Satima: UUID perangkat anjungan.
+// - Tambah: pakai UUID yang sudah tersimpan di browser ini (bila ada), selain itu buat baru; isi IP & user agent.
+// - Ubah anjungan yang belum punya UUID: isi UUID browser ini (IP tidak ditimpa).
+// UUID baru ditandai data-baru="1" supaya hanya UUID itu yang dipasang ke localStorage + cookie saat Simpan.
+const buatUuid = () => {
+    if (window.crypto && typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID();
+    }
+    const b = crypto.getRandomValues(new Uint8Array(16));
+    b[6] = (b[6] & 0x0f) | 0x40;
+    b[8] = (b[8] & 0x3f) | 0x80;
+    const h = Array.from(b, x => x.toString(16).padStart(2, '0')).join('');
+    return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+};
 
-    // ------------------------------------------------------------------
-    // 1. Kalau UUID sudah ada
-    // ------------------------------------------------------------------
-    if (anjungan_uuid) {
-        console.log("UUID terverifikasi pada server:", anjungan_uuid);
+document.addEventListener('DOMContentLoaded', () => {
+    const field = document.getElementById('anjungan_id');
+    if (!field || field.value) {
+        return;
     }
 
-    // ------------------------------------------------------------------
-    // 2. Kalau UUID belum ada → generate baru dan tampilkan pada form
-    // ------------------------------------------------------------------
-    if (!anjungan_uuid) {
+    const tambah = field.dataset.aksi === 'Tambah';
+    let uuid = null;
+    try {
+        uuid = localStorage.getItem('anjungan_uuid');
+    } catch (e) {}
+
+    field.value = uuid || buatUuid();
+    field.dataset.baru = '1';
+    if (typeof wajib === 'function') {
+        wajib();
+    }
+
+    if (tambah) {
         getIp();
+    }
+    const ua = document.getElementById('user_agent');
+    if (ua && (tambah || !ua.value)) {
         getUserAgent();
-        const temp_uuid = crypto.randomUUID();
-        $('#anjungan_id').val(temp_uuid);
     }
 });
 
 getIp = () => {
-    fetch('https://api.ipify.org?format=json') 
+    fetch('https://api.ipify.org?format=json')
     .then(r => r.json())
     .then(
         d => {
-            document.getElementById('ip_address').value = d.ip;
+            const ip = document.getElementById('ip_address');
+            if (ip && !ip.value) {
+                ip.value = d.ip;
+            }
         }
-    );
+    )
+    .catch(() => {});
 };
 
 getUserAgent = () => {

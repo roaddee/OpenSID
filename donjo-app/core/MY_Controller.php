@@ -328,9 +328,18 @@ class MY_Controller extends CI_Controller
         $macAddress   = $this->session->mac_address;
         $anjunganUuid = $this->session->anjungan_uuid;
 
+        // Satima: UUID perangkat dari cookie (dipasang saat anjungan disimpan dari browser perangkat itu)
+        if (! $anjunganUuid && isset($_COOKIE['anjungan_uuid'])) {
+            $anjunganUuid = $_COOKIE['anjungan_uuid'];
+        }
+        $anjunganUuid = preg_match('/^[0-9a-f-]{16,64}$/', strtolower((string) $anjunganUuid)) ? strtolower($anjunganUuid) : null;
+
         try {
             $data = DB::table('anjungan')
-                ->where(static function ($query) use ($macAddress, $ip) {
+                ->where(static function ($query) use ($macAddress, $ip, $anjunganUuid) {
+                    if ($anjunganUuid) {
+                        $query->orWhere('uuid', $anjunganUuid);
+                    }
                     if ($macAddress) {
                         $query->orWhere('mac_address', $macAddress);
                     }

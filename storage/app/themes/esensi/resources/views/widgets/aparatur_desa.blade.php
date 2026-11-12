@@ -5,11 +5,12 @@
         </h3>
     </div>
     <div class="box-body">
-        <div class="owl-carousel">
+        <div class="owl-carousel es-aparatur">
             @foreach ($aparatur_desa['daftar_perangkat'] as $data)
                 <div class="relative space-y-2">
-                    <div class="w-3/4 mx-auto">
-                        <img src="{{ $data['foto'] }}" alt="{{ $data['nama'] }}" class="object-cover object-center bg-gray-300">
+                    {{-- bingkai foto tetap 3:4 agar tinggi kotak tidak mengikuti foto paling panjang --}}
+                    <div class="es-aparatur-foto">
+                        <img src="{{ $data['foto'] }}" alt="{{ $data['nama'] }}" loading="lazy">
                     </div>
                     @if (getWidgetSetting('aparatur_desa', 'overlay') == true)
                         <div class="space-y-1 text-sm text-center z-10">
