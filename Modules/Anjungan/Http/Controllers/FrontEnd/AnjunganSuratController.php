@@ -265,8 +265,10 @@ class AnjunganSuratController extends MandiriModulController
 
     protected function print_connector()
     {
-        if (null === ($anjungan = $this->cek_anjungan)) {
-            return;
+        // Satima: cek_anjungan berupa array (kosong bila bukan anjungan) — jangan coba sambung ke printer tanpa alamat
+        $anjungan = $this->cek_anjungan;
+        if (empty($anjungan) || empty($anjungan['printer_ip'])) {
+            return false;
         }
 
         try {
