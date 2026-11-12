@@ -6,7 +6,8 @@
 <h3>Surat {{ $surat['nama'] }}</h3>
 <div class="box box-info">
     <div class="box-body">
-        <form id="validasi" action="{{ $form_action }}" method="POST" target="_blank" class="form-surat form-horizontal">
+        {{-- Satima: tanpa target="_blank" — di HP dengan situs terpasang sebagai aplikasi (PWA), jendela baru dibuka ulang lewat GET sehingga pratinjau 404 --}}
+        <form id="validasi" action="{{ $form_action }}" method="POST" class="form-surat form-horizontal">
             <input type="hidden" id="url_surat" name="url_surat" value="{{ $url }}">
             <input type="hidden" id="url_remote" name="url_remote" value="{{ ci_route('surat.nomor_surat_duplikat') }}">
             <div class="form-group cari_nik">
