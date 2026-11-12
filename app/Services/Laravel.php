@@ -491,7 +491,33 @@ class Laravel extends Container
             foreach ($merged as $original => $alias) {
                 class_alias($original, $alias);
             }
+
+            $this->daftarkanAliasMalas();
         }
+    }
+
+    /**
+     * Satima: alias kelas global ala Laravel (Str, Arr, dst.) yang dibuat saat pertama dipakai.
+     *
+     * Tema pihak ketiga (mis. Velo) menulis `Str::limit()` di Blade tanpa namespace karena di
+     * Laravel penuh alias itu tersedia. Di sini alias baru dibuat ketika kelasnya dicari dan
+     * belum ada, sehingga tidak membebani permintaan lain dan tidak menimpa kelas global
+     * milik CodeIgniter/OpenSID yang bernama sama.
+     */
+    protected function daftarkanAliasMalas(): void
+    {
+        spl_autoload_register(static function (string $kelas): void {
+            if (str_contains($kelas, '\\')) {
+                return;
+            }
+
+            static $alias = null;
+            $alias ??= Facade::defaultAliases()->all();
+
+            if (isset($alias[$kelas]) && class_exists($alias[$kelas])) {
+                class_alias($alias[$kelas], $kelas);
+            }
+        });
     }
 
     /**

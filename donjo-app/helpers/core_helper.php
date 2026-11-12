@@ -36,7 +36,6 @@
  */
 
 use App\Models\Config;
-use Modules\Pelanggan\Services\PelangganService;
 
 defined('BASEPATH') || exit('No direct script access allowed');
 
@@ -78,26 +77,12 @@ define('MODUL_BAWAAN', [
 if (! function_exists('cek_anjungan')) {
     /**
      * Cek status anjungan.
+     *
+     * Satima: pengecekan langganan anjungan ke layanan.opendesa.id dilewati — anjungan selalu aktif.
      */
     function cek_anjungan(): bool
     {
-        if (ENVIRONMENT === 'development' || (config_item('demo_mode') && in_array(get_domain(APP_URL), WEBSITE_DEMO))) {
-            return true;
-        }
-
-        if (cache()->has('anjungan_aktif')) {
-            return cache('anjungan_aktif');
-        }
-
-        $status = PelangganService::apiPelangganPemesanan();
-
-        $isAktif = isset($status->body->tanggal_berlangganan->anjungan) && $status->body->tanggal_berlangganan->anjungan === 'aktif';
-
-        if ($isAktif) {
-            cache()->forever('anjungan_aktif', true);
-        }
-
-        return $isAktif;
+        return true;
     }
 }
 
