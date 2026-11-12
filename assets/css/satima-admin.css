@@ -391,6 +391,38 @@
 }
 .satima-admin .btn.disabled, .satima-admin .btn[disabled] { opacity: .5; filter: none; }
 
+/* tombol pilihan (data-toggle="buttons", mis. Aktif / Tidak Aktif, Lanskap / Potret):
+   yang tidak dipilih putih bergaris, yang dipilih berwarna tema + tanda centang.
+   Tanpa ini .btn-info !important di atas membuat keduanya berwarna sama. */
+.satima-admin [data-toggle="buttons"] > .btn:not(.active) {
+    background-color: #fff !important;
+    border-color: var(--sa-line-2) !important;
+    color: var(--sa-muted) !important;
+    font-weight: 600;
+    box-shadow: none;
+    filter: none;
+}
+.satima-admin [data-toggle="buttons"] > .btn:not(.active):hover {
+    background-color: var(--sa-soft) !important;
+    color: var(--sa-ink) !important;
+}
+.satima-admin [data-toggle="buttons"] > .btn.active {
+    background-color: var(--sa-brand) !important;
+    border-color: var(--sa-brand) !important;
+    color: #fff !important;
+    box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.12);
+    position: relative;
+    z-index: 2;
+}
+.satima-admin [data-toggle="buttons"] > .btn.active::before {
+    content: "\f00c";
+    font-family: FontAwesome;
+    font-weight: normal;
+    margin-right: 6px;
+    font-size: .9em;
+}
+.satima-admin [data-toggle="buttons"] > .btn + .btn:not(.active) { border-left-color: var(--sa-line-2) !important; }
+
 /* btn-social: ikon di kiri dalam kotak, dipertahankan tapi lebih halus */
 .satima-admin .btn-social { padding-left: 40px; }
 .satima-admin .btn-social > :first-child {

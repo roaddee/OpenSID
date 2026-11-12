@@ -14,9 +14,15 @@
             // Mencegah form submit secara default
             e.preventDefault();
 
-            let uuid = $('#anjungan_id').val();
-            if (uuid) {
-                localStorage.setItem('anjungan_uuid', uuid);
+            // Satima: hanya UUID yang dibuat/dipakai di browser ini (data-baru) yang menandai browser ini sebagai anjungan,
+            // supaya menyimpan ubahan dari komputer admin tidak menjadikan komputer itu anjungan.
+            let field = $('#anjungan_id');
+            let uuid = field.val();
+            if (uuid && field.attr('data-baru') === '1') {
+                try {
+                    localStorage.setItem('anjungan_uuid', uuid);
+                } catch (e) {}
+                document.cookie = 'anjungan_uuid=' + encodeURIComponent(uuid) + '; path=/; max-age=315360000; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
             }
             // Submit form secara manual setelah menyimpan ke localStorage
             $('#validasi').submit();

@@ -158,9 +158,10 @@
                 // Menangani klik pada tombol konfirmasi hapus di dalam modal
                 $(this).find('.btn-ok').off('click').on('click', function() {
                     // Cek apakah anjungan_uuid di localStorage sama dengan yang akan dihapus
-                    if (localStorage.getItem('anjungan_uuid') === uuidToDelete) {
+                    if (uuidToDelete && localStorage.getItem('anjungan_uuid') === uuidToDelete) {
                         // Hapus dari localStorage
                         localStorage.removeItem('anjungan_uuid');
+                        document.cookie = 'anjungan_uuid=; path=/; max-age=0';
                     }
                     // Lanjutkan ke URL penghapusan di server
                     window.location = $(e.relatedTarget).data('href');
